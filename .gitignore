@@ -1,0 +1,12 @@
+node_modules/
+dist/
+dist-electron/
+*.dmg
+*.app
+.DS_Store
+*.log
+.env
+.env.*
+resources/audio/*.mp3
+resources/audio/*.ogg
+native/keyboard-blocker/.build/

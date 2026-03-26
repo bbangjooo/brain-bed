@@ -1,0 +1,68 @@
+{
+  "name": "brain-bed",
+  "version": "0.2.0",
+  "description": "Forced meditation breaks for AI-fried brains. Inner peace, right on your screen.",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build && electron-builder",
+    "preview": "vite preview",
+    "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron:build": "vite build && electron-builder --mac",
+    "build:native": "cd native/keyboard-blocker && swift build -c release && cp .build/release/KeyboardBlocker ../../resources/bin/keyboard-blocker"
+  },
+  "author": "bbangjo",
+  "license": "MIT",
+  "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.5.0",
+    "@types/three": "^0.183.1",
+    "better-sqlite3": "^11.7.0",
+    "electron-store": "^10.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "three": "^0.183.2"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.0",
+    "electron": "^33.3.1",
+    "electron-builder": "^25.1.8",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.6",
+    "vite-plugin-electron": "^0.28.8",
+    "vite-plugin-electron-renderer": "^0.14.6",
+    "wait-on": "^8.0.1"
+  },
+  "build": {
+    "appId": "com.brainbed.app",
+    "productName": "Brain Bed",
+    "icon": "resources/icons/app-icon.icns",
+    "mac": {
+      "category": "public.app-category.healthcare-fitness",
+      "icon": "resources/icons/app-icon.icns",
+      "target": "dmg"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "resources/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/audio",
+        "to": "audio"
+      },
+      {
+        "from": "resources/bin",
+        "to": "bin"
+      }
+    ]
+  }
+}

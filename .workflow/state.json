@@ -1,0 +1,79 @@
+{
+  "projectName": "Brain Bed",
+  "createdAt": "2026-03-26T12:00:00Z",
+  "currentPhaseId": "v2-complete",
+  "phases": [
+    {
+      "id": "stage-0",
+      "name": "Ideation",
+      "status": "completed",
+      "startedAt": "2026-03-26T12:00:00Z",
+      "completedAt": "2026-03-26T12:02:00Z",
+      "artifacts": ["outputs/stage-0/idea-brief.md"]
+    },
+    {
+      "id": "stage-1",
+      "name": "Planning",
+      "status": "completed",
+      "startedAt": "2026-03-26T12:02:00Z",
+      "completedAt": "2026-03-26T12:07:00Z",
+      "artifacts": ["outputs/stage-1/prd.md"]
+    },
+    {
+      "id": "stage-2",
+      "name": "Design",
+      "status": "completed",
+      "startedAt": "2026-03-26T12:07:00Z",
+      "completedAt": "2026-03-26T12:12:00Z",
+      "artifacts": ["outputs/stage-2/design-spec.md"]
+    },
+    {
+      "id": "stage-3",
+      "name": "Development (Phase 1 + Phase 2 MVP)",
+      "status": "completed",
+      "startedAt": "2026-03-26T12:12:00Z",
+      "completedAt": "2026-03-26T13:00:00Z",
+      "artifacts": ["outputs/stage-3/build-config.md"]
+    },
+    {
+      "id": "stage-4",
+      "name": "Deployment",
+      "status": "completed",
+      "startedAt": "2026-03-26T13:00:00Z",
+      "completedAt": "2026-03-26T13:05:00Z",
+      "artifacts": ["outputs/stage-4/deployment-complete.md", "dist/mac-arm64/Brain Bed.app"]
+    },
+    {
+      "id": "v2-stage-0",
+      "name": "Ideation v2 — BFI System",
+      "status": "completed",
+      "startedAt": "2026-03-26T14:30:00Z",
+      "completedAt": "2026-03-26T14:35:00Z",
+      "artifacts": ["outputs/stage-0/idea-brief-v2.md"]
+    },
+    {
+      "id": "v2-stage-1",
+      "name": "Planning v2 — BFI PRD",
+      "status": "completed",
+      "startedAt": "2026-03-26T14:35:00Z",
+      "completedAt": "2026-03-26T14:40:00Z",
+      "artifacts": ["outputs/stage-1/prd-v2.md"]
+    },
+    {
+      "id": "v2-stage-2",
+      "name": "Design v2 — BFI Gauge & Notifications",
+      "status": "completed",
+      "startedAt": "2026-03-26T14:40:00Z",
+      "completedAt": "2026-03-26T14:45:00Z",
+      "artifacts": ["outputs/stage-2/design-spec-v2.md"]
+    },
+    {
+      "id": "v2-stage-3",
+      "name": "Development v2 — BFI Implementation",
+      "status": "completed",
+      "startedAt": "2026-03-26T14:45:00Z",
+      "completedAt": "2026-03-26T15:00:00Z",
+      "artifacts": ["outputs/stage-3/build-config-v2.md"]
+    }
+  ]
+}
