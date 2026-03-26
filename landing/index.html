@@ -367,20 +367,25 @@
     <p>Brain Bed &copy; 2026 &middot; <a href="mailto:airmancho@gmail.com">Contact</a> &middot; <a href="https://github.com/bbangjooo/brain-bed">GitHub</a></p>
   </footer>
 <script>
-async function downloadLatest(e) {
+// Cache the download URL on page load so clicks are instant
+let cachedDownloadUrl = null;
+fetch('https://api.github.com/repos/bbangjooo/brain-bed/releases/latest')
+  .then(r => r.json())
+  .then(data => {
+    const dmg = (data.assets || []).find(a => a.name.endsWith('-arm64.dmg'));
+    if (dmg) cachedDownloadUrl = dmg.browser_download_url;
+  })
+  .catch(() => {});
+
+function downloadLatest(e) {
   e.preventDefault();
-  try {
-    const res = await fetch('https://api.github.com/repos/bbangjooo/brain-bed/releases/latest');
-    const data = await res.json();
-    const dmg = data.assets.find(a => a.name.endsWith('-arm64.dmg'));
-    if (dmg) {
-      window.location.href = dmg.browser_download_url;
-    } else {
-      window.location.href = data.html_url;
-    }
-  } catch {
-    window.location.href = 'https://github.com/bbangjooo/brain-bed/releases/latest';
-  }
+  const url = cachedDownloadUrl || 'https://github.com/bbangjooo/brain-bed/releases/latest';
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = '';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 </script>
 </body>
