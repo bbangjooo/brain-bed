@@ -42,6 +42,7 @@ function FloatingOrb({ position, scale, color, speed }: {
 
 function ParticleField({ analyser }: { analyser: AnalyserNode | null }) {
   const pointsRef = useRef<THREE.Points>(null)
+  const smoothedAudio = useRef(0)
   const dataArray = useMemo(() => analyser ? new Uint8Array(analyser.frequencyBinCount) : null, [analyser])
 
   const { positions, basePositions, count } = useMemo(() => {
@@ -79,9 +80,11 @@ function ParticleField({ analyser }: { analyser: AnalyserNode | null }) {
       analyser.getByteFrequencyData(dataArray)
       audioLevel = dataArray.reduce((sum, v) => sum + v, 0) / (dataArray.length * 255)
     }
+    // Smooth audio response to prevent jerky motion
+    smoothedAudio.current += (audioLevel - smoothedAudio.current) * 0.05
 
     const breathe = Math.sin(t * 0.3) * 0.15
-    const audioReact = audioLevel * 0.8
+    const audioReact = smoothedAudio.current * 0.4
 
     for (let i = 0; i < count; i++) {
       const bx = basePositions[i * 3]

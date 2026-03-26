@@ -61,31 +61,39 @@ export default function BreathingCircle() {
       const maxR = Math.min(w, h) * 0.35
       const r = maxR * scale
 
-      // Outer glow rings
-      for (let i = 3; i >= 0; i--) {
-        const glowR = r + i * 8
-        const alpha = 0.02 - i * 0.004
+      // Outer aurora glow
+      for (let i = 4; i >= 0; i--) {
+        const glowR = r + i * 12
+        const alpha = 0.04 - i * 0.007
         ctx.beginPath()
         ctx.arc(cx, cy, glowR, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(139, 92, 246, ${Math.max(0, alpha)})`
+        ctx.fillStyle = `rgba(180, 100, 220, ${Math.max(0, alpha * scale)})`
         ctx.fill()
       }
 
-      // Main circle
-      const grad = ctx.createRadialGradient(cx, cy, r * 0.2, cx, cy, r)
-      grad.addColorStop(0, `rgba(139, 92, 246, ${0.08 + scale * 0.06})`)
-      grad.addColorStop(0.6, `rgba(99, 102, 241, ${0.04 + scale * 0.03})`)
-      grad.addColorStop(1, 'rgba(99, 102, 241, 0)')
+      // Main circle — aurora gradient
+      const grad = ctx.createRadialGradient(cx, cy, r * 0.1, cx, cy, r)
+      grad.addColorStop(0, `rgba(200, 160, 255, ${0.06 + scale * 0.08})`)
+      grad.addColorStop(0.4, `rgba(140, 80, 220, ${0.04 + scale * 0.05})`)
+      grad.addColorStop(0.7, `rgba(80, 140, 200, ${0.02 + scale * 0.03})`)
+      grad.addColorStop(1, 'rgba(60, 120, 180, 0)')
       ctx.beginPath()
       ctx.arc(cx, cy, r, 0, Math.PI * 2)
       ctx.fillStyle = grad
       ctx.fill()
 
-      // Ring border
+      // Ring border — soft white with aurora tint
       ctx.beginPath()
       ctx.arc(cx, cy, r, 0, Math.PI * 2)
-      ctx.strokeStyle = `rgba(255, 255, 255, ${0.06 + scale * 0.04})`
-      ctx.lineWidth = 1
+      ctx.strokeStyle = `rgba(200, 180, 255, ${0.08 + scale * 0.06})`
+      ctx.lineWidth = 1.5
+      ctx.stroke()
+
+      // Inner ring — subtle second border
+      ctx.beginPath()
+      ctx.arc(cx, cy, r * 0.85, 0, Math.PI * 2)
+      ctx.strokeStyle = `rgba(180, 140, 240, ${0.03 + scale * 0.02})`
+      ctx.lineWidth = 0.5
       ctx.stroke()
 
       // Label
