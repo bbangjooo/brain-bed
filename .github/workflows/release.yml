@@ -2,14 +2,19 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
 
 jobs:
-  build:
+  check-and-release:
     runs-on: macos-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-node@v4
         with:
@@ -17,6 +22,18 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      - name: Bump version and tag
+        id: version
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          NEW_VERSION=$(npm version patch --no-git-tag-version)
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          git add package.json package-lock.json
+          git commit -m "release: $NEW_VERSION"
+          git tag "$NEW_VERSION"
+          git push origin main --tags
 
       - name: Build and publish
         env:
