@@ -31,7 +31,7 @@ jobs:
           NEW_VERSION=$(npm version patch --no-git-tag-version)
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
           git add package.json package-lock.json
-          git commit -m "release: $NEW_VERSION"
+          git commit -m "release: $NEW_VERSION [skip ci]"
           git tag "$NEW_VERSION"
           git push origin main --tags
 
