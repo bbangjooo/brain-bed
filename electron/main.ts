@@ -362,12 +362,9 @@ function sendNotification() {
   const bfi = currentBfi
   const body = getBfiMessage(bfi)
 
-  const iconPath = path.join(__dirname, '..', 'resources', 'icons', 'app-icon.png')
-
   const notification = new Notification({
     title: `Brain Bed — ${stageLabel(bfi.stage)} (${bfi.score})`,
     body,
-    icon: iconPath,
     actions: [
       { type: 'button', text: 'Take a Break' },
     ],
