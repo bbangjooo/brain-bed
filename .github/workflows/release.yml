@@ -10,6 +10,8 @@ jobs:
     runs-on: macos-latest
     permissions:
       contents: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,7 +31,13 @@ jobs:
           git config user.email "github-actions@github.com"
           NEW_VERSION=$(npm version patch --no-git-tag-version)
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-          git add package.json package-lock.json
+
+          # Update landing page version and download URL
+          VERSION_NUM=${NEW_VERSION#v}
+          sed -i '' "s|v[0-9]*\.[0-9]*\.[0-9]* &middot; Apple Silicon|${NEW_VERSION} \&middot; Apple Silicon|g" landing/index.html
+          sed -i '' "s|Brain-Bed-[0-9]*\.[0-9]*\.[0-9]*-arm64\.dmg|Brain-Bed-${VERSION_NUM}-arm64.dmg|g" landing/index.html
+
+          git add package.json package-lock.json landing/index.html
           git commit -m "release: $NEW_VERSION [skip ci]"
           git tag "$NEW_VERSION"
           git push origin main --tags
@@ -40,9 +48,12 @@ jobs:
         run: npx vite build && npx electron-builder --mac --publish always
 
   deploy-landing:
+    needs: check-and-release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25

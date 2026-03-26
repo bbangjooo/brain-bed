@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
 
 interface Settings {
-  alert_threshold_minutes: number
-  realert_interval_minutes: number
   default_meditation_minutes: number
   emergency_hotkey: string
   force_entry_enabled: boolean
@@ -11,8 +9,6 @@ interface Settings {
 }
 
 const DEFAULT_SETTINGS: Settings = {
-  alert_threshold_minutes: 90,
-  realert_interval_minutes: 10,
   default_meditation_minutes: 10,
   emergency_hotkey: 'CommandOrControl+Shift+Escape',
   force_entry_enabled: false,
@@ -71,44 +67,6 @@ export default function SettingsPanel({ onBack }: SettingsPanelProps) {
       </div>
 
       <div className="space-y-6">
-        <SettingItem label="Break alert threshold" description="Get a notification after this many minutes of continuous use">
-          <div className="flex items-center gap-3">
-            <input
-              type="range"
-              min={30}
-              max={180}
-              step={10}
-              value={settings.alert_threshold_minutes}
-              onChange={(e) => updateSetting('alert_threshold_minutes', Number(e.target.value))}
-              className="flex-1 h-1 rounded-full appearance-none cursor-pointer"
-              style={{
-                background: `linear-gradient(to right, rgba(255,255,255,0.5) ${((settings.alert_threshold_minutes - 30) / 150) * 100}%, rgba(255,255,255,0.1) ${((settings.alert_threshold_minutes - 30) / 150) * 100}%)`,
-              }}
-            />
-            <span className="text-sm font-mono w-16 text-right" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-              {settings.alert_threshold_minutes} min
-            </span>
-          </div>
-        </SettingItem>
-
-        <SettingItem label="Snooze interval" description="How long to wait before reminding you again">
-          <select
-            value={settings.realert_interval_minutes}
-            onChange={(e) => updateSetting('realert_interval_minutes', Number(e.target.value))}
-            className="w-full rounded-lg px-3 py-2 text-sm cursor-pointer"
-            style={{
-              background: 'rgba(255, 255, 255, 0.08)',
-              color: 'rgba(255, 255, 255, 0.8)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-            }}
-          >
-            <option value={5}>5 min</option>
-            <option value={10}>10 min</option>
-            <option value={15}>15 min</option>
-            <option value={30}>30 min</option>
-          </select>
-        </SettingItem>
-
         <SettingItem label="Default meditation duration">
           <select
             value={settings.default_meditation_minutes}

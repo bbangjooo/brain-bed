@@ -1,10 +1,7 @@
 import { powerMonitor } from 'electron'
 
 interface ActivityTrackerOptions {
-  onThresholdReached: () => void
   onTick: () => void
-  getThreshold: () => number
-  getSnoozeInterval: () => number
 }
 
 export class ActivityTracker {
@@ -12,8 +9,6 @@ export class ActivityTracker {
   private pausedAt: number | null = null
   private pausedDuration: number = 0
   private intervalId: ReturnType<typeof setInterval> | null = null
-  private snoozedUntil: number | null = null
-  private notificationCount: number = 0
   private running: boolean = false
   private options: ActivityTrackerOptions
   private idleCheckInterval: ReturnType<typeof setInterval> | null = null
@@ -26,8 +21,6 @@ export class ActivityTracker {
     this.running = true
     this.startTime = Date.now()
     this.pausedDuration = 0
-    this.notificationCount = 0
-    this.snoozedUntil = null
 
     // Check every minute
     this.intervalId = setInterval(() => this.tick(), 60_000)
@@ -36,7 +29,6 @@ export class ActivityTracker {
     this.idleCheckInterval = setInterval(() => {
       const idleSeconds = powerMonitor.getSystemIdleTime()
       if (idleSeconds >= 300) {
-        // 5 minutes idle = reset
         this.reset()
       }
     }, 30_000)
@@ -63,17 +55,6 @@ export class ActivityTracker {
     this.startTime = Date.now()
     this.pausedDuration = 0
     this.pausedAt = null
-    this.notificationCount = 0
-    this.snoozedUntil = null
-  }
-
-  snooze(minutes: number) {
-    this.snoozedUntil = Date.now() + minutes * 60_000
-    this.notificationCount++
-  }
-
-  getSnoozeCount(): number {
-    return this.notificationCount
   }
 
   getElapsedMinutes(): number {
@@ -85,20 +66,6 @@ export class ActivityTracker {
 
   private tick() {
     if (!this.running || this.pausedAt) return
-
     this.options.onTick()
-
-    const elapsed = this.getElapsedMinutes()
-    const threshold = this.options.getThreshold()
-
-    // Check if snoozed
-    if (this.snoozedUntil && Date.now() < this.snoozedUntil) {
-      return
-    }
-    this.snoozedUntil = null
-
-    if (elapsed >= threshold) {
-      this.options.onThresholdReached()
-    }
   }
 }

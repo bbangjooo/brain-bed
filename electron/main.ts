@@ -96,7 +96,7 @@ function computeBfi(): BfiResult {
     activeToolCount: activeTools.length,
     activeSessionCount: stats.activeSessionCount,
     currentHour: new Date().getHours(),
-    snoozeCount: activityTracker.getSnoozeCount(),
+    snoozeCount: notificationCount,
     lateNightStart: settingsStore.get('late_night_start', 22),
     lateNightEnd: settingsStore.get('late_night_end', 6),
   }
@@ -460,9 +460,6 @@ app.whenReady().then(() => {
   cliTokenTracker.start()
 
   activityTracker = new ActivityTracker({
-    onThresholdReached: () => {
-      // Handled entirely in onTick now
-    },
     onTick: () => {
       currentBfi = computeBfi()
       const isHigh = currentBfi.stage === 'heating' || currentBfi.stage === 'brain-fry'
@@ -495,8 +492,6 @@ app.whenReady().then(() => {
       updateTrayMenu()
       sendStatusToMain()
     },
-    getThreshold: () => settingsStore.get('alert_threshold_minutes', 60),
-    getSnoozeInterval: () => settingsStore.get('realert_interval_minutes', 10),
   })
 
   createMainWindow()
