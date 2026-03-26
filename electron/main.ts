@@ -30,8 +30,9 @@ let keyboardBlockerProcess: ChildProcess | null = null
 let statusUpdateInterval: ReturnType<typeof setInterval> | null = null
 let lastBfiStage: BfiStage = 'calm'
 let currentBfi: BfiResult = { score: 0, stage: 'calm', dominant: 'elapsedRatio' }
-let highBfiSince: number | null = null   // when heating/brain-fry started
-let notificationSent: boolean = false     // already notified for this episode
+let highBfiSince: number | null = null     // when heating/brain-fry started
+let notificationCount: number = 0          // how many notifications sent this episode
+let lastNotificationAt: number | null = null // when last notification was sent
 
 const DIST = path.join(__dirname, '../dist')
 const VITE_DEV_SERVER_URL = process.env.VITE_DEV_SERVER_URL
@@ -271,7 +272,8 @@ function endMeditation(completed: boolean) {
   if (completed) {
     activityTracker.reset()
     highBfiSince = null
-    notificationSent = false
+    notificationCount = 0
+    lastNotificationAt = null
   }
   activityTracker.resume()
   updateTrayMenu()
@@ -466,21 +468,27 @@ app.whenReady().then(() => {
       const isHigh = currentBfi.stage === 'heating' || currentBfi.stage === 'brain-fry'
 
       if (isHigh) {
+        const now = Date.now()
         // Start tracking when high BFI begins
         if (!highBfiSince) {
-          highBfiSince = Date.now()
-          notificationSent = false
+          highBfiSince = now
+          notificationCount = 0
+          lastNotificationAt = null
         }
-        // Send one notification after 10 minutes of sustained high BFI
-        const elapsedMs = Date.now() - highBfiSince
-        if (!notificationSent && elapsedMs >= 10 * 60_000) {
+
+        // Exponential backoff: 10m → 20m → 40m → 60m (cap)
+        const interval = Math.min(10 * 60_000 * Math.pow(2, notificationCount), 60 * 60_000)
+        const anchor = lastNotificationAt ?? highBfiSince
+        if (now - anchor >= interval) {
           sendNotification()
-          notificationSent = true
+          notificationCount++
+          lastNotificationAt = now
         }
       } else {
         // Dropped back to calm/warming — reset tracking
         highBfiSince = null
-        notificationSent = false
+        notificationCount = 0
+        lastNotificationAt = null
       }
 
       lastBfiStage = currentBfi.stage
