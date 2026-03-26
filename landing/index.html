@@ -187,6 +187,38 @@
     footer a { color: var(--text3); text-decoration: none; }
     footer a:hover { color: var(--text2); }
 
+    /* ── Lightbox ── */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0);
+      backdrop-filter: blur(0px);
+      pointer-events: none;
+      transition: background 0.35s, backdrop-filter 0.35s;
+    }
+    .lightbox.active {
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px);
+      pointer-events: auto;
+      cursor: zoom-out;
+    }
+    .lightbox img {
+      max-width: 90vw; max-height: 85vh;
+      border-radius: 16px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+      transform: translateY(40px) scale(0.9);
+      opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.35s;
+    }
+    .lightbox.active img {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    .hero-screenshots img,
+    .hero img[onclick] {
+      cursor: zoom-in;
+    }
+
     /* ── Mobile ── */
     @media (max-width: 640px) {
       nav { padding: 1rem; }
@@ -230,12 +262,12 @@
       </a>
     </div>
     <div style="margin-top: 4rem; width: 100%; max-width: 1000px; border-radius: 20px; overflow: hidden; box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06);">
-      <img src="hero-meditation.png" alt="Brain Bed meditation mode" style="width: 100%; display: block;" />
+      <img src="hero-meditation.png" alt="Brain Bed meditation mode" style="width: 100%; display: block; cursor: zoom-in;" onclick="openLightbox(this)" />
     </div>
 
     <div class="hero-screenshots" style="margin-top: 2rem;">
-      <img src="screenshot-dashboard.png" alt="Brain Bed Dashboard — BFI gauge showing Warming state" />
-      <img src="screenshot-meditation.png" alt="Brain Bed Meditation — breathing circle with quote" />
+      <img src="screenshot-dashboard.png" alt="Brain Bed Dashboard — BFI gauge showing Warming state" onclick="openLightbox(this)" />
+      <img src="screenshot-meditation.png" alt="Brain Bed Meditation — breathing circle with quote" onclick="openLightbox(this)" />
     </div>
   </div>
 
@@ -362,6 +394,11 @@
     </p>
   </div>
 
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <img id="lightbox-img" src="" alt="" />
+  </div>
+
   <!-- Footer -->
   <footer>
     <p>Brain Bed &copy; 2026 &middot; <a href="mailto:airmancho@gmail.com">Contact</a> &middot; <a href="https://github.com/bbangjooo/brain-bed">GitHub</a></p>
@@ -376,6 +413,25 @@ fetch('https://api.github.com/repos/bbangjooo/brain-bed/releases/latest')
     if (dmg) cachedDownloadUrl = dmg.browser_download_url;
   })
   .catch(() => {});
+
+function openLightbox(img) {
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lightbox-img');
+  lbImg.src = img.src;
+  lbImg.alt = img.alt;
+  requestAnimationFrame(() => lb.classList.add('active'));
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  const lb = document.getElementById('lightbox');
+  lb.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeLightbox();
+});
 
 function downloadLatest(e) {
   e.preventDefault();
