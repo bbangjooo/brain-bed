@@ -1,6 +1,6 @@
 {
   "name": "brain-bed",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Forced meditation breaks for AI-fried brains. Inner peace, right on your screen.",
   "main": "dist-electron/main.js",
   "scripts": {
@@ -50,8 +50,20 @@
       "category": "public.app-category.healthcare-fitness",
       "icon": "resources/icons/app-icon.icns",
       "target": [
-        { "target": "dmg", "arch": ["arm64", "x64"] },
-        { "target": "zip", "arch": ["arm64", "x64"] }
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
       ]
     },
     "publish": {
