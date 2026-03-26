@@ -10,3 +10,6 @@ dist-electron/
 resources/audio/*.mp3
 resources/audio/*.ogg
 native/keyboard-blocker/.build/
+**/.omc/
+.vercel/
+.env

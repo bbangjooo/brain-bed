@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
     "electron:build": "vite build && electron-builder --mac",
-    "build:native": "cd native/keyboard-blocker && swift build -c release && cp .build/release/KeyboardBlocker ../../resources/bin/keyboard-blocker"
+    "build:native": "cd native/keyboard-blocker && swift build -c release && cp .build/release/KeyboardBlocker ../../resources/bin/keyboard-blocker",
+    "release": "source .env && vite build && electron-builder --mac --publish always"
   },
   "author": "bbangjo",
   "license": "MIT",
@@ -19,6 +20,7 @@
     "@types/three": "^0.183.1",
     "better-sqlite3": "^11.7.0",
     "electron-store": "^10.0.0",
+    "electron-updater": "^6.8.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "three": "^0.183.2"
@@ -47,12 +49,34 @@
     "mac": {
       "category": "public.app-category.healthcare-fitness",
       "icon": "resources/icons/app-icon.icns",
-      "target": "dmg"
+      "target": [
+        { "target": "dmg", "arch": ["arm64", "x64"] },
+        { "target": "zip", "arch": ["arm64", "x64"] }
+      ]
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "bbangjooo",
+      "repo": "brain-bed",
+      "private": true
     },
     "files": [
       "dist/**/*",
       "dist-electron/**/*",
-      "resources/**/*"
+      "resources/icons/app-icon.icns",
+      "resources/icons/app-icon.png",
+      "resources/icons/trayTemplate.png",
+      "resources/icons/trayTemplate@2x.png",
+      "!node_modules/**/*",
+      "node_modules/better-sqlite3/**/*",
+      "node_modules/bindings/**/*",
+      "node_modules/file-uri-to-path/**/*",
+      "node_modules/prebuild-install/**/*",
+      "node_modules/electron-updater/**/*",
+      "node_modules/builder-util-runtime/**/*",
+      "node_modules/electron-store/**/*",
+      "node_modules/conf/**/*",
+      "node_modules/semver/**/*"
     ],
     "extraResources": [
       {

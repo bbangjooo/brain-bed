@@ -154,6 +154,17 @@ export default function SettingsPanel({ onBack }: SettingsPanelProps) {
         <p className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.25)' }}>
           Brain Bed v0.2.0 · Emergency exit: ⌘⇧⎋
         </p>
+        <a
+          href="mailto:airmancho@gmail.com?subject=Brain%20Bed%20Feedback"
+          className="inline-flex items-center gap-1.5 mt-3 text-xs transition-colors hover:underline"
+          style={{ color: 'rgba(255, 255, 255, 0.35)' }}
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2" />
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+          </svg>
+          Contact: airmancho@gmail.com
+        </a>
       </div>
     </div>
   )

@@ -404,8 +404,8 @@ export class CliTokenTracker {
     // Update token velocity (rolling 10-minute window)
     const now = Date.now()
     this.snapshots.push({ time: now, total: this.stats.totalTokens })
-    const thirtyMinAgo = now - 30 * 60_000
-    this.snapshots = this.snapshots.filter((s) => s.time >= thirtyMinAgo)
+    const tenMinAgo = now - 10 * 60_000
+    this.snapshots = this.snapshots.filter((s) => s.time >= tenMinAgo)
 
     if (this.snapshots.length >= 2) {
       const oldest = this.snapshots[0]
@@ -418,7 +418,7 @@ export class CliTokenTracker {
 
     // Update message velocity (rolling 10-minute window)
     this.messageSnapshots.push({ time: now, total: this.stats.messageCount })
-    this.messageSnapshots = this.messageSnapshots.filter((s) => s.time >= thirtyMinAgo)
+    this.messageSnapshots = this.messageSnapshots.filter((s) => s.time >= tenMinAgo)
 
     if (this.messageSnapshots.length >= 2) {
       const oldest = this.messageSnapshots[0]
@@ -433,7 +433,7 @@ export class CliTokenTracker {
   // Bootstrap: read today's full totals + recent 10-min velocity
   private bootstrapRecentActivity() {
     const now = Date.now()
-    const thirtyMinAgo = now - 30 * 60_000
+    const tenMinAgo = now - 10 * 60_000
     const todayStart = new Date()
     todayStart.setHours(0, 0, 0, 0)
     const todayStartMs = todayStart.getTime()
@@ -481,7 +481,7 @@ export class CliTokenTracker {
                     // Messages
                     if (data.type === 'user') {
                       totalMessages++
-                      if (ts >= thirtyMinAgo) recentMessages++
+                      if (ts >= tenMinAgo) recentMessages++
                     }
                   } catch { /* skip */ }
                 }
@@ -522,7 +522,7 @@ export class CliTokenTracker {
                   if (data.messages && Array.isArray(data.messages)) {
                     for (const msg of data.messages) {
                       const ts = msg.timestamp ? new Date(msg.timestamp).getTime() : 0
-                      if (ts >= thirtyMinAgo && msg.type === 'user') recentMessages++
+                      if (ts >= tenMinAgo && msg.type === 'user') recentMessages++
                     }
                   }
                 } catch { /* skip */ }
@@ -545,11 +545,11 @@ export class CliTokenTracker {
     // Seed velocity from recent 10 min
     // Baseline = totalMessages minus recentMessages (so delta = recentMessages over 10min)
     const msgBaseline = totalMessages - recentMessages
-    this.messageSnapshots.push({ time: thirtyMinAgo, total: msgBaseline })
+    this.messageSnapshots.push({ time: tenMinAgo, total: msgBaseline })
     this.messageSnapshots.push({ time: now, total: totalMessages })
-    this.stats.messageVelocity = recentMessages / 30
+    this.stats.messageVelocity = recentMessages / 10
 
-    this.snapshots.push({ time: thirtyMinAgo, total: this.stats.totalTokens })
+    this.snapshots.push({ time: tenMinAgo, total: this.stats.totalTokens })
     this.snapshots.push({ time: now, total: this.stats.totalTokens })
     this.stats.velocity = 0
 

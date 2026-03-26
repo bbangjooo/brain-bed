@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brain Bed — Rest your AI-fried brain</title>
+  <meta name="description" content="Brain Bed monitors your AI tool usage and gently forces you to take meditation breaks before burnout hits." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0f0c29;
+      --bg2: #1a1640;
+      --purple: #8b5cf6;
+      --indigo: #6366f1;
+      --text: rgba(255,255,255,0.92);
+      --text2: rgba(255,255,255,0.6);
+      --text3: rgba(255,255,255,0.35);
+      --sans: 'DM Sans', system-ui, sans-serif;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      padding: 1.25rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(15,12,41,0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-weight: 700; font-size: 1.1rem; color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo img { width: 32px; height: 32px; border-radius: 8px; }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a { color: var(--text2); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+    .btn-download {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1.4rem; border-radius: 10px;
+      background: linear-gradient(135deg, var(--indigo), var(--purple));
+      color: #fff; font-size: 0.9rem; font-weight: 600;
+      text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .btn-download:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(99,102,241,0.3); }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 8rem 2rem 4rem;
+      position: relative;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 30%, rgba(99,102,241,0.12) 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 80%, rgba(139,92,246,0.08) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block; padding: 0.4rem 1rem; border-radius: 99px;
+      background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.25);
+      font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-bottom: 2rem;
+    }
+    .hero h1 {
+      font-family: var(--serif); font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 600; line-height: 1.1; margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #fff 30%, rgba(139,92,246,0.8));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.25rem; color: var(--text2); max-width: 540px;
+      line-height: 1.7; margin-bottom: 2.5rem;
+    }
+    .hero-buttons { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.7rem 1.6rem; border-radius: 10px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text2); font-size: 0.95rem; text-decoration: none; transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+    .hero-screenshots {
+      margin-top: 4rem; display: flex; gap: 2rem; justify-content: center;
+      flex-wrap: wrap; perspective: 1000px;
+    }
+    .hero-screenshots img {
+      border-radius: 16px; height: 420px; object-fit: contain;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
+      transition: transform 0.4s;
+    }
+    .hero-screenshots img:first-child { transform: rotateY(4deg); }
+    .hero-screenshots img:last-child { transform: rotateY(-4deg); }
+    .hero-screenshots img:hover { transform: rotateY(0deg) scale(1.03); }
+
+    /* ── Sections ── */
+    section { padding: 6rem 2rem; max-width: 1000px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em;
+      color: var(--purple); margin-bottom: 0.75rem;
+    }
+    section h2 {
+      font-family: var(--serif); font-size: 2.8rem; font-weight: 600;
+      margin-bottom: 1rem; line-height: 1.2;
+    }
+    section > p { color: var(--text2); font-size: 1.1rem; max-width: 600px; line-height: 1.7; margin-bottom: 3rem; }
+
+    /* ── Features Grid ── */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .feature-card {
+      padding: 2rem; border-radius: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .feature-card:hover { border-color: rgba(139,92,246,0.3); transform: translateY(-2px); }
+    .feature-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(139,92,246,0.15); margin-bottom: 1rem;
+    }
+    .feature-icon svg { width: 20px; height: 20px; stroke: var(--purple); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .feature-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .feature-card p { font-size: 0.9rem; color: var(--text2); line-height: 1.6; }
+
+    /* ── BFI Section ── */
+    .bfi-visual {
+      display: flex; align-items: center; justify-content: center; gap: 3rem;
+      flex-wrap: wrap; margin-top: 2rem;
+    }
+    .bfi-stages { display: flex; flex-direction: column; gap: 1rem; }
+    .bfi-stage {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0.8rem 1.2rem; border-radius: 12px;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+      min-width: 240px;
+    }
+    .bfi-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .bfi-stage-name { font-weight: 600; font-size: 0.95rem; }
+    .bfi-stage-range { font-size: 0.8rem; color: var(--text3); margin-left: auto; font-family: monospace; }
+
+    /* ── Tools ── */
+    .tools-row {
+      display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;
+    }
+    .tool-badge {
+      padding: 0.8rem 1.5rem; border-radius: 12px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.95rem; color: var(--text2);
+    }
+
+    /* ── CTA ── */
+    .cta {
+      text-align: center; padding: 6rem 2rem;
+      background: radial-gradient(ellipse at center, rgba(99,102,241,0.08) 0%, transparent 60%);
+    }
+    .cta h2 { font-family: var(--serif); font-size: 2.5rem; margin-bottom: 1rem; }
+    .cta p { color: var(--text2); margin-bottom: 2rem; font-size: 1.1rem; }
+
+    /* ── Footer ── */
+    footer {
+      padding: 2rem; text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      color: var(--text3); font-size: 0.8rem;
+    }
+    footer a { color: var(--text3); text-decoration: none; }
+    footer a:hover { color: var(--text2); }
+
+    /* ── Mobile ── */
+    @media (max-width: 640px) {
+      nav { padding: 1rem; }
+      .nav-links a:not(.btn-download) { display: none; }
+      .hero { padding: 7rem 1.5rem 3rem; }
+      section { padding: 4rem 1.5rem; }
+      .bfi-visual { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Nav -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <img src="app-icon.png" alt="Brain Bed" />
+      Brain Bed
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#bfi">BFI</a>
+      <a href="https://github.com/bbangjooo/brain-bed/releases/download/v0.2.0/Brain-Bed-0.2.0-arm64.dmg" class="btn-download">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download
+      </a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <span class="hero-badge">Free &middot; macOS &middot; Open source soon</span>
+    <h1>Rest your<br/>AI-fried brain</h1>
+    <p>Brain Bed monitors your Claude, Gemini, and Codex usage in real-time and gently forces you to take meditation breaks before burnout hits.</p>
+    <div class="hero-buttons">
+      <a href="https://github.com/bbangjooo/brain-bed/releases/download/v0.2.0/Brain-Bed-0.2.0-arm64.dmg" class="btn-download" style="padding: 0.8rem 2rem; font-size: 1rem;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download for macOS
+      </a>
+      <a href="https://github.com/bbangjooo/brain-bed" class="btn-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+        GitHub
+      </a>
+    </div>
+    <div class="hero-screenshots">
+      <img src="screenshot-dashboard.png" alt="Brain Bed Dashboard — BFI gauge showing Warming state" />
+      <img src="screenshot-meditation.png" alt="Brain Bed Meditation — breathing circle with quote" />
+    </div>
+  </div>
+
+  <!-- Features -->
+  <section id="features">
+    <p class="section-label">Features</p>
+    <h2>Your brain's guardian</h2>
+    <p>Brain Bed sits in your menu bar, silently watching. When your cognitive load gets too high, it steps in.</p>
+
+    <div class="features-grid" style="grid-template-columns: 1fr;">
+      <div class="feature-card" style="padding: 2.5rem; border-color: rgba(139,92,246,0.2); background: rgba(139,92,246,0.04);">
+        <div class="feature-icon" style="width:48px; height:48px; border-radius:12px;">
+          <svg viewBox="0 0 24 24" style="width:24px; height:24px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <h3 style="font-size:1.3rem; margin-bottom:0.75rem;">Brain Fry Index</h3>
+        <p style="font-size:1rem; line-height:1.7;">A real-time 0&ndash;100 cognitive load score. Calculated from your message velocity, number of active AI sessions, time of day, and how many alerts you've dismissed. Tracks Claude Code, Gemini CLI, and Codex CLI simultaneously.</p>
+      </div>
+
+      <div class="feature-card" style="padding: 2.5rem; border-color: rgba(99,102,241,0.2); background: rgba(99,102,241,0.04);">
+        <div class="feature-icon" style="width:48px; height:48px; border-radius:12px;">
+          <svg viewBox="0 0 24 24" style="width:24px; height:24px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <h3 style="font-size:1.3rem; margin-bottom:0.75rem;">Forced Meditation</h3>
+        <p style="font-size:1rem; line-height:1.7;">When your BFI spikes, Brain Bed locks your keyboard and transforms your screen into a meditation space. A breathing circle guides you through 4-4-6-2 cycles while curated classical music &mdash; Satie, Debussy, Chopin &mdash; fades in. Inspirational quotes rotate gently. You can't work. You can only rest.</p>
+      </div>
+
+      <div class="feature-card" style="padding: 2.5rem; border-color: rgba(234,179,8,0.2); background: rgba(234,179,8,0.04);">
+        <div class="feature-icon" style="width:48px; height:48px; border-radius:12px; background: rgba(234,179,8,0.15);">
+          <svg viewBox="0 0 24 24" style="width:24px; height:24px; stroke: #eab308;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </div>
+        <h3 style="font-size:1.3rem; margin-bottom:0.75rem;">Smart Notifications</h3>
+        <p style="font-size:1rem; line-height:1.7;">Context-aware alerts that explain why you should rest. Late-night coding? Rapid-fire prompting? Multiple sessions at once? Brain Bed tells you exactly what's pushing your cognitive load up &mdash; and only nudges you when it actually matters (Heating and Brain Fry stages).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BFI -->
+  <section id="bfi">
+    <p class="section-label">Brain Fry Index</p>
+    <h2>How fried is your brain?</h2>
+    <p>BFI calculates your cognitive load from four signals, weighted by impact on burnout.</p>
+
+    <div class="bfi-visual">
+      <div class="bfi-stages">
+        <div class="bfi-stage">
+          <div class="bfi-dot" style="background:#22c55e"></div>
+          <span class="bfi-stage-name">Calm</span>
+          <span class="bfi-stage-range">0 &ndash; 29</span>
+        </div>
+        <div class="bfi-stage">
+          <div class="bfi-dot" style="background:#eab308"></div>
+          <span class="bfi-stage-name">Warming</span>
+          <span class="bfi-stage-range">30 &ndash; 59</span>
+        </div>
+        <div class="bfi-stage">
+          <div class="bfi-dot" style="background:#f97316"></div>
+          <span class="bfi-stage-name">Heating</span>
+          <span class="bfi-stage-range">60 &ndash; 84</span>
+        </div>
+        <div class="bfi-stage">
+          <div class="bfi-dot" style="background:#ef4444"></div>
+          <span class="bfi-stage-name">Brain Fry</span>
+          <span class="bfi-stage-range">85 &ndash; 100</span>
+        </div>
+      </div>
+
+      <div style="max-width:320px; text-align:left;">
+        <div style="margin-bottom:1.5rem;">
+          <div style="font-size:0.8rem; color:var(--text3); margin-bottom:0.3rem;">Message Velocity</div>
+          <div style="height:6px; border-radius:3px; background:rgba(255,255,255,0.06);">
+            <div style="height:100%; width:45%; border-radius:3px; background:var(--purple);"></div>
+          </div>
+          <div style="font-size:0.75rem; color:var(--text3); margin-top:0.2rem;">45% weight</div>
+        </div>
+        <div style="margin-bottom:1.5rem;">
+          <div style="font-size:0.8rem; color:var(--text3); margin-bottom:0.3rem;">Active Sessions</div>
+          <div style="height:6px; border-radius:3px; background:rgba(255,255,255,0.06);">
+            <div style="height:100%; width:25%; border-radius:3px; background:var(--indigo);"></div>
+          </div>
+          <div style="font-size:0.75rem; color:var(--text3); margin-top:0.2rem;">25% weight</div>
+        </div>
+        <div style="margin-bottom:1.5rem;">
+          <div style="font-size:0.8rem; color:var(--text3); margin-bottom:0.3rem;">Late Night</div>
+          <div style="height:6px; border-radius:3px; background:rgba(255,255,255,0.06);">
+            <div style="height:100%; width:15%; border-radius:3px; background:#818cf8;"></div>
+          </div>
+          <div style="font-size:0.75rem; color:var(--text3); margin-top:0.2rem;">15% weight</div>
+        </div>
+        <div>
+          <div style="font-size:0.8rem; color:var(--text3); margin-bottom:0.3rem;">Snooze Penalty</div>
+          <div style="height:6px; border-radius:3px; background:rgba(255,255,255,0.06);">
+            <div style="height:100%; width:15%; border-radius:3px; background:#a78bfa;"></div>
+          </div>
+          <div style="font-size:0.75rem; color:var(--text3); margin-top:0.2rem;">15% weight</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Supported Tools -->
+  <section>
+    <p class="section-label">Compatibility</p>
+    <h2>Works with your tools</h2>
+    <p>Brain Bed reads local session logs &mdash; no API keys, no cloud, everything stays on your machine.</p>
+    <div class="tools-row">
+      <div class="tool-badge">Claude Code</div>
+      <div class="tool-badge">Gemini CLI</div>
+      <div class="tool-badge">Codex CLI</div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta" id="download">
+    <h2>Your brain will thank you</h2>
+    <p>Free, private, and built for developers who can't stop prompting.</p>
+    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+      <a href="https://github.com/bbangjooo/brain-bed/releases/download/v0.2.0/Brain-Bed-0.2.0-arm64.dmg" class="btn-download" style="padding:0.8rem 2rem; font-size:1rem;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download for macOS
+      </a>
+    </div>
+    <p style="margin-top:1.5rem; font-size:0.8rem; color:var(--text3);">
+      Apple Silicon &amp; Intel &middot; macOS 12+ &middot; No sign-up required
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>Brain Bed &copy; 2026 &middot; <a href="mailto:airmancho@gmail.com">Contact</a> &middot; <a href="https://github.com/bbangjooo/brain-bed">GitHub</a></p>
+  </footer>
+</body>
+</html>

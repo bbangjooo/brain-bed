@@ -12,6 +12,7 @@ import {
 } from 'electron'
 import path from 'path'
 import { spawn, ChildProcess } from 'child_process'
+import { autoUpdater } from 'electron-updater'
 import { ActivityTracker } from './activity-tracker'
 import { CliTokenTracker } from './cli-token-tracker'
 import { SettingsStore } from './settings-store'
@@ -29,6 +30,8 @@ let keyboardBlockerProcess: ChildProcess | null = null
 let statusUpdateInterval: ReturnType<typeof setInterval> | null = null
 let lastBfiStage: BfiStage = 'calm'
 let currentBfi: BfiResult = { score: 0, stage: 'calm', dominant: 'elapsedRatio' }
+let highBfiSince: number | null = null   // when heating/brain-fry started
+let notificationSent: boolean = false     // already notified for this episode
 
 const DIST = path.join(__dirname, '../dist')
 const VITE_DEV_SERVER_URL = process.env.VITE_DEV_SERVER_URL
@@ -267,6 +270,8 @@ function endMeditation(completed: boolean) {
 
   if (completed) {
     activityTracker.reset()
+    highBfiSince = null
+    notificationSent = false
   }
   activityTracker.resume()
   updateTrayMenu()
@@ -355,10 +360,6 @@ function sendNotification() {
   const bfi = currentBfi
   const body = getBfiMessage(bfi)
 
-  const snoozeMin = bfi.stage === 'brain-fry' ? 3
-    : bfi.stage === 'heating' ? Math.max(Math.floor(settingsStore.get('realert_interval_minutes', 10) / 2), 3)
-    : settingsStore.get('realert_interval_minutes', 10)
-
   const iconPath = path.join(__dirname, '..', 'resources', 'icons', 'app-icon.png')
 
   const notification = new Notification({
@@ -367,14 +368,12 @@ function sendNotification() {
     icon: iconPath,
     actions: [
       { type: 'button', text: 'Take a Break' },
-      { type: 'button', text: `In ${snoozeMin} min` },
     ],
     closeButtonText: 'Dismiss',
   })
 
-  notification.on('action', (_event, index) => {
-    if (index === 0) showTimeSelection()
-    else activityTracker.snooze(snoozeMin)
+  notification.on('action', () => {
+    showTimeSelection()
   })
 
   notification.on('click', () => showTimeSelection())
@@ -460,28 +459,30 @@ app.whenReady().then(() => {
 
   activityTracker = new ActivityTracker({
     onThresholdReached: () => {
-      // BFI-based notification: only fire at heating (60+) or brain-fry (85+)
-      currentBfi = computeBfi()
-      const shouldNotify = currentBfi.stage === 'heating' || currentBfi.stage === 'brain-fry'
-      if (shouldNotify && currentBfi.stage !== lastBfiStage) {
-        sendNotification()
-      }
-      // Re-alert for sustained high BFI
-      if (shouldNotify && currentBfi.stage === lastBfiStage) {
-        sendNotification()
-      }
-      lastBfiStage = currentBfi.stage
+      // Handled entirely in onTick now
     },
     onTick: () => {
       currentBfi = computeBfi()
-      // Notify on escalation to heating or brain-fry only
-      const shouldNotify = currentBfi.stage === 'heating' || currentBfi.stage === 'brain-fry'
-      if (shouldNotify && currentBfi.stage !== lastBfiStage) {
-        const stageOrder: Record<string, number> = { calm: 0, warming: 1, heating: 2, 'brain-fry': 3 }
-        if (stageOrder[currentBfi.stage] > stageOrder[lastBfiStage]) {
-          sendNotification()
+      const isHigh = currentBfi.stage === 'heating' || currentBfi.stage === 'brain-fry'
+
+      if (isHigh) {
+        // Start tracking when high BFI begins
+        if (!highBfiSince) {
+          highBfiSince = Date.now()
+          notificationSent = false
         }
+        // Send one notification after 10 minutes of sustained high BFI
+        const elapsedMs = Date.now() - highBfiSince
+        if (!notificationSent && elapsedMs >= 10 * 60_000) {
+          sendNotification()
+          notificationSent = true
+        }
+      } else {
+        // Dropped back to calm/warming — reset tracking
+        highBfiSince = null
+        notificationSent = false
       }
+
       lastBfiStage = currentBfi.stage
       updateTrayMenu()
       sendStatusToMain()
@@ -499,6 +500,30 @@ app.whenReady().then(() => {
   powerMonitor.on('resume', () => activityTracker.resume())
   powerMonitor.on('lock-screen', () => activityTracker.pause())
   powerMonitor.on('unlock-screen', () => activityTracker.resume())
+
+  // Auto-updater (private repo requires GH_TOKEN)
+  if (!isDev) {
+    autoUpdater.autoDownload = true
+    autoUpdater.autoInstallOnAppQuit = true
+
+    autoUpdater.on('update-available', (info) => {
+      new Notification({
+        title: 'Brain Bed Update Available',
+        body: `Version ${info.version} is available. Downloading...`,
+        icon: path.join(__dirname, '..', 'resources', 'icons', 'app-icon.png'),
+      }).show()
+    })
+
+    autoUpdater.on('update-downloaded', () => {
+      new Notification({
+        title: 'Brain Bed Update Ready',
+        body: 'Update will be installed on next restart.',
+        icon: path.join(__dirname, '..', 'resources', 'icons', 'app-icon.png'),
+      }).show()
+    })
+
+    autoUpdater.checkForUpdatesAndNotify().catch(() => {})
+  }
 })
 
 app.on('before-quit', () => {
