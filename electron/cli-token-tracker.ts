@@ -434,7 +434,6 @@ export class CliTokenTracker {
 
     // Update token velocity (rolling 10-minute window)
     this.snapshots.push({ time: now, total: this.stats.totalTokens })
-    const tenMinAgo = now - 10 * 60_000
     this.snapshots = this.snapshots.filter((s) => s.time >= tenMinAgo)
 
     if (this.snapshots.length >= 2) {
