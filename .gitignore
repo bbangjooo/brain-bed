@@ -13,3 +13,4 @@ native/keyboard-blocker/.build/
 **/.omc/
 .vercel/
 .env
+.vercel
