@@ -22,14 +22,15 @@ Brain Bed monitors your AI tool usage (Claude Code, Gemini CLI, Codex CLI) in re
 
 ### Brain Fry Index (BFI)
 
-A real-time 0–100 cognitive load score calculated from four signals:
+A real-time 0–100 cognitive load score calculated from five signals:
 
 | Factor | Weight | What it measures |
 |--------|--------|------------------|
-| Message Velocity | 45% | Prompts per minute (rolling 10-min window) |
-| Active Sessions | 25% | Number of concurrent AI tool sessions |
-| Late Night | 15% | Working between 22:00–06:00 |
-| Snooze Penalty | 15% | Dismissed alerts increase urgency |
+| Message Velocity | 55% | Prompts per minute (rolling 10-min window) |
+| Context Switching | 15% | Project switches in 10-min window |
+| Active Sessions | 10% | Number of concurrent AI tool sessions |
+| Token Usage | 10% | Token throughput per minute |
+| Late Night | 5% | Working between 22:00–06:00 |
 
 **Stages:** Calm (0–29) → Warming (30–59) → Heating (60–84) → Brain Fry (85–100)
 
@@ -67,10 +68,7 @@ Reads local session logs only. No API keys, no cloud. Everything stays on your m
 
 Download the latest `.dmg` from [Releases](https://github.com/bbangjooo/brain-bed/releases/latest).
 
-> **Note:** The app is not yet code-signed. On first launch, run:
-> ```bash
-> xattr -cr /Applications/Brain\ Bed.app
-> ```
+The app is code-signed and notarized by Apple — just open and run.
 
 **Requirements:** macOS 12+, Apple Silicon or Intel
 
@@ -109,7 +107,6 @@ npm run release
 | Meditation duration | 10 min | 5, 10, 15, 20, or 30 minutes |
 | Music autoplay | On | Classical music on meditation start |
 | Force entry | Off | Auto-start meditation after 3 dismissals |
-| Launch at login | Off | Start with macOS |
 | Alert threshold | 60 min | Usage time before first alert |
 | Late night window | 22:00–06:00 | Hours that trigger late-night penalty |
 
