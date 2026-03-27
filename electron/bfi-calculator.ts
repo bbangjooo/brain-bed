@@ -6,21 +6,23 @@ export interface BfiResult {
   dominant: string     // which factor contributed most
 }
 
-interface BfiInputs {
+export interface BfiInputs {
   messageVelocity: number       // messages per minute (rolling average)
   activeToolCount: number       // number of tools with recent activity
   activeSessionCount: number    // number of recently active log files (sessions)
   currentHour: number           // 0–23
-  snoozeCount: number
   lateNightStart: number        // hour, e.g. 22
   lateNightEnd: number          // hour, e.g. 6
+  tokenVelocity: number         // tokens per minute
+  contextSwitchRate: number     // project switches in 10-min window
 }
 
 const WEIGHTS = {
-  messageVelocity: 0.45,
-  multiTool: 0.25,
-  lateNight: 0.15,
-  snoozePenalty: 0.15,
+  messageVelocity: 0.55,
+  contextSwitch: 0.15,
+  multiTool: 0.10,
+  tokenUsage: 0.10,
+  lateNight: 0.05,
 } as const
 
 function clamp(v: number, min: number, max: number): number {
@@ -33,7 +35,6 @@ function scoreMessageVelocity(messagesPerMin: number): number {
 }
 
 function scoreMultiTool(toolCount: number, sessionCount: number): number {
-  // Consider both different tools AND multiple sessions of the same tool
   const effectiveCount = Math.max(toolCount, sessionCount)
   if (effectiveCount <= 1) return 0
   if (effectiveCount === 2) return 50
@@ -42,33 +43,41 @@ function scoreMultiTool(toolCount: number, sessionCount: number): number {
 }
 
 function scoreLateNight(hour: number, start: number, end: number): number {
-  // Handle wrap-around (e.g. 22–6)
   if (start > end) {
     return (hour >= start || hour < end) ? 100 : 0
   }
   return (hour >= start && hour < end) ? 100 : 0
 }
 
-function scoreSnoozePenalty(count: number): number {
-  if (count <= 0) return 0
-  if (count === 1) return 30
-  if (count === 2) return 60
+function scoreTokenUsage(tokensPerMin: number): number {
+  // 0 → 0, 10000+ tokens/min → 100, linear
+  return clamp((tokensPerMin / 10000) * 100, 0, 100)
+}
+
+function scoreContextSwitch(switchCount: number): number {
+  // 0-1 switches in 10min → 0, 5+ → 100
+  if (switchCount <= 1) return 0
+  if (switchCount === 2) return 25
+  if (switchCount === 3) return 50
+  if (switchCount === 4) return 75
   return 100
 }
 
 export function calculateBfi(inputs: BfiInputs): BfiResult {
   const scores: Record<string, number> = {
     messageVelocity: scoreMessageVelocity(inputs.messageVelocity),
+    contextSwitch: scoreContextSwitch(inputs.contextSwitchRate),
     multiTool: scoreMultiTool(inputs.activeToolCount, inputs.activeSessionCount),
+    tokenUsage: scoreTokenUsage(inputs.tokenVelocity),
     lateNight: scoreLateNight(inputs.currentHour, inputs.lateNightStart, inputs.lateNightEnd),
-    snoozePenalty: scoreSnoozePenalty(inputs.snoozeCount),
   }
 
   const weighted =
     scores.messageVelocity * WEIGHTS.messageVelocity +
+    scores.contextSwitch * WEIGHTS.contextSwitch +
     scores.multiTool * WEIGHTS.multiTool +
-    scores.lateNight * WEIGHTS.lateNight +
-    scores.snoozePenalty * WEIGHTS.snoozePenalty
+    scores.tokenUsage * WEIGHTS.tokenUsage +
+    scores.lateNight * WEIGHTS.lateNight
 
   const score = Math.round(clamp(weighted, 0, 100))
 
@@ -127,15 +136,26 @@ const MESSAGES: Record<string, Partial<Record<BfiStage, string[]>>> = {
       'Heavy multi-tool usage detected. Your cognitive load is at its peak.',
     ],
   },
-  snoozePenalty: {
+  contextSwitch: {
     warming: [
-      'You\'ve dismissed a few alerts. Just a gentle reminder to check in with yourself.',
+      'You\'ve been jumping between projects. Give your focus a chance to settle.',
     ],
     heating: [
-      'Pushing through is exactly when breaks matter most.',
+      'Frequent context switching drains your mental energy faster than deep work.',
     ],
     'brain-fry': [
-      'You keep going. That persistence is admirable — but your brain is asking for a pause.',
+      'Rapid project switching detected. Your brain needs a reset to regain focus.',
+    ],
+  },
+  tokenUsage: {
+    warming: [
+      'High token throughput — you\'re processing a lot of AI output. Pace yourself.',
+    ],
+    heating: [
+      'Heavy AI output consumption. Your brain is absorbing more than it can process.',
+    ],
+    'brain-fry': [
+      'Massive token flow detected. Step away and let your mind digest what you\'ve read.',
     ],
   },
 }

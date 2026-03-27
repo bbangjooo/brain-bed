@@ -96,9 +96,10 @@ function computeBfi(): BfiResult {
     activeToolCount: activeTools.length,
     activeSessionCount: stats.activeSessionCount,
     currentHour: new Date().getHours(),
-    snoozeCount: notificationCount,
     lateNightStart: settingsStore.get('late_night_start', 22),
     lateNightEnd: settingsStore.get('late_night_end', 6),
+    tokenVelocity: stats.velocity,
+    contextSwitchRate: stats.contextSwitchRate,
   }
 
   const result = calculateBfi(inputs)

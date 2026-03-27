@@ -5,7 +5,6 @@ interface Settings {
   emergency_hotkey: string
   force_entry_enabled: boolean
   music_autoplay: boolean
-  launch_at_login: boolean
 }
 
 const DEFAULT_SETTINGS: Settings = {
@@ -13,7 +12,6 @@ const DEFAULT_SETTINGS: Settings = {
   emergency_hotkey: 'CommandOrControl+Shift+Escape',
   force_entry_enabled: false,
   music_autoplay: true,
-  launch_at_login: false,
 }
 
 interface SettingsPanelProps {
@@ -100,12 +98,7 @@ export default function SettingsPanel({ onBack }: SettingsPanelProps) {
           />
         </SettingItem>
 
-        <SettingItem label="Launch at login">
-          <Toggle
-            checked={settings.launch_at_login}
-            onChange={(v) => updateSetting('launch_at_login', v)}
-          />
-        </SettingItem>
+
       </div>
 
       <div className="mt-8 pt-4 border-t" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>

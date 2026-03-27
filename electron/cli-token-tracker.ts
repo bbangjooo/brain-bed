@@ -10,6 +10,7 @@ interface TokenStats {
   activeSessionCount: number
   messageCount: number
   messageVelocity: number
+  contextSwitchRate: number  // project switches per 10-min window
 }
 
 interface TokenSnapshot {
@@ -32,6 +33,7 @@ export class CliTokenTracker {
   private stats: TokenStats = {
     totalTokens: 0, byTool: {}, lastUpdated: Date.now(),
     velocity: 0, activeSessionCount: 0, messageCount: 0, messageVelocity: 0,
+    contextSwitchRate: 0,
   }
   private intervalId: ReturnType<typeof setInterval> | null = null
   private dailyResetDate: string = new Date().toDateString()
@@ -39,6 +41,8 @@ export class CliTokenTracker {
   private messageSnapshots: MessageSnapshot[] = []
   private fileTrackers: Map<string, FileTracker> = new Map()
   private geminiPrevTotals: Map<string, { tokens: number; messages: number }> = new Map()
+  private lastActiveProject: string | null = null
+  private contextSwitches: { time: number }[] = []
 
   private home: string
   private claudeProjectsDir: string
@@ -323,9 +327,12 @@ export class CliTokenTracker {
       this.stats = {
         totalTokens: 0, byTool: {}, lastUpdated: Date.now(),
         velocity: 0, activeSessionCount: 0, messageCount: 0, messageVelocity: 0,
+        contextSwitchRate: 0,
       }
       this.snapshots = []
       this.messageSnapshots = []
+      this.contextSwitches = []
+      this.lastActiveProject = null
       this.fileTrackers.clear()
       this.geminiPrevTotals.clear()
       this.dailyResetDate = today
@@ -401,8 +408,31 @@ export class CliTokenTracker {
 
     this.stats.activeSessionCount = totalActiveSessions
 
-    // Update token velocity (rolling 10-minute window)
+    // Track context switching (project changes)
     const now = Date.now()
+    const allActiveFiles = [...claudeFiles, ...geminiFiles, ...codexFiles]
+    let mostRecentFile: string | null = null
+    let mostRecentTime = 0
+    for (const file of allActiveFiles) {
+      try {
+        const stat = fs.statSync(file)
+        if (stat.mtimeMs > mostRecentTime) {
+          mostRecentTime = stat.mtimeMs
+          // Extract project name from path
+          mostRecentFile = path.dirname(file)
+        }
+      } catch { /* skip */ }
+    }
+    if (mostRecentFile && this.lastActiveProject && mostRecentFile !== this.lastActiveProject) {
+      this.contextSwitches.push({ time: now })
+    }
+    if (mostRecentFile) this.lastActiveProject = mostRecentFile
+
+    const tenMinAgo = now - 10 * 60_000
+    this.contextSwitches = this.contextSwitches.filter((s) => s.time >= tenMinAgo)
+    this.stats.contextSwitchRate = this.contextSwitches.length
+
+    // Update token velocity (rolling 10-minute window)
     this.snapshots.push({ time: now, total: this.stats.totalTokens })
     const tenMinAgo = now - 10 * 60_000
     this.snapshots = this.snapshots.filter((s) => s.time >= tenMinAgo)
