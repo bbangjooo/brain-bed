@@ -74,7 +74,6 @@ export default function AudioPlayer({ autoplay, onAnalyserReady }: AudioPlayerPr
 
   useEffect(() => {
     const audio = new Audio()
-    audio.crossOrigin = 'anonymous'
     const track = playlist[currentTrack]
     audio.src = `media:///${track.file}`
 

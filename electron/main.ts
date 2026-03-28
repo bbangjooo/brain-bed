@@ -488,7 +488,7 @@ function setupIPC() {
 
 // Register custom protocol for serving audio files
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'media', privileges: { bypassCSP: true, stream: true } },
+  { scheme: 'media', privileges: { bypassCSP: true, stream: true, corsEnabled: true, supportFetchAPI: true } },
 ])
 
 app.whenReady().then(() => {
