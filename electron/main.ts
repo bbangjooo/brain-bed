@@ -547,7 +547,7 @@ app.whenReady().then(() => {
       mainWindow?.webContents.send('update:ready', { version: info.version })
     })
 
-    autoUpdater.checkForUpdatesAndNotify().catch(() => {})
+    autoUpdater.checkForUpdates().catch(() => {})
   }
 })
 
