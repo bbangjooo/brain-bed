@@ -10,9 +10,7 @@ const TRACKS = [
   { title: 'Nocturne Op.9 No.2', artist: 'Frédéric Chopin', file: 'nocturne-op9-no2.mp3' },
   { title: 'Moonlight Sonata (1st Mvt)', artist: 'Ludwig van Beethoven', file: 'moonlight-sonata-1st.mp3' },
   { title: 'Canon in D', artist: 'Johann Pachelbel', file: 'canon-in-d.mp3' },
-  { title: 'Pavane Op.50', artist: 'Gabriel Fauré', file: 'pavane.mp3' },
   { title: 'Le Cygne (The Swan)', artist: 'Camille Saint-Saëns', file: 'le-cygne.mp3' },
-  { title: 'Piano Concerto No.2 (1st Mvt)', artist: 'Sergei Rachmaninoff', file: 'rach-piano-concerto-2-1st.mp3' },
   { title: 'Symphony No.2 (3rd Mvt)', artist: 'Sergei Rachmaninoff', file: 'rach-symphony-2-3rd.mp3' },
 ]
 
