@@ -25,6 +25,8 @@ export interface AppStatus {
 
 export interface ElectronAPI {
   getAudioPath: () => Promise<string>
+  restartForUpdate: () => void
+  onUpdateReady: (callback: (data: { version: string }) => void) => () => void
   getSettings: () => Promise<Record<string, any>>
   updateSetting: (key: string, value: string) => Promise<boolean>
   getStatus: () => Promise<AppStatus>

@@ -4,6 +4,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Audio
   getAudioPath: () => ipcRenderer.invoke('audio:get-path'),
 
+  // Updates
+  restartForUpdate: () => ipcRenderer.send('app:restart-for-update'),
+  onUpdateReady: (callback: (data: { version: string }) => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, data: { version: string }) => callback(data)
+    ipcRenderer.on('update:ready', handler)
+    return () => ipcRenderer.removeListener('update:ready', handler)
+  },
+
   // Settings
   getSettings: () => ipcRenderer.invoke('settings:get'),
   updateSetting: (key: string, value: string) =>

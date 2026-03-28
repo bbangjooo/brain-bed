@@ -67,6 +67,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
   })
   const [showDetails, setShowDetails] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [updateVersion, setUpdateVersion] = useState<string | null>(null)
 
   useEffect(() => {
     window.electronAPI?.getStatus().then((data) => {
@@ -77,7 +78,10 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
       setStatus(data)
       setIsLoading(false)
     })
-    return () => unsub?.()
+    const unsubUpdate = window.electronAPI?.onUpdateReady((data) => {
+      setUpdateVersion(data.version)
+    })
+    return () => { unsub?.(); unsubUpdate?.() }
   }, [])
 
   const stage = STAGE_CONFIG[status.bfiStage] || STAGE_CONFIG.calm
@@ -308,6 +312,31 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
           {status.isMeditating ? 'Meditating...' : 'Take a Break'}
         </button>
       </div>
+
+      {/* Update toast */}
+      {updateVersion && (
+        <div
+          className="fixed bottom-4 right-4 flex items-center gap-3 px-4 py-3 rounded-xl text-xs shadow-lg"
+          style={{
+            background: 'rgba(99, 102, 241, 0.15)',
+            border: '1px solid rgba(99, 102, 241, 0.3)',
+            backdropFilter: 'blur(12px)',
+            color: 'rgba(255, 255, 255, 0.8)',
+          }}
+        >
+          <span>v{updateVersion} ready</span>
+          <button
+            onClick={() => window.electronAPI?.restartForUpdate()}
+            className="px-3 py-1 rounded-lg font-medium transition-all hover:scale-105 active:scale-95"
+            style={{
+              background: 'rgba(99, 102, 241, 0.5)',
+              color: '#fff',
+            }}
+          >
+            Restart
+          </button>
+        </div>
+      )}
     </div>
   )
 }

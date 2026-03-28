@@ -414,6 +414,10 @@ function setupIPC() {
       : path.join(process.resourcesPath, 'audio')
   })
 
+  ipcMain.on('app:restart-for-update', () => {
+    autoUpdater.quitAndInstall()
+  })
+
   ipcMain.handle('settings:get', () => settingsStore.getAll())
 
   ipcMain.handle('settings:update', (_event, key: string, value: string) => {
@@ -539,20 +543,8 @@ app.whenReady().then(() => {
     autoUpdater.autoDownload = true
     autoUpdater.autoInstallOnAppQuit = true
 
-    autoUpdater.on('update-available', (info) => {
-      new Notification({
-        title: 'Brain Bed Update Available',
-        body: `Version ${info.version} is available. Downloading...`,
-        icon: path.join(__dirname, '..', 'resources', 'icons', 'app-icon.png'),
-      }).show()
-    })
-
-    autoUpdater.on('update-downloaded', () => {
-      new Notification({
-        title: 'Brain Bed Update Ready',
-        body: 'Update will be installed on next restart.',
-        icon: path.join(__dirname, '..', 'resources', 'icons', 'app-icon.png'),
-      }).show()
+    autoUpdater.on('update-downloaded', (info) => {
+      mainWindow?.webContents.send('update:ready', { version: info.version })
     })
 
     autoUpdater.checkForUpdatesAndNotify().catch(() => {})
