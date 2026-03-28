@@ -48,7 +48,6 @@
     "productName": "Brain Bed",
     "icon": "resources/icons/app-icon.icns",
     "afterSign": "scripts/notarize.js",
-    "afterAllArtifactBuild": "scripts/notarize-dmg.js",
     "mac": {
       "category": "public.app-category.healthcare-fitness",
       "icon": "resources/icons/app-icon.icns",
