@@ -47,7 +47,6 @@
     "appId": "com.brainbed.app",
     "productName": "Brain Bed",
     "icon": "resources/icons/app-icon.icns",
-    "afterSign": "scripts/notarize.js",
     "mac": {
       "category": "public.app-category.healthcare-fitness",
       "icon": "resources/icons/app-icon.icns",
@@ -55,6 +54,7 @@
       "gatekeeperAssess": false,
       "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mac.plist",
+      "notarize": true,
       "target": [
         {
           "target": "dmg",
