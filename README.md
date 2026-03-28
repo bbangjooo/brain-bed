@@ -36,13 +36,7 @@ A real-time 0–100 cognitive load score calculated from five signals:
 
 ### Forced Meditation
 
-When your BFI spikes, Brain Bed locks your keyboard and transforms your screen:
-
-- **Breathing circle** — animated 4-4-6-2 inhale/hold/exhale guide
-- **3D particle field** — Three.js scene with floating orbs
-- **Classical music** — 13 curated tracks (Satie, Debussy, Chopin, Rachmaninoff, Beethoven, ...)
-- **Rotating quotes** — 100 rest & mindfulness quotes
-- **Keyboard lock** — native Swift CGEventTap, emergency exit via `Cmd+Shift+Esc`
+When your BFI spikes, Brain Bed locks your keyboard and immerses you in a full-screen meditation — guided breathing, 3D visuals, classical music, and mindfulness quotes. Emergency exit via `Cmd+Shift+Esc`.
 
 ### Smart Notifications
 
