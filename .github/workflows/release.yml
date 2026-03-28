@@ -59,20 +59,23 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple: -k "" "$KEYCHAIN_PATH"
           security list-keychain -d user -s "$KEYCHAIN_PATH"
 
-      - name: Build (without publish)
+      - name: Build and publish
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        run: npx vite build && npx electron-builder --mac --publish never
+        run: npx vite build && npx electron-builder --mac --publish always
 
-      - name: Sign and notarize DMGs
+      - name: Sign, notarize, and re-upload DMGs
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
+          VERSION=${{ steps.version.outputs.version }}
           for dmg in dist/*.dmg; do
             echo "Signing $dmg..."
             codesign --force --sign "Developer ID Application: seungwook seo (Y6M44N2QCD)" "$dmg"
@@ -84,15 +87,8 @@ jobs:
               --wait
             echo "Stapling $dmg..."
             xcrun stapler staple "$dmg"
-          done
-
-      - name: Upload artifacts to release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          VERSION=${{ steps.version.outputs.version }}
-          for f in dist/*.dmg dist/*.dmg.blockmap dist/*.zip dist/*.zip.blockmap dist/latest-mac.yml; do
-            [ -f "$f" ] && gh release upload "$VERSION" "$f" --clobber
+            echo "Re-uploading $dmg..."
+            gh release upload "$VERSION" "$dmg" --clobber
           done
 
       - name: Publish release
