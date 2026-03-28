@@ -415,7 +415,8 @@ function setupIPC() {
   })
 
   ipcMain.on('app:restart-for-update', () => {
-    autoUpdater.quitAndInstall()
+    (app as any).isQuitting = true
+    autoUpdater.quitAndInstall(false, true)
   })
 
   ipcMain.handle('settings:get', () => settingsStore.getAll())
