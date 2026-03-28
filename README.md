@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://brain-bed.vercel.app">Website</a> &middot;
+  <a href="https://brainbed.backproach.dev">Website</a> &middot;
   <a href="https://github.com/bbangjooo/brain-bed/releases/latest">Download</a>
 </p>
 

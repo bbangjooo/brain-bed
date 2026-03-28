@@ -9,6 +9,9 @@ import {
   powerMonitor,
   screen,
   globalShortcut,
+  systemPreferences,
+  dialog,
+  shell,
 } from 'electron'
 import path from 'path'
 import { spawn, ChildProcess } from 'child_process'
@@ -298,6 +301,34 @@ function getKeyboardBlockerPath(): string {
     : path.join(process.resourcesPath, 'bin', 'keyboard-blocker')
 }
 
+function checkAccessibilityPermission() {
+  const trusted = systemPreferences.isTrustedAccessibilityClient(false)
+  if (!trusted && mainWindow) {
+    dialog.showMessageBox(mainWindow, {
+      type: 'warning',
+      title: 'Accessibility Permission Required',
+      message: 'Brain Bed needs Accessibility permission to block keyboard input during meditation.',
+      detail: 'Go to System Settings > Privacy & Security > Accessibility, then add Brain Bed.',
+      buttons: ['Open Settings', 'Later'],
+      defaultId: 0,
+    }).then((result) => {
+      if (result.response === 0) {
+        shell.openExternal('x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility')
+      }
+    })
+  }
+}
+
+function registerExitShortcut() {
+  globalShortcut.register('CommandOrControl+Shift+Escape', () => {
+    meditationWindow?.webContents.send('meditation:show-exit-dialog')
+  })
+}
+
+function unregisterExitShortcut() {
+  globalShortcut.unregister('CommandOrControl+Shift+Escape')
+}
+
 function blockKeyboard() {
   if (keyboardBlockerProcess) return
 
@@ -321,21 +352,8 @@ function blockKeyboard() {
   proc.stderr?.on('data', (data: Buffer) => {
     const msg = data.toString().trim()
     if (msg.includes('accessibility_permission_required')) {
-      // Fallback: native blocker can't start without Accessibility permission.
-      // Show a dialog and offer to open System Settings directly.
-      const { dialog, shell } = require('electron')
-      dialog.showMessageBox({
-        type: 'warning',
-        title: 'Accessibility Permission Required',
-        message: 'Brain Bed needs Accessibility permission to block keyboard input during meditation.',
-        detail: 'Go to System Settings > Privacy & Security > Accessibility, then add Brain Bed.',
-        buttons: ['Open Settings', 'Later'],
-        defaultId: 0,
-      }).then((result: { response: number }) => {
-        if (result.response === 0) {
-          shell.openExternal('x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility')
-        }
-      })
+      // Native blocker can't start — register globalShortcut as fallback
+      registerExitShortcut()
     }
   })
 
@@ -345,6 +363,8 @@ function blockKeyboard() {
 }
 
 function unblockKeyboard() {
+  unregisterExitShortcut()
+
   if (!keyboardBlockerProcess) return
 
   try {
@@ -506,6 +526,7 @@ app.whenReady().then(() => {
   createMainWindow()
   createTray()
   setupIPC()
+  checkAccessibilityPermission()
   activityTracker.start()
 
   powerMonitor.on('suspend', () => activityTracker.pause())
