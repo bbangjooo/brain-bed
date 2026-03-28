@@ -47,8 +47,8 @@
     "appId": "com.brainbed.app",
     "productName": "Brain Bed",
     "icon": "resources/icons/app-icon.icns",
-    "afterSign": "scripts/notarize.js:notarizeApp",
-    "afterAllArtifactBuild": "scripts/notarize.js:notarizeDmg",
+    "afterSign": "scripts/notarize.js",
+    "afterAllArtifactBuild": "scripts/notarize-dmg.js",
     "mac": {
       "category": "public.app-category.healthcare-fitness",
       "icon": "resources/icons/app-icon.icns",
