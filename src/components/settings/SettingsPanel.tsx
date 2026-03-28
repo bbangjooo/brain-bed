@@ -103,7 +103,7 @@ export default function SettingsPanel({ onBack }: SettingsPanelProps) {
 
       <div className="mt-8 pt-4 border-t" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
         <p className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.25)' }}>
-          Brain Bed v0.2.0 · Emergency exit: ⌘⇧⎋
+          Brain Bed v{__APP_VERSION__} · Emergency exit: ⌘⇧⎋
         </p>
         <a
           href="mailto:airmancho@gmail.com?subject=Brain%20Bed%20Feedback"
