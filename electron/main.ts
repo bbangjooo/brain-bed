@@ -562,6 +562,9 @@ app.whenReady().then(() => {
     })
 
     autoUpdater.checkForUpdates().catch(() => {})
+    setInterval(() => {
+      autoUpdater.checkForUpdates().catch(() => {})
+    }, 30 * 60_000) // 30분마다 확인
   }
 })
 
