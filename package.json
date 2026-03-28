@@ -72,6 +72,9 @@
         }
       ]
     },
+    "dmg": {
+      "sign": true
+    },
     "publish": {
       "provider": "github",
       "owner": "bbangjooo",
