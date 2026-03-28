@@ -1,6 +1,9 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld('electronAPI', {
+  // Audio
+  getAudioPath: () => ipcRenderer.invoke('audio:get-path'),
+
   // Settings
   getSettings: () => ipcRenderer.invoke('settings:get'),
   updateSetting: (key: string, value: string) =>

@@ -322,14 +322,19 @@ function blockKeyboard() {
     const msg = data.toString().trim()
     if (msg.includes('accessibility_permission_required')) {
       // Fallback: native blocker can't start without Accessibility permission.
-      // Show a dialog explaining the permission requirement.
-      const { dialog } = require('electron')
+      // Show a dialog and offer to open System Settings directly.
+      const { dialog, shell } = require('electron')
       dialog.showMessageBox({
         type: 'warning',
         title: 'Accessibility Permission Required',
         message: 'Brain Bed needs Accessibility permission to block keyboard input during meditation.',
         detail: 'Go to System Settings > Privacy & Security > Accessibility, then add Brain Bed.',
-        buttons: ['OK'],
+        buttons: ['Open Settings', 'Later'],
+        defaultId: 0,
+      }).then((result: { response: number }) => {
+        if (result.response === 0) {
+          shell.openExternal('x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility')
+        }
       })
     }
   })
@@ -383,6 +388,12 @@ function sendNotification() {
 // ── IPC ──────────────────────────────────────────────────
 
 function setupIPC() {
+  ipcMain.handle('audio:get-path', () => {
+    return isDev
+      ? path.join(__dirname, '..', 'resources', 'audio')
+      : path.join(process.resourcesPath, 'audio')
+  })
+
   ipcMain.handle('settings:get', () => settingsStore.getAll())
 
   ipcMain.handle('settings:update', (_event, key: string, value: string) => {
