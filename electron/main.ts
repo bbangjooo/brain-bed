@@ -257,7 +257,6 @@ function startMeditation(durationSeconds: number) {
   if (!meditationWindow) return
 
   // Lock window and keyboard once the user commits
-  meditationWindow.setAlwaysOnTop(true)
   meditationWindow.setClosable(false)
   meditationWindow.webContents.send('meditation:start', {
     duration: durationSeconds,
@@ -310,15 +309,12 @@ function checkAccessibilityPermission() {
   if (!trusted && mainWindow) {
     dialog.showMessageBox(mainWindow, {
       type: 'warning',
-      title: '손쉬운 사용 권한 필요',
-      message: '명상 중 키보드 입력을 차단하려면 손쉬운 사용 권한이 필요합니다.',
-      detail: '시스템 설정 > 개인정보 보호 및 보안 > 손쉬운 사용에서 Brain Bed를 추가해주세요.',
-      buttons: ['설정 열기', '나중에'],
-      defaultId: 0,
-    }).then((result) => {
-      if (result.response === 0) {
-        shell.openExternal('x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility')
-      }
+      title: 'Accessibility Permission Required',
+      message: 'Brain Bed needs Accessibility permission to block keyboard input during meditation.',
+      detail: 'Go to System Settings > Privacy & Security > Accessibility, then add Brain Bed.',
+      buttons: ['Open Settings'],
+    }).then(() => {
+      shell.openExternal('x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility')
     })
   }
 }
