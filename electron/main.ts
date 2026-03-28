@@ -12,8 +12,11 @@ import {
   systemPreferences,
   dialog,
   shell,
+  protocol,
+  net,
 } from 'electron'
 import path from 'path'
+import { pathToFileURL } from 'url'
 import { spawn, ChildProcess } from 'child_process'
 import { autoUpdater } from 'electron-updater'
 import { ActivityTracker } from './activity-tracker'
@@ -486,7 +489,20 @@ function setupIPC() {
 
 // ── App lifecycle ────────────────────────────────────────
 
+// Register custom protocol for serving audio files
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'media', privileges: { bypassCSP: true, stream: true } },
+])
+
 app.whenReady().then(() => {
+  const audioDir = isDev
+    ? path.join(__dirname, '..', 'resources', 'audio')
+    : path.join(process.resourcesPath, 'audio')
+
+  protocol.handle('media', (req) => {
+    const filename = decodeURIComponent(new URL(req.url).pathname.replace(/^\//, ''))
+    return net.fetch(pathToFileURL(path.join(audioDir, filename)).toString())
+  })
   settingsStore = new SettingsStore()
 
   cliTokenTracker = new CliTokenTracker()

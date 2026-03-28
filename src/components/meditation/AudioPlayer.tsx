@@ -36,17 +36,12 @@ export default function AudioPlayer({ autoplay, onAnalyserReady }: AudioPlayerPr
   const [isPlaying, setIsPlaying] = useState(false)
   const [volume, setVolume] = useState(0.5)
   const [hasAudio, setHasAudio] = useState(false)
-  const [audioBasePath, setAudioBasePath] = useState<string | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
   const analyserRef = useRef<AnalyserNode | null>(null)
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null)
   const gainNodeRef = useRef<GainNode | null>(null)
   const connectedRef = useRef(false)
-
-  useEffect(() => {
-    window.electronAPI?.getAudioPath().then((p: string) => setAudioBasePath(p))
-  }, [])
 
   const setupAudioContext = useCallback((audio: HTMLAudioElement) => {
     if (connectedRef.current || !onAnalyserReady) return
@@ -78,12 +73,10 @@ export default function AudioPlayer({ autoplay, onAnalyserReady }: AudioPlayerPr
   }, [onAnalyserReady, volume])
 
   useEffect(() => {
-    if (!audioBasePath) return
-
     const audio = new Audio()
     audio.crossOrigin = 'anonymous'
     const track = playlist[currentTrack]
-    audio.src = `file://${audioBasePath}/${track.file}`
+    audio.src = `media:///${track.file}`
 
     audio.addEventListener('canplay', () => {
       setHasAudio(true)
@@ -110,7 +103,7 @@ export default function AudioPlayer({ autoplay, onAnalyserReady }: AudioPlayerPr
       audio.pause()
       audio.src = ''
     }
-  }, [currentTrack, audioBasePath])
+  }, [currentTrack])
 
   function fadeIn(audio: HTMLAudioElement) {
     if (gainNodeRef.current) {
