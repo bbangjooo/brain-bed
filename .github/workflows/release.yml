@@ -29,7 +29,12 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          NEW_VERSION=$(npm version patch --no-git-tag-version)
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          if git tag -l "v${CURRENT_VERSION}" | grep -q .; then
+            NEW_VERSION=$(npm version patch --no-git-tag-version)
+          else
+            NEW_VERSION="v${CURRENT_VERSION}"
+          fi
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
           # Update landing page version and download URL
