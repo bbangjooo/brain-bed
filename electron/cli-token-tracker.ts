@@ -231,7 +231,7 @@ export class CliTokenTracker {
   // ── Session Counting ──────────────────────────────────
 
   private countClaudeSessions(): number {
-    // Count JSONL files modified in last 30 minutes across all projects
+    // Count projects with any JSONL file modified in last 30 minutes
     const thirtyMinAgo = Date.now() - 30 * 60_000
     let count = 0
     try {
@@ -245,7 +245,10 @@ export class CliTokenTracker {
           for (const file of files) {
             try {
               const stat = fs.statSync(path.join(projDir, file))
-              if (stat.mtimeMs >= thirtyMinAgo) count++
+              if (stat.mtimeMs >= thirtyMinAgo) {
+                count++
+                break
+              }
             } catch { /* skip */ }
           }
         } catch { /* skip */ }
