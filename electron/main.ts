@@ -54,7 +54,7 @@ function createMainWindow() {
     titleBarStyle: 'hiddenInset',
     trafficLightPosition: { x: 14, y: 14 },
     vibrancy: 'under-window',
-    backgroundColor: '#0f0c29',
+    backgroundColor: '#050510',
     show: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -319,16 +319,6 @@ function checkAccessibilityPermission() {
   }
 }
 
-function registerExitShortcut() {
-  globalShortcut.register('CommandOrControl+Shift+Escape', () => {
-    meditationWindow?.webContents.send('meditation:show-exit-dialog')
-  })
-}
-
-function unregisterExitShortcut() {
-  globalShortcut.unregister('CommandOrControl+Shift+Escape')
-}
-
 function blockKeyboard() {
   if (keyboardBlockerProcess) return
 
@@ -339,32 +329,12 @@ function blockKeyboard() {
 
   keyboardBlockerProcess = proc
 
-  proc.stdout?.on('data', (data: Buffer) => {
-    const msg = data.toString().trim()
-    if (msg === 'unlocked') {
-      // The user pressed Cmd+Shift+Escape inside the native blocker
-      meditationWindow?.webContents.send('meditation:show-exit-dialog')
-      // Note: we don't kill the process here — the exit dialog will
-      // call endMeditation which calls unblockKeyboard
-    }
-  })
-
-  proc.stderr?.on('data', (data: Buffer) => {
-    const msg = data.toString().trim()
-    if (msg.includes('accessibility_permission_required')) {
-      // Native blocker can't start — register globalShortcut as fallback
-      registerExitShortcut()
-    }
-  })
-
   proc.on('exit', () => {
     keyboardBlockerProcess = null
   })
 }
 
 function unblockKeyboard() {
-  unregisterExitShortcut()
-
   if (!keyboardBlockerProcess) return
 
   try {

@@ -1,11 +1,11 @@
 export default function GradientBackground() {
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden" style={{ background: '#0a0a1a' }}>
+    <div className="fixed inset-0 -z-10 overflow-hidden" style={{ background: '#050510' }}>
       {/* Base gradient */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(ellipse at 50% 120%, #1a1040 0%, #0a0a1a 70%)',
+          background: 'radial-gradient(ellipse at 50% 120%, #0c0b18 0%, #050510 70%)',
         }}
       />
 

@@ -5,12 +5,12 @@
 
 
 :root {
-  --color-bg-primary: #0f0c29;
-  --color-bg-secondary: #302b63;
-  --color-bg-tertiary: #24243e;
-  --color-text-primary: rgba(255, 255, 255, 0.95);
-  --color-text-secondary: rgba(255, 255, 255, 0.7);
-  --color-text-muted: rgba(255, 255, 255, 0.4);
+  --color-bg-primary: #050510;
+  --color-bg-secondary: #131122;
+  --color-bg-tertiary: #0c0b18;
+  --color-text-primary: rgba(255, 255, 255, 0.87);
+  --color-text-secondary: rgba(255, 255, 255, 0.58);
+  --color-text-muted: rgba(255, 255, 255, 0.32);
   --color-accent: rgba(255, 255, 255, 0.2);
   --color-accent-hover: rgba(255, 255, 255, 0.3);
   --transition-gentle: cubic-bezier(0.4, 0, 0.2, 1);
@@ -41,7 +41,7 @@ body {
 .meditation-window {
   border-radius: 20px;
   overflow: hidden;
-  background: #0f0c29;
+  background: #050510;
 }
 
 /* Prevent all text selection in meditation mode */

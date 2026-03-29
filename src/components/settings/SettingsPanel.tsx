@@ -44,7 +44,7 @@ export default function SettingsPanel({ onBack }: SettingsPanelProps) {
 
   return (
     <div className="settings-mode h-full overflow-y-auto p-6 pt-10"
-      style={{ background: '#0f0c29' }}>
+      style={{ background: '#050510' }}>
       <div className="fixed top-0 left-0 right-0 h-12" style={{ WebkitAppRegion: 'drag' } as any} />
 
       <div className="flex items-center gap-3 mb-6">
@@ -103,7 +103,7 @@ export default function SettingsPanel({ onBack }: SettingsPanelProps) {
 
       <div className="mt-8 pt-4 border-t" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
         <p className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.25)' }}>
-          Brain Bed v{__APP_VERSION__} · Emergency exit: ⌘⇧⎋
+          Brain Bed v{__APP_VERSION__}
         </p>
         <a
           href="mailto:airmancho@gmail.com?subject=Brain%20Bed%20Feedback"

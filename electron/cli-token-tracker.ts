@@ -231,14 +231,27 @@ export class CliTokenTracker {
   // ── Session Counting ──────────────────────────────────
 
   private countClaudeSessions(): number {
-    // ~/.claude/sessions/*.json — one file per running session (PID-based)
+    // Count JSONL files modified in last 30 minutes across all projects
+    const thirtyMinAgo = Date.now() - 30 * 60_000
+    let count = 0
     try {
-      if (!fs.existsSync(this.claudeSessionsDir)) return 0
-      const files = fs.readdirSync(this.claudeSessionsDir).filter((f) => f.endsWith('.json'))
-      return files.length
-    } catch {
-      return 0
-    }
+      if (!fs.existsSync(this.claudeProjectsDir)) return 0
+      const projects = fs.readdirSync(this.claudeProjectsDir, { withFileTypes: true })
+      for (const proj of projects) {
+        if (!proj.isDirectory()) continue
+        const projDir = path.join(this.claudeProjectsDir, proj.name)
+        try {
+          const files = fs.readdirSync(projDir).filter((f) => f.endsWith('.jsonl'))
+          for (const file of files) {
+            try {
+              const stat = fs.statSync(path.join(projDir, file))
+              if (stat.mtimeMs >= thirtyMinAgo) count++
+            } catch { /* skip */ }
+          }
+        } catch { /* skip */ }
+      }
+    } catch { /* skip */ }
+    return count
   }
 
   private countCodexSessions(): number {

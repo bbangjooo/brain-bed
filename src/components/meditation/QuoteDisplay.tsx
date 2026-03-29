@@ -49,7 +49,7 @@ export default function QuoteDisplay() {
             fontWeight: 600,
             fontStyle: 'italic',
             color: 'rgba(255, 255, 255, 0.75)',
-            textShadow: '0 0 30px rgba(139, 92, 246, 0.12)',
+            textShadow: '0 0 30px rgba(167, 139, 250, 0.15)',
           }}
         >
           {quote.text}

@@ -90,7 +90,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
   const toolEntries = Object.entries(status.tokenStats.byTool)
 
   return (
-    <div className="h-full flex flex-col" style={{ background: '#0f0c29' }}>
+    <div className="h-full flex flex-col" style={{ background: '#050510' }}>
       {/* Draggable title bar */}
       <div
         className="h-12 flex items-center justify-between px-4 shrink-0"
@@ -304,7 +304,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
           style={{
             background: status.isMeditating
               ? 'rgba(255,255,255,0.05)'
-              : 'linear-gradient(135deg, rgba(99,102,241,0.4), rgba(139,92,246,0.4))',
+              : 'linear-gradient(135deg, rgba(129,140,248,0.4), rgba(167,139,250,0.4))',
             color: 'rgba(255,255,255,0.9)',
             border: '1px solid rgba(255,255,255,0.1)',
           }}
@@ -318,8 +318,8 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
         <div
           className="fixed bottom-4 right-4 flex items-center gap-3 px-4 py-3 rounded-xl text-xs shadow-lg"
           style={{
-            background: 'rgba(99, 102, 241, 0.15)',
-            border: '1px solid rgba(99, 102, 241, 0.3)',
+            background: 'rgba(129, 140, 248, 0.15)',
+            border: '1px solid rgba(129, 140, 248, 0.3)',
             backdropFilter: 'blur(12px)',
             color: 'rgba(255, 255, 255, 0.8)',
           }}
@@ -329,7 +329,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             onClick={() => window.electronAPI?.restartForUpdate()}
             className="px-3 py-1 rounded-lg font-medium transition-all hover:scale-105 active:scale-95"
             style={{
-              background: 'rgba(99, 102, 241, 0.5)',
+              background: 'rgba(129, 140, 248, 0.5)',
               color: '#fff',
             }}
           >

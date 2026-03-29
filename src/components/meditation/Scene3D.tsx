@@ -141,13 +141,13 @@ export default function Scene3D({ analyser }: Scene3DProps) {
         gl={{ alpha: true, antialias: true, powerPreference: 'low-power' }}
       >
         <ambientLight intensity={0.3} />
-        <pointLight position={[5, 5, 5]} intensity={0.5} color="#6366f1" />
-        <pointLight position={[-5, -3, 3]} intensity={0.3} color="#8b5cf6" />
+        <pointLight position={[5, 5, 5]} intensity={0.5} color="#818cf8" />
+        <pointLight position={[-5, -3, 3]} intensity={0.3} color="#a78bfa" />
 
         <FloatingOrb position={[-2.5, 1.5, -3]} scale={1.2} color="#4338ca" speed={0.4} />
-        <FloatingOrb position={[2, -1, -4]} scale={0.8} color="#6366f1" speed={0.6} />
+        <FloatingOrb position={[2, -1, -4]} scale={0.8} color="#818cf8" speed={0.6} />
         <FloatingOrb position={[0, 2, -6]} scale={1.5} color="#7c3aed" speed={0.3} />
-        <FloatingOrb position={[-1.5, -2, -5]} scale={0.6} color="#8b5cf6" speed={0.5} />
+        <FloatingOrb position={[-1.5, -2, -5]} scale={0.6} color="#a78bfa" speed={0.5} />
 
         <ParticleField analyser={analyser} />
       </Canvas>

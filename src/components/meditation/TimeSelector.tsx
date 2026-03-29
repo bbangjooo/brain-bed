@@ -73,13 +73,13 @@ export default function TimeSelector({ defaultMinutes, onSelect }: TimeSelectorP
             className="px-5 py-3 rounded-2xl text-sm font-medium transition-all duration-200"
             style={{
               background: !isCustom && selected === min
-                ? 'rgba(139, 92, 246, 0.4)'
+                ? 'rgba(167, 139, 250, 0.4)'
                 : 'rgba(255, 255, 255, 0.06)',
               color: !isCustom && selected === min
                 ? 'rgba(255, 255, 255, 0.95)'
                 : 'rgba(255, 255, 255, 0.5)',
               border: !isCustom && selected === min
-                ? '1px solid rgba(139, 92, 246, 0.5)'
+                ? '1px solid rgba(167, 139, 250, 0.5)'
                 : '1px solid rgba(255, 255, 255, 0.08)',
               transform: !isCustom && selected === min ? 'scale(1.05)' : 'scale(1)',
             }}
@@ -91,8 +91,8 @@ export default function TimeSelector({ defaultMinutes, onSelect }: TimeSelectorP
           <div
             className="flex items-center gap-2 px-5 py-3 rounded-2xl transition-all duration-200"
             style={{
-              background: 'rgba(139, 92, 246, 0.4)',
-              border: '1px solid rgba(139, 92, 246, 0.5)',
+              background: 'rgba(167, 139, 250, 0.4)',
+              border: '1px solid rgba(167, 139, 250, 0.5)',
             }}
           >
             <input
@@ -128,7 +128,7 @@ export default function TimeSelector({ defaultMinutes, onSelect }: TimeSelectorP
         disabled={selected <= 0}
         className="w-48 py-3.5 rounded-xl font-medium text-sm transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
         style={{
-          background: 'linear-gradient(135deg, rgba(99,102,241,0.5), rgba(139,92,246,0.5))',
+          background: 'linear-gradient(135deg, rgba(129,140,248,0.5), rgba(139,92,246,0.5))',
           color: 'rgba(255, 255, 255, 0.95)',
           border: '1px solid rgba(255, 255, 255, 0.15)',
         }}

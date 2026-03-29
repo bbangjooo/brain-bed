@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'react'
 import GradientBackground from './GradientBackground'
 import Scene3D from './Scene3D'
 import QuoteDisplay from './QuoteDisplay'
@@ -100,6 +100,35 @@ export default function MeditationScreen() {
     setAnalyser(node)
   }, [])
 
+  // Long-press exit
+  const [holdProgress, setHoldProgress] = useState(0)
+  const holdTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const HOLD_DURATION = 3000 // 3 seconds
+  const HOLD_INTERVAL = 50
+
+  const startHold = useCallback(() => {
+    let elapsed = 0
+    holdTimerRef.current = setInterval(() => {
+      elapsed += HOLD_INTERVAL
+      const progress = Math.min(elapsed / HOLD_DURATION, 1)
+      setHoldProgress(progress)
+      if (progress >= 1) {
+        if (holdTimerRef.current) clearInterval(holdTimerRef.current)
+        holdTimerRef.current = null
+        setShowExitDialog(true)
+        setHoldProgress(0)
+      }
+    }, HOLD_INTERVAL)
+  }, [])
+
+  const cancelHold = useCallback(() => {
+    if (holdTimerRef.current) {
+      clearInterval(holdTimerRef.current)
+      holdTimerRef.current = null
+    }
+    setHoldProgress(0)
+  }, [])
+
   if (phase === 'loading') {
     return (
       <div className="meditation-window w-full h-full">
@@ -157,9 +186,33 @@ export default function MeditationScreen() {
           totalSeconds={totalSeconds}
         />
         <AudioPlayer autoplay={musicAutoplay} onAnalyserReady={handleAnalyserReady} />
-        <div className="text-center mt-1">
-          <p className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.3)' }}>
-            Your keyboard is locked. Press Cmd+Shift+Escape to exit early.
+        <div className="flex flex-col items-center gap-2 mt-1">
+          <button
+            onPointerDown={startHold}
+            onPointerUp={cancelHold}
+            onPointerLeave={cancelHold}
+            className="relative w-11 h-11 rounded-full flex items-center justify-center transition-colors"
+            style={{ background: 'rgba(255, 255, 255, 0.08)' }}
+          >
+            <svg className="absolute inset-0 -rotate-90" viewBox="0 0 44 44">
+              <circle cx="22" cy="22" r="20" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="2" />
+              <circle
+                cx="22" cy="22" r="20" fill="none"
+                stroke="#a78bfa"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeDasharray={`${2 * Math.PI * 20}`}
+                strokeDashoffset={`${2 * Math.PI * 20 * (1 - holdProgress)}`}
+                style={{ transition: holdProgress === 0 ? 'stroke-dashoffset 0.15s' : 'none' }}
+              />
+            </svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeLinecap="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+          </button>
+          <p className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.2)' }}>
+            Hold to exit
           </p>
         </div>
       </div>
