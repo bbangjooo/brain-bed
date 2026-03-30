@@ -18,11 +18,10 @@ export interface BfiInputs {
 }
 
 const WEIGHTS = {
-  messageVelocity: 0.55,
-  contextSwitch: 0.15,
-  multiTool: 0.10,
-  tokenUsage: 0.10,
-  lateNight: 0.05,
+  messageVelocity: 0.35,
+  multiTool: 0.35,
+  tokenUsage: 0.20,
+  lateNight: 0.10,
 } as const
 
 function clamp(v: number, min: number, max: number): number {
@@ -54,19 +53,9 @@ function scoreTokenUsage(tokensPerMin: number): number {
   return clamp((tokensPerMin / 10000) * 100, 0, 100)
 }
 
-function scoreContextSwitch(switchCount: number): number {
-  // 0-1 switches in 10min → 0, 5+ → 100
-  if (switchCount <= 1) return 0
-  if (switchCount === 2) return 25
-  if (switchCount === 3) return 50
-  if (switchCount === 4) return 75
-  return 100
-}
-
 export function calculateBfi(inputs: BfiInputs): BfiResult {
   const scores: Record<string, number> = {
     messageVelocity: scoreMessageVelocity(inputs.messageVelocity),
-    contextSwitch: scoreContextSwitch(inputs.contextSwitchRate),
     multiTool: scoreMultiTool(inputs.activeToolCount, inputs.activeSessionCount),
     tokenUsage: scoreTokenUsage(inputs.tokenVelocity),
     lateNight: scoreLateNight(inputs.currentHour, inputs.lateNightStart, inputs.lateNightEnd),
@@ -74,7 +63,6 @@ export function calculateBfi(inputs: BfiInputs): BfiResult {
 
   const weighted =
     scores.messageVelocity * WEIGHTS.messageVelocity +
-    scores.contextSwitch * WEIGHTS.contextSwitch +
     scores.multiTool * WEIGHTS.multiTool +
     scores.tokenUsage * WEIGHTS.tokenUsage +
     scores.lateNight * WEIGHTS.lateNight
@@ -134,17 +122,6 @@ const MESSAGES: Record<string, Partial<Record<BfiStage, string[]>>> = {
     ],
     'brain-fry': [
       'Heavy multi-tool usage detected. Your cognitive load is at its peak.',
-    ],
-  },
-  contextSwitch: {
-    warming: [
-      'You\'ve been jumping between projects. Give your focus a chance to settle.',
-    ],
-    heating: [
-      'Frequent context switching drains your mental energy faster than deep work.',
-    ],
-    'brain-fry': [
-      'Rapid project switching detected. Your brain needs a reset to regain focus.',
     ],
   },
   tokenUsage: {
