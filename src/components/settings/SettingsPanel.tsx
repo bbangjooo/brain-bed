@@ -2,16 +2,16 @@ import { useEffect, useState } from 'react'
 
 interface Settings {
   default_meditation_minutes: number
-  emergency_hotkey: string
   force_entry_enabled: boolean
   music_autoplay: boolean
+  launch_at_login: boolean
 }
 
 const DEFAULT_SETTINGS: Settings = {
   default_meditation_minutes: 10,
-  emergency_hotkey: 'CommandOrControl+Shift+Escape',
   force_entry_enabled: false,
   music_autoplay: true,
+  launch_at_login: false,
 }
 
 interface SettingsPanelProps {
@@ -95,6 +95,13 @@ export default function SettingsPanel({ onBack }: SettingsPanelProps) {
           <Toggle
             checked={settings.force_entry_enabled}
             onChange={(v) => updateSetting('force_entry_enabled', v)}
+          />
+        </SettingItem>
+
+        <SettingItem label="Launch at login" description="Start Brain Bed automatically when you log in">
+          <Toggle
+            checked={settings.launch_at_login}
+            onChange={(v) => updateSetting('launch_at_login', v)}
           />
         </SettingItem>
 

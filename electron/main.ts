@@ -393,6 +393,11 @@ function setupIPC() {
 
   ipcMain.handle('settings:update', (_event, key: string, value: string) => {
     settingsStore.set(key, value)
+
+    if (key === 'launch_at_login') {
+      app.setLoginItemSettings({ openAtLogin: value === 'true' })
+    }
+
     updateTrayMenu()
     sendStatusToMain()
     return true
@@ -515,6 +520,7 @@ app.whenReady().then(() => {
   createTray()
   setupIPC()
   checkAccessibilityPermission()
+  app.setLoginItemSettings({ openAtLogin: settingsStore.get('launch_at_login', false) })
   activityTracker.start()
 
   powerMonitor.on('suspend', () => activityTracker.pause())
