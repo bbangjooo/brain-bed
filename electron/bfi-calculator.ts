@@ -18,9 +18,9 @@ export interface BfiInputs {
 }
 
 const WEIGHTS = {
-  messageVelocity: 0.35,
-  multiTool: 0.35,
-  tokenUsage: 0.20,
+  messageVelocity: 0.40,
+  multiTool: 0.40,
+  tokenUsage: 0.10,
   lateNight: 0.10,
 } as const
 
