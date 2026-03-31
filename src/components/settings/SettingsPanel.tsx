@@ -109,7 +109,14 @@ export default function SettingsPanel({ onBack }: SettingsPanelProps) {
       </div>
 
       <div className="mt-8 pt-4 border-t" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
-        <p className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.25)' }}>
+        <button
+          onClick={() => window.electronAPI?.onboardingReplay()}
+          className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-white/5"
+          style={{ color: 'rgba(255, 255, 255, 0.35)', border: '1px solid rgba(255, 255, 255, 0.08)' }}
+        >
+          Replay onboarding
+        </button>
+        <p className="text-xs mt-4" style={{ color: 'rgba(255, 255, 255, 0.25)' }}>
           Brain Bed v{__APP_VERSION__}
         </p>
         <a
