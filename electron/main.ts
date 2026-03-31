@@ -599,7 +599,7 @@ app.whenReady().then(() => {
   activityTracker = new ActivityTracker({
     onTick: () => {
       currentBfi = computeBfi()
-      const isHigh = currentBfi.stage === 'heating' || currentBfi.stage === 'brain-fry'
+      const isHigh = currentBfi.stage === 'brain-fry'
 
       if (isHigh) {
         const now = Date.now()
