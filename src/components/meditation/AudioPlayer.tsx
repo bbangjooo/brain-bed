@@ -25,10 +25,11 @@ function shuffleArray<T>(arr: T[]): T[] {
 
 interface AudioPlayerProps {
   autoplay: boolean
+  fadeOut?: boolean
   onAnalyserReady?: (analyser: AnalyserNode) => void
 }
 
-export default function AudioPlayer({ autoplay, onAnalyserReady }: AudioPlayerProps) {
+export default function AudioPlayer({ autoplay, fadeOut, onAnalyserReady }: AudioPlayerProps) {
   const [playlist] = useState(() => shuffleArray(TRACKS))
   const [currentTrack, setCurrentTrack] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -101,6 +102,28 @@ export default function AudioPlayer({ autoplay, onAnalyserReady }: AudioPlayerPr
       audio.src = ''
     }
   }, [currentTrack])
+
+  // Fade out when fadeOut prop becomes true
+  useEffect(() => {
+    if (!fadeOut || !audioRef.current) return
+    const audio = audioRef.current
+    const startVol = gainNodeRef.current?.gain.value ?? audio.volume
+    let vol = startVol
+    const interval = setInterval(() => {
+      vol -= 0.02
+      if (vol <= 0) {
+        vol = 0
+        clearInterval(interval)
+        audio.pause()
+      }
+      if (gainNodeRef.current) {
+        gainNodeRef.current.gain.value = vol
+      } else {
+        audio.volume = vol
+      }
+    }, 60) // ~3s total for 0.5 volume
+    return () => clearInterval(interval)
+  }, [fadeOut])
 
   function fadeIn(audio: HTMLAudioElement) {
     if (gainNodeRef.current) {

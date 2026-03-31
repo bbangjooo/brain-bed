@@ -14,6 +14,7 @@ import {
   shell,
   protocol,
   net,
+  nativeTheme,
 } from 'electron'
 import path from 'path'
 import { pathToFileURL } from 'url'
@@ -25,8 +26,10 @@ import { SettingsStore } from './settings-store'
 import { calculateBfi, getBfiMessage, type BfiStage, type BfiResult } from './bfi-calculator'
 
 const isDev = !app.isPackaged
+nativeTheme.themeSource = 'dark'
 
 let mainWindow: BrowserWindow | null = null
+let onboardingWindow: BrowserWindow | null = null
 let tray: Tray | null = null
 let meditationWindow: BrowserWindow | null = null
 let activityTracker: ActivityTracker
@@ -91,6 +94,47 @@ function createMainWindow() {
   statusUpdateInterval = setInterval(() => sendStatusToMain(), 10_000)
 }
 
+// ── Onboarding Window ────────────────────────────────────
+
+function createOnboardingWindow() {
+  const { width: screenW, height: screenH } = screen.getPrimaryDisplay().workAreaSize
+  const winW = Math.min(Math.round(screenW * 0.75), 1200)
+  const winH = Math.min(Math.round(screenH * 0.85), 900)
+
+  onboardingWindow = new BrowserWindow({
+    width: winW,
+    height: winH,
+    x: Math.round((screenW - winW) / 2),
+    y: Math.round((screenH - winH) / 2),
+    titleBarStyle: 'hiddenInset',
+    trafficLightPosition: { x: 14, y: 14 },
+    backgroundColor: '#050510',
+    show: false,
+    resizable: false,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
+    },
+  })
+
+  if (VITE_DEV_SERVER_URL) {
+    onboardingWindow.loadURL(`${VITE_DEV_SERVER_URL}#/onboarding`)
+  } else {
+    onboardingWindow.loadFile(path.join(DIST, 'index.html'), {
+      hash: '/onboarding',
+    })
+  }
+
+  onboardingWindow.once('ready-to-show', () => {
+    onboardingWindow?.show()
+  })
+
+  onboardingWindow.on('closed', () => {
+    onboardingWindow = null
+  })
+}
+
 function computeBfi(): BfiResult {
   const stats = cliTokenTracker.getStats()
   const activeTools = Object.entries(stats.byTool)
@@ -153,7 +197,6 @@ function createTray() {
   let trayIcon: nativeImage
   try {
     trayIcon = nativeImage.createFromPath(iconPath)
-    trayIcon = trayIcon.resize({ width: 16, height: 16 })
   } catch {
     trayIcon = nativeImage.createEmpty()
   }
@@ -458,6 +501,78 @@ function setupIPC() {
       mainWindow.focus()
     }
   })
+
+  // ── Onboarding IPC ──────────────────────────────────────
+  ipcMain.handle('onboarding:get-scan-data', () => {
+    const stats = cliTokenTracker.getStats()
+    const activeTools = Object.entries(stats.byTool)
+      .filter(([, tokens]) => tokens > 0)
+
+    if (stats.totalTokens === 0 && activeTools.length === 0) {
+      return null
+    }
+
+    // Find latest session time from token tracker
+    let latestTime: string | null = null
+    if (stats.lastUpdated > 0) {
+      const d = new Date(stats.lastUpdated)
+      const hours = d.getHours()
+      const minutes = d.getMinutes()
+      const ampm = hours >= 12 ? 'PM' : 'AM'
+      const h = hours % 12 || 12
+      latestTime = `${h}:${String(minutes).padStart(2, '0')} ${ampm}`
+    }
+
+    return {
+      totalTokens: stats.totalTokens,
+      activeToolCount: activeTools.length,
+      latestTime,
+      bfiStage: currentBfi.stage,
+    }
+  })
+
+  ipcMain.on('onboarding:complete', (_event, settings: {
+    default_meditation_minutes: number
+    late_night_enabled: boolean
+    launch_at_login: boolean
+  }) => {
+    settingsStore.set('onboarding_completed', true)
+    settingsStore.set('default_meditation_minutes', settings.default_meditation_minutes)
+    if (!settings.late_night_enabled) {
+      settingsStore.set('late_night_alerts_enabled', false)
+    }
+    settingsStore.set('launch_at_login', settings.launch_at_login)
+    app.setLoginItemSettings({ openAtLogin: settings.launch_at_login })
+
+    // Close the large onboarding window and open the small dashboard
+    if (onboardingWindow && !onboardingWindow.isDestroyed()) {
+      onboardingWindow.close()
+      onboardingWindow = null
+    }
+    createMainWindow()
+  })
+
+  ipcMain.handle('onboarding:request-accessibility', () => {
+    const trusted = systemPreferences.isTrustedAccessibilityClient(true)
+    if (!trusted) {
+      shell.openExternal('x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility')
+    }
+    return trusted
+  })
+
+  ipcMain.on('onboarding:replay', () => {
+    // Called from settings "Replay onboarding" button
+    settingsStore.set('onboarding_completed', false)
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.close()
+      mainWindow = null
+    }
+    if (statusUpdateInterval) {
+      clearInterval(statusUpdateInterval)
+      statusUpdateInterval = null
+    }
+    createOnboardingWindow()
+  })
 }
 
 // ── App lifecycle ────────────────────────────────────────
@@ -516,10 +631,55 @@ app.whenReady().then(() => {
     },
   })
 
-  createMainWindow()
+  // ── Application Menu ──────────────────────────────────
+  const appMenu = Menu.buildFromTemplate([
+    {
+      label: app.name,
+      submenu: [
+        { role: 'about' },
+        { type: 'separator' },
+        { label: 'Take a Break', click: () => showTimeSelection() },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideOthers' },
+        { role: 'unhide' },
+        { type: 'separator' },
+        { role: 'quit' },
+      ],
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        { role: 'selectAll' },
+      ],
+    },
+    {
+      label: 'Window',
+      submenu: [
+        { role: 'minimize' },
+        { role: 'close' },
+      ],
+    },
+  ])
+  Menu.setApplicationMenu(appMenu)
+
+  const isFirstRun = !settingsStore.get('onboarding_completed', false)
+  if (isFirstRun) {
+    createOnboardingWindow()
+  } else {
+    createMainWindow()
+  }
   createTray()
   setupIPC()
-  checkAccessibilityPermission()
+  if (!isFirstRun) {
+    checkAccessibilityPermission()
+  }
   app.setLoginItemSettings({ openAtLogin: settingsStore.get('launch_at_login', false) })
   activityTracker.start()
 

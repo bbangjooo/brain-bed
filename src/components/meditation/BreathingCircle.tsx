@@ -99,7 +99,7 @@ export default function BreathingCircle() {
       // Label
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
-      ctx.font = 'italic 14px "Cormorant Garamond", Georgia, serif'
+      ctx.font = `italic ${Math.max(14, Math.round(maxR * 0.16))}px "Cormorant Garamond", Georgia, serif`
       ctx.fillStyle = `rgba(255, 255, 255, ${0.3 + scale * 0.15})`
       ctx.fillText(label, cx, cy)
     }

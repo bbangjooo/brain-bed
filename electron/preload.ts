@@ -54,4 +54,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.on('meditation:show-exit-dialog', handler)
     return () => ipcRenderer.removeListener('meditation:show-exit-dialog', handler)
   },
+
+  // Onboarding
+  onboardingRequestAccessibility: () => ipcRenderer.invoke('onboarding:request-accessibility'),
+  onboardingGetScanData: () => ipcRenderer.invoke('onboarding:get-scan-data'),
+  onboardingComplete: (settings: { default_meditation_minutes: number; late_night_enabled: boolean; launch_at_login: boolean }) =>
+    ipcRenderer.send('onboarding:complete', settings),
+  onboardingReplay: () => ipcRenderer.send('onboarding:replay'),
 })
