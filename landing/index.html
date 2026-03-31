@@ -230,6 +230,191 @@
       cursor: zoom-in;
     }
 
+    /* ── Demo ── */
+    .demo-section { max-width: 800px; }
+    .demo-frame {
+      position: relative;
+      background: #1c1832;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+      aspect-ratio: 16/10;
+    }
+    .demo-titlebar {
+      display: flex; align-items: center; gap: 6px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .demo-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .demo-dot--red { background: #ff5f57; }
+    .demo-dot--yellow { background: #febc2e; }
+    .demo-dot--green { background: #28c840; }
+    .demo-titlebar-text {
+      flex: 1; text-align: center; font-size: 0.75rem; color: var(--text3);
+      margin-right: 48px;
+    }
+    .demo-viewport {
+      position: relative;
+      width: 100%; height: calc(100% - 38px);
+      overflow: hidden;
+    }
+
+    /* Demo layers */
+    .demo-layer {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+    .demo-layer.active { opacity: 1; }
+
+    /* Phase 1: Dashboard */
+    .demo-dashboard {
+      flex-direction: column; gap: 1rem;
+      padding: 1.5rem;
+    }
+    .demo-gauge-wrap {
+      position: relative; width: 140px; height: 140px;
+    }
+    .demo-gauge-bg, .demo-gauge-fg {
+      position: absolute; inset: 0;
+      border-radius: 50%;
+    }
+    .demo-gauge-bg {
+      border: 6px solid rgba(255,255,255,0.06);
+    }
+    .demo-gauge-fg {
+      border: 6px solid transparent;
+      border-top-color: #22c55e;
+      border-right-color: #22c55e;
+      transform: rotate(-90deg);
+      transition: transform 0.8s ease, border-color 0.5s ease;
+    }
+    .demo-gauge-value {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .demo-gauge-number {
+      font-size: 2rem; font-weight: 700;
+      font-family: var(--sans);
+      line-height: 1;
+    }
+    .demo-gauge-label {
+      font-size: 0.7rem; color: var(--text3);
+      margin-top: 2px; text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .demo-sessions {
+      display: flex; gap: 0.75rem; align-items: center;
+      font-size: 0.8rem; color: var(--text2);
+    }
+    .demo-session-tag {
+      padding: 0.25rem 0.6rem; border-radius: 6px;
+      background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.25);
+      font-size: 0.7rem; color: rgba(255,255,255,0.7);
+    }
+    .demo-active-label {
+      font-size: 0.75rem; color: var(--text3);
+    }
+
+    /* Phase 2: Notification */
+    .demo-notification {
+      position: absolute; top: 12px; right: 12px; left: auto; bottom: auto;
+      width: 280px;
+      padding: 1rem;
+      border-radius: 12px;
+      background: rgba(30,25,55,0.95);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      transform: translateY(-120%);
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+      display: flex; flex-direction: column; gap: 0.6rem;
+      pointer-events: none; opacity: 1;
+      z-index: 5;
+    }
+    .demo-notification.show {
+      transform: translateY(0);
+    }
+    .demo-notif-title {
+      font-size: 0.85rem; font-weight: 600;
+    }
+    .demo-notif-body {
+      font-size: 0.75rem; color: var(--text2); line-height: 1.5;
+    }
+    .demo-notif-buttons {
+      display: flex; gap: 0.5rem; margin-top: 0.25rem;
+    }
+    .demo-notif-btn {
+      padding: 0.35rem 0.8rem; border-radius: 8px;
+      font-size: 0.7rem; font-weight: 600; border: none; cursor: default;
+    }
+    .demo-notif-btn--primary {
+      background: linear-gradient(135deg, var(--indigo), var(--purple));
+      color: #fff;
+    }
+    .demo-notif-btn--secondary {
+      background: rgba(255,255,255,0.08);
+      color: var(--text2);
+    }
+    .demo-notif-btn--primary.highlight {
+      box-shadow: 0 0 16px rgba(139,92,246,0.5);
+      transform: scale(1.05);
+    }
+
+    /* Phase 3: Meditation */
+    .demo-meditation {
+      flex-direction: column; gap: 1.2rem;
+      background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.15));
+    }
+    .demo-breath-circle {
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(139,92,246,0.4), rgba(99,102,241,0.1));
+      box-shadow: 0 0 40px rgba(139,92,246,0.2), 0 0 80px rgba(139,92,246,0.1);
+      animation: demoPulse 6s ease-in-out infinite;
+    }
+    @keyframes demoPulse {
+      0%, 100% { transform: scale(0.85); opacity: 0.7; }
+      40% { transform: scale(1.15); opacity: 1; }
+      60% { transform: scale(1.15); opacity: 1; }
+    }
+    .demo-quote {
+      font-family: var(--serif);
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--text2);
+      max-width: 300px;
+      text-align: center;
+      line-height: 1.5;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+    .demo-quote.visible { opacity: 1; }
+    .demo-timer {
+      font-size: 0.75rem; color: var(--text3);
+      font-family: monospace;
+    }
+
+    /* Replay button */
+    .demo-replay-wrap {
+      display: flex; justify-content: center; margin-top: 1.5rem;
+    }
+    .demo-replay-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.5rem 1.2rem; border-radius: 8px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text2); font-size: 0.85rem; cursor: pointer;
+      font-family: var(--sans);
+      transition: all 0.2s;
+    }
+    .demo-replay-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
     /* ── Mobile ── */
     @media (max-width: 640px) {
       nav { padding: 1rem; }
@@ -237,6 +422,12 @@
       .hero { padding: 7rem 1.5rem 3rem; }
       section { padding: 4rem 1.5rem; }
       .bfi-visual { flex-direction: column; }
+      .demo-frame { aspect-ratio: 4/5; }
+      .demo-gauge-wrap { width: 100px; height: 100px; }
+      .demo-gauge-number { font-size: 1.4rem; }
+      .demo-notification { width: 220px; padding: 0.75rem; }
+      .demo-breath-circle { width: 60px; height: 60px; }
+      .demo-quote { font-size: 0.8rem; max-width: 220px; }
     }
   </style>
   <script defer src="/_vercel/insights/script.js"></script>
@@ -250,6 +441,7 @@
       Brain Bed
     </a>
     <div class="nav-links">
+      <a href="#demo">Demo</a>
       <a href="#features">Features</a>
       <a href="#bfi">BFI</a>
       <a href="#" onclick="downloadLatest(event)" class="btn-download">
@@ -277,15 +469,67 @@
     <div style="margin-top: 2rem;">
       <a href="https://www.producthunt.com/products/brain-bed?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-brain-bed" target="_blank" rel="noopener noreferrer"><img alt="Brain Bed - Your AI don't have a break button. Brain Bed is that button | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1108769&amp;theme=dark&amp;t=1774607547148" /></a>
     </div>
-    <div style="margin-top: 4rem; width: 100%; max-width: 1000px; border-radius: 20px; overflow: hidden; box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06);">
-      <img src="hero-meditation.png" alt="Brain Bed AI brain fry prevention — forced meditation mode with breathing circle and classical music" style="width: 100%; display: block; cursor: zoom-in;" onclick="openLightbox(this)" />
+  </div>
+
+  <!-- Demo -->
+  <section id="demo" class="demo-section">
+    <p class="section-label">Demo</p>
+    <h2>See it in action</h2>
+    <p>Watch how Brain Bed detects cognitive overload and guides you into a meditation break.</p>
+
+    <div class="demo-frame" id="demo-frame">
+      <div class="demo-titlebar">
+        <div class="demo-dot demo-dot--red"></div>
+        <div class="demo-dot demo-dot--yellow"></div>
+        <div class="demo-dot demo-dot--green"></div>
+        <span class="demo-titlebar-text">Brain Bed</span>
+      </div>
+      <div class="demo-viewport">
+        <!-- Phase 1: Dashboard -->
+        <div class="demo-layer demo-dashboard active" id="demo-phase1">
+          <div class="demo-gauge-wrap">
+            <div class="demo-gauge-bg"></div>
+            <div class="demo-gauge-fg" id="demo-gauge-fg"></div>
+            <div class="demo-gauge-value">
+              <span class="demo-gauge-number" id="demo-bfi-num">25</span>
+              <span class="demo-gauge-label" id="demo-bfi-label">Calm</span>
+            </div>
+          </div>
+          <div class="demo-sessions">
+            <span class="demo-active-label">Active Sessions: 2</span>
+          </div>
+          <div class="demo-sessions">
+            <span class="demo-session-tag">Claude Code</span>
+            <span class="demo-session-tag">Gemini CLI</span>
+          </div>
+        </div>
+
+        <!-- Phase 2: Notification (overlays on dashboard) -->
+        <div class="demo-notification" id="demo-notification">
+          <div class="demo-notif-title">Brain Fry Detected</div>
+          <div class="demo-notif-body">BFI 87 &mdash; Your cognitive load is dangerously high. Time to rest.</div>
+          <div class="demo-notif-buttons">
+            <div class="demo-notif-btn demo-notif-btn--primary" id="demo-meditate-btn">Meditate Now</div>
+            <div class="demo-notif-btn demo-notif-btn--secondary">Snooze</div>
+          </div>
+        </div>
+
+        <!-- Phase 3: Meditation -->
+        <div class="demo-layer demo-meditation" id="demo-phase3">
+          <div class="demo-breath-circle"></div>
+          <div class="demo-quote" id="demo-quote">"The mind is everything. What you think you become." &mdash; Buddha</div>
+          <div class="demo-timer" id="demo-timer">9:42 remaining</div>
+        </div>
+      </div>
     </div>
 
-    <div class="hero-screenshots" style="margin-top: 2rem;">
-      <img src="screenshot-dashboard.png" alt="Brain Bed dashboard — Brain Fry Index gauge monitoring Claude Code cognitive load" onclick="openLightbox(this)" />
-      <img src="screenshot-meditation.png" alt="Brain Bed meditation screen — breathing exercise with inspirational quotes for AI developer burnout recovery" onclick="openLightbox(this)" />
+    <div class="demo-replay-wrap">
+      <button class="demo-replay-btn" id="demo-replay-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        Replay
+      </button>
     </div>
-  </div>
+  </section>
 
   <!-- Features -->
   <section id="features">
@@ -459,6 +703,144 @@ function downloadLatest(e) {
   a.click();
   document.body.removeChild(a);
 }
+
+// ── Demo Animation ──
+(function() {
+  const demoFrame = document.getElementById('demo-frame');
+  const phase1 = document.getElementById('demo-phase1');
+  const phase3 = document.getElementById('demo-phase3');
+  const notification = document.getElementById('demo-notification');
+  const gaugeFg = document.getElementById('demo-gauge-fg');
+  const bfiNum = document.getElementById('demo-bfi-num');
+  const bfiLabel = document.getElementById('demo-bfi-label');
+  const meditateBtn = document.getElementById('demo-meditate-btn');
+  const quote = document.getElementById('demo-quote');
+  const replayBtn = document.getElementById('demo-replay-btn');
+
+  let animationTimer = null;
+  let isRunning = false;
+
+  function getBfiColor(v) {
+    if (v < 30) return '#22c55e';
+    if (v < 60) return '#eab308';
+    if (v < 85) return '#f97316';
+    return '#ef4444';
+  }
+
+  function getBfiStage(v) {
+    if (v < 30) return 'Calm';
+    if (v < 60) return 'Warming';
+    if (v < 85) return 'Heating';
+    return 'Brain Fry';
+  }
+
+  function setGauge(value) {
+    var degrees = (value / 100) * 360 - 90;
+    var color = getBfiColor(value);
+    gaugeFg.style.borderTopColor = color;
+    gaugeFg.style.borderRightColor = value > 25 ? color : 'transparent';
+    gaugeFg.style.borderBottomColor = value > 50 ? color : 'transparent';
+    gaugeFg.style.borderLeftColor = value > 75 ? color : 'transparent';
+    gaugeFg.style.transform = 'rotate(' + degrees + 'deg)';
+    bfiNum.textContent = value;
+    bfiNum.style.color = color;
+    bfiLabel.textContent = getBfiStage(value);
+  }
+
+  function resetDemo() {
+    phase1.classList.add('active');
+    phase3.classList.remove('active');
+    notification.classList.remove('show');
+    meditateBtn.classList.remove('highlight');
+    quote.classList.remove('visible');
+    setGauge(25);
+  }
+
+  function animateBfi(from, to, duration, callback) {
+    var start = performance.now();
+    function tick(now) {
+      var elapsed = now - start;
+      var progress = Math.min(elapsed / duration, 1);
+      var eased = progress * progress * (3 - 2 * progress); // smoothstep
+      var current = Math.round(from + (to - from) * eased);
+      setGauge(current);
+      if (progress < 1) {
+        animationTimer = requestAnimationFrame(tick);
+      } else if (callback) {
+        callback();
+      }
+    }
+    animationTimer = requestAnimationFrame(tick);
+  }
+
+  function delay(ms) {
+    return new Promise(function(resolve) {
+      animationTimer = setTimeout(resolve, ms);
+    });
+  }
+
+  async function runDemo() {
+    if (isRunning) return;
+    isRunning = true;
+    resetDemo();
+
+    // Phase 1: Dashboard gauge animation (3s)
+    await new Promise(function(resolve) {
+      animateBfi(25, 87, 3000, resolve);
+    });
+
+    // Phase 2: Notification slide in (2s)
+    notification.classList.add('show');
+    await delay(1000);
+    meditateBtn.classList.add('highlight');
+    await delay(1000);
+
+    // Phase 3: Meditation (4s)
+    notification.classList.remove('show');
+    phase1.classList.remove('active');
+    phase3.classList.add('active');
+    await delay(600);
+    quote.classList.add('visible');
+    await delay(3400);
+
+    // Loop back
+    phase3.classList.remove('active');
+    quote.classList.remove('visible');
+    isRunning = false;
+    runDemo();
+  }
+
+  function stopDemo() {
+    isRunning = false;
+    if (animationTimer) {
+      cancelAnimationFrame(animationTimer);
+      clearTimeout(animationTimer);
+      animationTimer = null;
+    }
+  }
+
+  // Auto-play on scroll into view
+  var hasStarted = false;
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting && !isRunning) {
+        hasStarted = true;
+        runDemo();
+      } else if (!entry.isIntersecting && isRunning) {
+        stopDemo();
+        resetDemo();
+      }
+    });
+  }, { threshold: 0.3 });
+  observer.observe(demoFrame);
+
+  // Replay button
+  replayBtn.addEventListener('click', function() {
+    stopDemo();
+    resetDemo();
+    setTimeout(function() { runDemo(); }, 100);
+  });
+})();
 </script>
 </body>
 </html>
