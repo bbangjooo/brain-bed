@@ -404,6 +404,7 @@ function sendNotification() {
   const notification = new Notification({
     title: `Brain Bed — ${stageLabel(bfi.stage)} (${bfi.score})`,
     body,
+    sound: 'Glass',
     actions: [
       { type: 'button', text: 'Take a Break' },
     ],
