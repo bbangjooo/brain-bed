@@ -87,7 +87,7 @@ export default function PhaseSetup({ onComplete }: Props) {
             color: 'rgba(255,255,255,0.45)',
           }}
         >
-          It lets Brain Bed gently block distractions during meditation.
+          It lets Brain Bed lock your keyboard during meditation so you can truly rest.
         </p>
         <button
           onClick={handleAccessibility}

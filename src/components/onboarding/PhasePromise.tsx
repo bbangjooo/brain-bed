@@ -5,6 +5,7 @@ const PROMISES = [
   'This is your Brain Fry Index.',
   'When things heat up, I\'ll let you know.',
   'When you need peace, I\'ll open a door.',
+  'During meditation, your keyboard locks — no work, just rest.',
 ]
 
 const STAGE_CONFIG: Record<BfiStage, { color: string; label: string }> = {
