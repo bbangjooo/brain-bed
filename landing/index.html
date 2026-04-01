@@ -207,6 +207,92 @@
       font-size: 0.95rem; color: var(--text2);
     }
 
+    /* ── Quiz ── */
+    .quiz-section { max-width: 640px; }
+    .quiz-card {
+      padding: 2.5rem; border-radius: 20px;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+    }
+    .quiz-progress {
+      display: flex; gap: 6px; margin-bottom: 2rem;
+    }
+    .quiz-progress-dot {
+      flex: 1; height: 4px; border-radius: 2px;
+      background: rgba(255,255,255,0.08);
+      transition: background 0.3s;
+    }
+    .quiz-progress-dot.done { background: var(--purple); }
+    .quiz-progress-dot.current { background: var(--indigo); }
+    .quiz-question-num {
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--purple); margin-bottom: 0.75rem;
+    }
+    .quiz-question {
+      font-family: var(--serif); font-size: 1.5rem; font-weight: 600;
+      line-height: 1.35; margin-bottom: 1.5rem;
+    }
+    .quiz-options { display: flex; flex-direction: column; gap: 0.6rem; }
+    .quiz-option {
+      padding: 0.9rem 1.2rem; border-radius: 12px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text2); font-size: 0.95rem; cursor: pointer;
+      transition: all 0.2s; text-align: left;
+      font-family: var(--sans);
+    }
+    .quiz-option:hover {
+      background: rgba(139,92,246,0.1); border-color: rgba(139,92,246,0.3); color: var(--text);
+    }
+    .quiz-option.selected {
+      background: rgba(139,92,246,0.15); border-color: rgba(139,92,246,0.5); color: #fff;
+    }
+
+    /* Quiz Result */
+    .quiz-result { text-align: center; }
+    .quiz-result-gauge {
+      position: relative; width: 160px; height: 160px; margin: 0 auto 1.5rem;
+    }
+    .quiz-result-gauge svg { width: 160px; height: 160px; transform: rotate(-90deg); }
+    .quiz-result-gauge circle {
+      fill: none; stroke-width: 8; stroke-linecap: round;
+    }
+    .quiz-gauge-bg { stroke: rgba(255,255,255,0.06); }
+    .quiz-gauge-fg { transition: stroke-dashoffset 1.2s ease, stroke 0.5s ease; }
+    .quiz-result-score {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .quiz-result-number {
+      font-size: 2.8rem; font-weight: 700; line-height: 1;
+    }
+    .quiz-result-label {
+      font-size: 0.75rem; color: var(--text3); text-transform: uppercase;
+      letter-spacing: 0.08em; margin-top: 4px;
+    }
+    .quiz-result-stage {
+      font-family: var(--serif); font-size: 1.8rem; font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .quiz-result-desc {
+      color: var(--text2); font-size: 1rem; line-height: 1.7;
+      max-width: 460px; margin: 0 auto 2rem;
+    }
+    .quiz-result-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .quiz-btn-restart {
+      padding: 0.6rem 1.4rem; border-radius: 10px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text2); font-size: 0.9rem; cursor: pointer;
+      font-family: var(--sans); transition: all 0.2s;
+    }
+    .quiz-btn-restart:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+    .quiz-btn-share {
+      padding: 0.6rem 1.4rem; border-radius: 10px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text2); font-size: 0.9rem; cursor: pointer;
+      font-family: var(--sans); transition: all 0.2s;
+    }
+    .quiz-btn-share:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
     /* ── AI Brain Fry ── */
     .brainfry-section { max-width: 800px; }
     .brainfry-section h2 { font-size: 2.4rem; }
@@ -574,6 +660,18 @@
     </div>
   </section>
 
+  <!-- Brain Fry Quiz -->
+  <section id="quiz" class="quiz-section">
+    <p class="section-label">Self-Assessment</p>
+    <h2>How fried is your brain?</h2>
+    <p>Answer 6 quick questions to find out your AI Brain Fry level.</p>
+
+    <div class="quiz-card" id="quiz-card">
+      <div class="quiz-progress" id="quiz-progress"></div>
+      <div id="quiz-body"></div>
+    </div>
+  </section>
+
   <!-- Features -->
   <section id="features">
     <p class="section-label">Features</p>
@@ -915,6 +1013,183 @@ function downloadLatest(e) {
     resetDemo();
     setTimeout(function() { runDemo(); }, 100);
   });
+})();
+
+// ── Brain Fry Quiz ──
+(function() {
+  var questions = [
+    {
+      q: "How many hours per day do you use AI coding tools?",
+      opts: [
+        { text: "Less than 1 hour", score: 5 },
+        { text: "1–3 hours", score: 20 },
+        { text: "3–6 hours", score: 45 },
+        { text: "6+ hours — I live in the terminal", score: 75 }
+      ]
+    },
+    {
+      q: "How many AI sessions do you run simultaneously?",
+      opts: [
+        { text: "Just one at a time", score: 5 },
+        { text: "2 sessions", score: 25 },
+        { text: "3–4 sessions", score: 55 },
+        { text: "I've lost count", score: 80 }
+      ]
+    },
+    {
+      q: "Do you review AI-generated code before accepting it?",
+      opts: [
+        { text: "Always, line by line", score: 5 },
+        { text: "Mostly, I skim through", score: 25 },
+        { text: "Sometimes I just hit accept", score: 55 },
+        { text: "Accept all, fix later (or never)", score: 80 }
+      ]
+    },
+    {
+      q: "How often do you code past midnight with AI tools?",
+      opts: [
+        { text: "Rarely or never", score: 5 },
+        { text: "Once or twice a week", score: 25 },
+        { text: "Most nights", score: 55 },
+        { text: "What's sleep?", score: 80 }
+      ]
+    },
+    {
+      q: "When you take a break, what do you do?",
+      opts: [
+        { text: "Go for a walk or stretch", score: 5 },
+        { text: "Browse social media", score: 30 },
+        { text: "Switch to a different AI project", score: 60 },
+        { text: "Breaks? I don't take breaks", score: 85 }
+      ]
+    },
+    {
+      q: "Have you ever forgotten what you were building mid-session?",
+      opts: [
+        { text: "No, never", score: 5 },
+        { text: "Once or twice", score: 25 },
+        { text: "It happens regularly", score: 55 },
+        { text: "I'm not sure what I'm building right now", score: 85 }
+      ]
+    }
+  ];
+
+  var scores = [];
+  var current = 0;
+  var body = document.getElementById('quiz-body');
+  var progressEl = document.getElementById('quiz-progress');
+
+  function renderProgress() {
+    var dots = '';
+    for (var i = 0; i < questions.length; i++) {
+      var cls = 'quiz-progress-dot';
+      if (i < current) cls += ' done';
+      else if (i === current) cls += ' current';
+      dots += '<div class="' + cls + '"></div>';
+    }
+    progressEl.innerHTML = dots;
+  }
+
+  function renderQuestion() {
+    var q = questions[current];
+    renderProgress();
+    var html = '<div class="quiz-question-num">Question ' + (current + 1) + ' of ' + questions.length + '</div>';
+    html += '<div class="quiz-question">' + q.q + '</div>';
+    html += '<div class="quiz-options">';
+    for (var i = 0; i < q.opts.length; i++) {
+      html += '<button class="quiz-option" data-score="' + q.opts[i].score + '">' + q.opts[i].text + '</button>';
+    }
+    html += '</div>';
+    body.innerHTML = html;
+
+    var btns = body.querySelectorAll('.quiz-option');
+    btns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        btn.classList.add('selected');
+        scores.push(parseInt(btn.getAttribute('data-score')));
+        setTimeout(function() {
+          current++;
+          if (current < questions.length) renderQuestion();
+          else renderResult();
+        }, 350);
+      });
+    });
+  }
+
+  function renderResult() {
+    var total = 0;
+    for (var i = 0; i < scores.length; i++) total += scores[i];
+    var bfi = Math.round(total / scores.length);
+    if (bfi > 100) bfi = 100;
+
+    var stage, color, desc;
+    if (bfi < 30) {
+      stage = 'Calm'; color = '#22c55e';
+      desc = "Your AI usage is well-balanced. You're taking breaks, reviewing code carefully, and keeping a healthy rhythm. Keep it up!";
+    } else if (bfi < 60) {
+      stage = 'Warming'; color = '#eab308';
+      desc = "You're starting to push it. The pace is picking up and your brain is working harder than you think. A few more sessions and things could heat up fast.";
+    } else if (bfi < 85) {
+      stage = 'Heating'; color = '#f97316';
+      desc = "Your cognitive load is high. You're juggling too many AI sessions, skipping reviews, and burning through prompts. Your brain needs a break — seriously.";
+    } else {
+      stage = 'Brain Fry'; color = '#ef4444';
+      desc = "You're deep in AI brain fry territory. Rapid-fire prompting, zero breaks, late-night sessions — your brain is running on fumes. Time to step away.";
+    }
+
+    var circumference = 2 * Math.PI * 68;
+    var offset = circumference - (bfi / 100) * circumference;
+
+    renderProgress();
+    // fill all progress dots
+    var dots = progressEl.querySelectorAll('.quiz-progress-dot');
+    dots.forEach(function(d) { d.className = 'quiz-progress-dot done'; });
+
+    body.innerHTML = '<div class="quiz-result">' +
+      '<div class="quiz-result-gauge">' +
+        '<svg viewBox="0 0 160 160">' +
+          '<circle class="quiz-gauge-bg" cx="80" cy="80" r="68" />' +
+          '<circle class="quiz-gauge-fg" cx="80" cy="80" r="68" stroke="' + color + '" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + circumference + '" />' +
+        '</svg>' +
+        '<div class="quiz-result-score">' +
+          '<div class="quiz-result-number" style="color:' + color + '">' + bfi + '</div>' +
+          '<div class="quiz-result-label">Brain Fry Index</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="quiz-result-stage" style="color:' + color + '">' + stage + '</div>' +
+      '<div class="quiz-result-desc">' + desc + '</div>' +
+      '<div class="quiz-result-actions">' +
+        '<a href="#" onclick="downloadLatest(event)" class="btn-download">Download Brain Bed</a>' +
+        '<button class="quiz-btn-share" id="quiz-share">Share Result</button>' +
+        '<button class="quiz-btn-restart" id="quiz-restart">Retake Quiz</button>' +
+      '</div>' +
+    '</div>';
+
+    // Animate gauge
+    setTimeout(function() {
+      body.querySelector('.quiz-gauge-fg').style.strokeDashoffset = offset;
+    }, 100);
+
+    document.getElementById('quiz-restart').addEventListener('click', function() {
+      scores = []; current = 0; renderQuestion();
+    });
+
+    document.getElementById('quiz-share').addEventListener('click', function() {
+      var shareText = "My AI Brain Fry Index is " + bfi + "/100 (" + stage + "). How fried is YOUR brain? Take the quiz:";
+      var shareUrl = "https://brainbed.backproach.dev#quiz";
+      if (navigator.share) {
+        navigator.share({ title: "AI Brain Fry Quiz", text: shareText, url: shareUrl });
+      } else {
+        navigator.clipboard.writeText(shareText + " " + shareUrl).then(function() {
+          var btn = document.getElementById('quiz-share');
+          btn.textContent = 'Copied!';
+          setTimeout(function() { btn.textContent = 'Share Result'; }, 2000);
+        });
+      }
+    });
+  }
+
+  renderQuestion();
 })();
 </script>
 </body>
