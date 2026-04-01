@@ -211,20 +211,30 @@ export class CliTokenTracker {
   private parseCodexContent(content: string): { tokens: number; messages: number } {
     let tokens = 0
     let messages = 0
+    let lastTotalTokens = 0
     const lines = content.split('\n').filter(Boolean)
 
     for (const line of lines) {
       try {
         const data = JSON.parse(line)
-        if (data.usage) {
-          tokens += (data.usage.input_tokens || 0) + (data.usage.output_tokens || 0)
-          tokens += (data.usage.prompt_tokens || 0) + (data.usage.completion_tokens || 0)
+        const payload = data.payload
+
+        // Token counting: event_msg with info.total_token_usage
+        if (data.type === 'event_msg' && payload?.info?.total_token_usage) {
+          const total = payload.info.total_token_usage.total_tokens || 0
+          if (total > lastTotalTokens) {
+            lastTotalTokens = total
+          }
         }
-        if (data.token_count) tokens += data.token_count
-        if (data.role === 'user' || data.type === 'user') messages++
+
+        // Message counting: response_item with role=user
+        if (data.type === 'response_item' && payload?.role === 'user') {
+          messages++
+        }
       } catch { /* skip */ }
     }
 
+    tokens = lastTotalTokens
     return { tokens, messages }
   }
 
@@ -401,19 +411,25 @@ export class CliTokenTracker {
     }
     totalActiveSessions += geminiFiles.length
 
-    // Codex CLI
+    // Codex CLI — full-file read with diff (total_token_usage is cumulative)
     const codexFiles = this.findActiveCodexFiles()
     for (const file of codexFiles) {
-      const content = this.readNewContent(file)
+      const content = this.readFullFileIfChanged(file)
       if (content) {
         const result = this.parseCodexContent(content)
-        if (result.tokens > 0) {
-          this.stats.byTool['Codex CLI'] = (this.stats.byTool['Codex CLI'] || 0) + result.tokens
-          this.stats.totalTokens += result.tokens
+        const prevKey = `codex:${file}`
+        const prev = this.geminiPrevTotals.get(prevKey) ?? { tokens: 0, messages: 0 }
+        const deltaTokens = Math.max(0, result.tokens - prev.tokens)
+        const deltaMessages = Math.max(0, result.messages - prev.messages)
+        this.geminiPrevTotals.set(prevKey, result)
+
+        if (deltaTokens > 0) {
+          this.stats.byTool['Codex CLI'] = (this.stats.byTool['Codex CLI'] || 0) + deltaTokens
+          this.stats.totalTokens += deltaTokens
           this.stats.lastUpdated = Date.now()
         }
-        if (result.messages > 0) {
-          this.stats.messageCount += result.messages
+        if (deltaMessages > 0) {
+          this.stats.messageCount += deltaMessages
         }
       }
     }
@@ -581,10 +597,33 @@ export class CliTokenTracker {
       }
     } catch { /* skip */ }
 
+    // Codex CLI — read all today's session files
+    let totalTokensCodex = 0
+    try {
+      const sessionsDir = path.join(this.codexDir, 'sessions')
+      if (fs.existsSync(sessionsDir)) {
+        const files = this.findFilesRecursive(sessionsDir, '.jsonl', 4)
+        for (const fp of files) {
+          try {
+            const stat = fs.statSync(fp)
+            if (stat.mtimeMs < todayStartMs) continue
+
+            const content = fs.readFileSync(fp, 'utf-8')
+            const result = this.parseCodexContent(content)
+            totalTokensCodex += result.tokens
+            totalMessages += result.messages
+
+            this.fileTrackers.set(fp, { path: fp, lastSize: stat.size })
+          } catch { /* skip */ }
+        }
+      }
+    } catch { /* skip */ }
+
     // Seed stats
     if (totalTokensClaude > 0) this.stats.byTool['Claude Code'] = totalTokensClaude
     if (totalTokensGemini > 0) this.stats.byTool['Gemini CLI'] = totalTokensGemini
-    this.stats.totalTokens = totalTokensClaude + totalTokensGemini
+    if (totalTokensCodex > 0) this.stats.byTool['Codex CLI'] = totalTokensCodex
+    this.stats.totalTokens = totalTokensClaude + totalTokensGemini + totalTokensCodex
     this.stats.messageCount = totalMessages
 
     // Seed velocity from recent 10 min
@@ -601,7 +640,7 @@ export class CliTokenTracker {
     // Sessions
     this.stats.activeSessionCount = this.countClaudeSessions() + this.findActiveGeminiFiles().length + this.countCodexSessions()
 
-    console.log(`[BrainBed] Bootstrap: ${totalMessages} msgs today (${recentMessages} in 10min → ${this.stats.messageVelocity.toFixed(1)} msg/min), tokens: Claude=${totalTokensClaude} Gemini=${totalTokensGemini}, sessions: ${this.stats.activeSessionCount}`)
+    console.log(`[BrainBed] Bootstrap: ${totalMessages} msgs today (${recentMessages} in 10min → ${this.stats.messageVelocity.toFixed(1)} msg/min), tokens: Claude=${totalTokensClaude} Gemini=${totalTokensGemini} Codex=${totalTokensCodex}, sessions: ${this.stats.activeSessionCount}`)
   }
 
   start() {
