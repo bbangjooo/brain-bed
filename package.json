@@ -78,8 +78,7 @@
     "publish": {
       "provider": "github",
       "owner": "bbangjooo",
-      "repo": "brain-bed",
-      "private": true
+      "repo": "brain-bed"
     },
     "files": [
       "dist/**/*",

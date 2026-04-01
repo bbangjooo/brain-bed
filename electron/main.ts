@@ -688,18 +688,34 @@ app.whenReady().then(() => {
   powerMonitor.on('lock-screen', () => activityTracker.pause())
   powerMonitor.on('unlock-screen', () => activityTracker.resume())
 
-  // Auto-updater (private repo requires GH_TOKEN)
+  // Auto-updater
   if (!isDev) {
     autoUpdater.autoDownload = true
     autoUpdater.autoInstallOnAppQuit = true
 
+    autoUpdater.on('checking-for-update', () => {
+      console.log('[updater] Checking for update…')
+    })
+    autoUpdater.on('update-available', (info) => {
+      console.log(`[updater] Update available: v${info.version}`)
+    })
+    autoUpdater.on('update-not-available', (info) => {
+      console.log(`[updater] Up to date: v${info.version}`)
+    })
+    autoUpdater.on('download-progress', (p) => {
+      console.log(`[updater] Downloading ${Math.round(p.percent)}%`)
+    })
     autoUpdater.on('update-downloaded', (info) => {
+      console.log(`[updater] Downloaded v${info.version}, ready to install`)
       mainWindow?.webContents.send('update:ready', { version: info.version })
     })
+    autoUpdater.on('error', (err) => {
+      console.error('[updater] Error:', err.message)
+    })
 
-    autoUpdater.checkForUpdates().catch(() => {})
+    autoUpdater.checkForUpdates().catch((err) => console.error('[updater] Check failed:', err.message))
     setInterval(() => {
-      autoUpdater.checkForUpdates().catch(() => {})
+      autoUpdater.checkForUpdates().catch((err) => console.error('[updater] Check failed:', err.message))
     }, 30 * 60_000) // 30분마다 확인
   }
 })
