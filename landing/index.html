@@ -207,6 +207,23 @@
       font-size: 0.95rem; color: var(--text2);
     }
 
+    /* ── AI Brain Fry ── */
+    .brainfry-section { max-width: 800px; }
+    .brainfry-section h2 { font-size: 2.4rem; }
+    .brainfry-content { color: var(--text2); font-size: 1.05rem; line-height: 1.85; }
+    .brainfry-content p { margin-bottom: 1.5rem; }
+    .brainfry-content strong { color: var(--text); font-weight: 600; }
+    .brainfry-symptoms {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem; margin: 2rem 0;
+    }
+    .brainfry-symptom {
+      padding: 1.2rem 1.4rem; border-radius: 12px;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.95rem; color: var(--text2); line-height: 1.6;
+    }
+    .brainfry-symptom span { display: block; font-size: 1.3rem; margin-bottom: 0.4rem; }
+
     /* ── CTA ── */
     .cta {
       text-align: center; padding: 6rem 2rem;
@@ -662,6 +679,38 @@
       <div class="tool-badge">Claude Code</div>
       <div class="tool-badge">Gemini CLI</div>
       <div class="tool-badge">Codex CLI</div>
+    </div>
+  </section>
+
+  <!-- What is AI Brain Fry -->
+  <section id="ai-brain-fry" class="brainfry-section">
+    <p class="section-label">AI Brain Fry</p>
+    <h2>What is AI Brain Fry?</h2>
+    <div class="brainfry-content">
+      <p><strong>AI Brain Fry</strong> is the state of cognitive overload that developers experience after prolonged, intense interaction with AI coding tools like Claude Code, Gemini CLI, and Codex CLI. Unlike traditional coding fatigue, AI brain fry hits faster and harder &mdash; because AI tools accelerate your output beyond what your brain can sustainably process.</p>
+
+      <p>When you're rapid-firing prompts, reviewing AI-generated code across multiple sessions, and context-switching between projects at machine speed, your cognitive load skyrockets. Your brain is doing more reviewing, deciding, and integrating than ever before &mdash; but it still needs the same rest it always did.</p>
+
+      <div class="brainfry-symptoms">
+        <div class="brainfry-symptom">
+          <span>&#x26A1;</span>
+          <strong>Prompt fatigue</strong><br/>You keep rephrasing the same question, unable to articulate what you actually need.
+        </div>
+        <div class="brainfry-symptom">
+          <span>&#x1F9CA;</span>
+          <strong>Decision paralysis</strong><br/>You accept AI suggestions without reviewing them, or reject everything on instinct.
+        </div>
+        <div class="brainfry-symptom">
+          <span>&#x1F300;</span>
+          <strong>Context blur</strong><br/>You forget which project you're working on or what you were trying to accomplish 10 minutes ago.
+        </div>
+        <div class="brainfry-symptom">
+          <span>&#x1F525;</span>
+          <strong>Compulsive prompting</strong><br/>You keep starting new AI sessions even though you know you should stop.
+        </div>
+      </div>
+
+      <p>AI brain fry isn't a character flaw &mdash; it's a natural consequence of working at the human-AI boundary. The solution isn't to use AI less, but to <strong>take forced breaks before your brain hits its limit</strong>. That's exactly what Brain Bed does: it monitors your real-time cognitive load and intervenes with meditation when you need it most.</p>
     </div>
   </section>
 
