@@ -1,6 +1,6 @@
 {
   "name": "brain-bed",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Forced meditation breaks for AI-fried brains. Inner peace, right on your screen.",
   "main": "dist-electron/main.js",
   "scripts": {
@@ -19,7 +19,16 @@
     "type": "git",
     "url": "https://github.com/bbangjooo/brain-bed"
   },
-  "keywords": ["brain-bed", "meditation", "ai-tools", "electron", "macos", "brain-fry", "developer-tools", "wellness"],
+  "keywords": [
+    "brain-bed",
+    "meditation",
+    "ai-tools",
+    "electron",
+    "macos",
+    "brain-fry",
+    "developer-tools",
+    "wellness"
+  ],
   "dependencies": {
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
