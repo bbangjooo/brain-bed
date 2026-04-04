@@ -1,6 +1,6 @@
 {
   "name": "brain-bed",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "Forced meditation breaks for AI-fried brains. Inner peace, right on your screen.",
   "main": "dist-electron/main.js",
   "scripts": {
