@@ -10,6 +10,10 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/bbangjooo/brain-bed/releases"><img src="https://img.shields.io/github/downloads/bbangjooo/brain-bed/total?label=Downloads&color=blue" alt="Downloads" /></a>
+</p>
+
+<p align="center">
   <a href="https://brainbed.backproach.dev">Website</a> &middot;
   <a href="https://github.com/bbangjooo/brain-bed/releases/latest">Download</a>
 </p>
