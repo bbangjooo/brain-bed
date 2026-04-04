@@ -117,3 +117,38 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           working-directory: landing
           vercel-args: --prod
+
+  update-badge:
+    needs: check-and-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update download count badge
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GIST_TOKEN }}
+          script: |
+            const { data: releases } = await github.rest.repos.listReleases({
+              owner: 'bbangjooo',
+              repo: 'brain-bed',
+            });
+            let total = 0;
+            for (const release of releases) {
+              for (const asset of release.assets) {
+                if (asset.name.endsWith('.dmg') && !asset.name.includes('blockmap')) {
+                  total += asset.download_count;
+                }
+              }
+            }
+            await github.rest.gists.update({
+              gist_id: '8c9c6bff436e44c41eba1ccff5567c6a',
+              files: {
+                'downloads.json': {
+                  content: JSON.stringify({
+                    schemaVersion: 1,
+                    label: 'Downloads',
+                    message: `${total}`,
+                    color: 'blue',
+                  }),
+                },
+              },
+            });
