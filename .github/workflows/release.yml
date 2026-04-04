@@ -122,8 +122,10 @@ jobs:
   update-badge:
     needs: check-and-release
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Update download count badge
+        if: ${{ secrets.GIST_TOKEN != '' }}
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GIST_TOKEN }}
