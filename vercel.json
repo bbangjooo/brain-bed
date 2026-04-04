@@ -1,6 +1,9 @@
 {
   "outputDirectory": "landing",
   "buildCommand": "",
-  "installCommand": "",
-  "framework": null
+  "installCommand": "echo skip",
+  "framework": null,
+  "git": {
+    "deploymentEnabled": false
+  }
 }
