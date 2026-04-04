@@ -118,24 +118,3 @@ jobs:
           npx vercel pull --yes --token "$VERCEL_TOKEN"
           npx vercel build --prod --token "$VERCEL_TOKEN"
           npx vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN"
-
-  update-badge:
-    needs: check-and-release
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: main
-
-      - name: Update download count badge
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          TOTAL=$(gh api repos/bbangjooo/brain-bed/releases --jq '[.[].assets[] | select(.name | endswith(".dmg")) | select(.name | contains("blockmap") | not) | .download_count] | add // 0')
-          echo "{\"schemaVersion\":1,\"label\":\"Downloads\",\"message\":\"${TOTAL}\",\"color\":\"blue\"}" > landing/badge/downloads.json
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add landing/badge/downloads.json
-          git diff --cached --quiet || git commit -m "chore: update download badge [skip ci]" && git push
