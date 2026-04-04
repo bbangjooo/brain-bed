@@ -122,36 +122,20 @@ jobs:
   update-badge:
     needs: check-and-release
     runs-on: ubuntu-latest
-    continue-on-error: true
+    permissions:
+      contents: write
     steps:
-      - name: Update download count badge
-        if: ${{ secrets.GIST_TOKEN != '' }}
-        uses: actions/github-script@v7
+      - uses: actions/checkout@v4
         with:
-          github-token: ${{ secrets.GIST_TOKEN }}
-          script: |
-            const { data: releases } = await github.rest.repos.listReleases({
-              owner: 'bbangjooo',
-              repo: 'brain-bed',
-            });
-            let total = 0;
-            for (const release of releases) {
-              for (const asset of release.assets) {
-                if (asset.name.endsWith('.dmg') && !asset.name.includes('blockmap')) {
-                  total += asset.download_count;
-                }
-              }
-            }
-            await github.rest.gists.update({
-              gist_id: '8c9c6bff436e44c41eba1ccff5567c6a',
-              files: {
-                'downloads.json': {
-                  content: JSON.stringify({
-                    schemaVersion: 1,
-                    label: 'Downloads',
-                    message: `${total}`,
-                    color: 'blue',
-                  }),
-                },
-              },
-            });
+          ref: main
+
+      - name: Update download count badge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TOTAL=$(gh api repos/bbangjooo/brain-bed/releases --jq '[.[].assets[] | select(.name | endswith(".dmg")) | select(.name | contains("blockmap") | not) | .download_count] | add // 0')
+          echo "{\"schemaVersion\":1,\"label\":\"Downloads\",\"message\":\"${TOTAL}\",\"color\":\"blue\"}" > landing/badge/downloads.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add landing/badge/downloads.json
+          git diff --cached --quiet || git commit -m "chore: update download badge [skip ci]" && git push
