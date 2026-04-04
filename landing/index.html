@@ -15,6 +15,8 @@
   <meta name="twitter:description" content="Forced meditation breaks for AI-fried developers. Monitors Claude, Gemini, Codex. Free & open source." />
   <meta name="twitter:image" content="https://brainbed.backproach.dev/hero-meditation.png" />
   <meta name="google-site-verification" content="eGQtK7aXDFNXHdoVouMpZl4zw54Z1MzbV68TsfaV7IE" />
+  <link rel="icon" type="image/png" href="/app-icon.png" />
+  <link rel="apple-touch-icon" href="/app-icon.png" />
   <link rel="canonical" href="https://brainbed.backproach.dev" />
   <script type="application/ld+json">
   {
@@ -559,6 +561,14 @@
       .demo-quote { font-size: 0.8rem; max-width: 220px; }
     }
   </style>
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8Q4PWFM67S"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-8Q4PWFM67S');
+  </script>
   <script defer src="/_vercel/insights/script.js"></script>
   <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
@@ -869,6 +879,11 @@ document.addEventListener('keydown', (e) => {
 function downloadLatest(e) {
   e.preventDefault();
   const url = cachedDownloadUrl || 'https://github.com/bbangjooo/brain-bed/releases/latest';
+  gtag('event', 'file_download', {
+    file_name: 'brain-bed-arm64.dmg',
+    file_extension: '.dmg',
+    link_url: url
+  });
   const a = document.createElement('a');
   a.href = url;
   a.download = '';
