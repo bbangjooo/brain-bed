@@ -19,7 +19,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TOTAL=$(gh api repos/bbangjooo/brain-bed/releases --jq '[.[].assets[] | select(.name | endswith(".dmg")) | select(.name | contains("blockmap") | not) | .download_count] | add // 0')
+          TOTAL=$(gh api repos/bbangjooo/brain-bed/releases --jq '[.[] | select(.tag_name | ltrimstr("v") | split(".") | map(tonumber) | . as [$maj,$min,$pat] | $maj > 1 or ($maj == 1 and $min > 0) or ($maj == 1 and $min == 0 and $pat >= 0)) | .assets[] | select(.name | endswith(".dmg")) | select(.name | contains("blockmap") | not) | .download_count] | add // 0')
           echo "{\"schemaVersion\":1,\"label\":\"Downloads\",\"message\":\"${TOTAL}\",\"color\":\"blue\"}" > landing/badge/downloads.json
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
