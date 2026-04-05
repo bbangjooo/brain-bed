@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Brain Bed — AI Brain Fry Prevention for Developers | Free macOS App</title>
-  <meta name="description" content="Brain Bed monitors your Claude Code, Gemini CLI, and Codex CLI usage and forces meditation breaks when AI brain fry hits. Measure your Brain Fry Index in real time. Free, open source, macOS." />
-  <meta property="og:title" content="Brain Bed — Stop AI Brain Fry Before It Stops You" />
-  <meta property="og:description" content="Monitor your AI coding tool usage. Get forced meditation breaks when your brain is overheating. Free, open source, macOS." />
+  <title>Brain Bed — Forced Breaks for AI-Fried Developers | Free macOS App</title>
+  <meta name="description" content="Brain Bed monitors your Claude Code, Cursor, and Gemini CLI sessions. When your Brain Fry Index crosses the threshold, it locks your keyboard and forces a 5-minute reset. Free, open source, macOS." />
+  <meta property="og:title" content="Brain Bed — AI Coding Sessions Need a Kill Switch" />
+  <meta property="og:description" content="Monitors your AI tool usage. Locks your keyboard when cognitive overload hits. Free, open source, macOS." />
   <meta property="og:image" content="https://brainbed.backproach.dev/hero-meditation.png" />
   <meta property="og:url" content="https://brainbed.backproach.dev" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Brain Bed — AI Brain Fry Prevention for Developers" />
-  <meta name="twitter:description" content="Forced meditation breaks for AI-fried developers. Monitors Claude, Gemini, Codex. Free & open source." />
+  <meta name="twitter:title" content="Brain Bed — Forced Breaks for AI-Fried Developers" />
+  <meta name="twitter:description" content="Your Brain Fry Index is a number. When it's too high, your keyboard locks. 5 minutes later, you catch the bug. Free, open source." />
   <meta name="twitter:image" content="https://brainbed.backproach.dev/hero-meditation.png" />
   <meta name="google-site-verification" content="eGQtK7aXDFNXHdoVouMpZl4zw54Z1MzbV68TsfaV7IE" />
   <link rel="icon" type="image/png" href="/app-icon.png" />
@@ -90,6 +90,56 @@
     .nav-links { display: flex; gap: 2rem; align-items: center; }
     .nav-links a { color: var(--text2); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
     .nav-links a:hover { color: var(--text); }
+    /* ── Music Button (Hero) ── */
+    .hero-music-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1.2rem; border-radius: 24px;
+      background: rgba(129,140,248,0.08);
+      border: 1px solid rgba(129,140,248,0.2);
+      color: #818cf8; font-size: 0.88rem; font-weight: 500;
+      font-family: var(--sans);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 1.5rem;
+    }
+    .hero-music-btn:hover {
+      background: rgba(129,140,248,0.15);
+      border-color: rgba(129,140,248,0.35);
+    }
+    .hero-music-btn.playing {
+      background: rgba(129,140,248,0.12);
+      border-color: rgba(129,140,248,0.3);
+    }
+    .hero-music-btn.playing .nav-music-icon { display: none; }
+    .hero-music-btn.playing .nav-music-label { display: none; }
+    .nav-music-bars {
+      display: none;
+      align-items: flex-end;
+      gap: 2px;
+      height: 16px;
+    }
+    .hero-music-btn.playing .nav-music-bars { display: inline-flex; }
+    .nav-music-bars span {
+      width: 3px;
+      background: #818cf8;
+      border-radius: 1px;
+      animation: musicBar 0.8s ease-in-out infinite alternate;
+    }
+    .nav-music-bars span:nth-child(1) { height: 40%; animation-delay: 0s; }
+    .nav-music-bars span:nth-child(2) { height: 70%; animation-delay: 0.2s; }
+    .nav-music-bars span:nth-child(3) { height: 50%; animation-delay: 0.4s; }
+    @keyframes musicBar {
+      0% { height: 30%; }
+      100% { height: 100%; }
+    }
+    .nav-music-now {
+      display: none;
+      font-size: 0.82rem;
+      color: var(--text2);
+    }
+    .hero-music-btn.playing .nav-music-now { display: inline; }
+    .nav-music-now .now-title { color: var(--text); font-weight: 500; }
+
     .btn-download {
       display: inline-flex; align-items: center; gap: 0.5rem;
       padding: 0.6rem 1.4rem; border-radius: 10px;
@@ -546,13 +596,288 @@
     }
     .demo-replay-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
 
+    /* ── Hero Claude Terminal ── */
+    .hero-claude-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto 2.5rem;
+    }
+    .hero-claude-terminal {
+      background: #1a1a2e;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+    .hero-claude-titlebar {
+      display: flex; align-items: center; gap: 6px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .hero-claude-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .hero-claude-dot--red { background: #ff5f57; }
+    .hero-claude-dot--yellow { background: #febc2e; }
+    .hero-claude-dot--green { background: #28c840; }
+    .hero-claude-titlebar-text {
+      flex: 1; text-align: center; font-size: 0.72rem; color: var(--text3);
+    }
+    .hero-claude-clock {
+      font-size: 0.7rem; color: var(--text3);
+      font-family: 'SF Mono', monospace;
+      min-width: 58px; text-align: right;
+      transition: color 0.5s;
+    }
+    .hero-claude-body {
+      padding: 1rem 1.4rem;
+      height: 360px;
+      overflow: hidden;
+      position: relative;
+      text-align: left;
+    }
+    .hero-claude-body::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 40px;
+      background: linear-gradient(transparent, #1a1a2e);
+      pointer-events: none;
+    }
+    .hero-claude-scroll {
+      transition: transform 0.3s ease;
+    }
+    /* Context switch slide animation */
+    .hero-claude-body.switching-out {
+      animation: slideOut 0.3s ease forwards;
+    }
+    .hero-claude-body.switching-in {
+      animation: slideIn 0.3s ease forwards;
+    }
+    @keyframes slideOut {
+      0% { transform: translateX(0); opacity: 1; }
+      100% { transform: translateX(-60px); opacity: 0; }
+    }
+    @keyframes slideIn {
+      0% { transform: translateX(60px); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    /* Terminal tabs */
+    .hero-claude-tabs {
+      display: flex; gap: 0;
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0 8px;
+      overflow: hidden;
+    }
+    .hero-claude-tab {
+      padding: 6px 14px;
+      font-family: 'SF Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text3);
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+    .hero-claude-tab.active {
+      color: var(--text);
+      border-bottom-color: var(--purple);
+      background: rgba(255,255,255,0.04);
+    }
+    .hero-line {
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .hero-line.visible { opacity: 1; transform: translateY(0); }
+    .hero-line .prompt { color: #c084fc; }
+    .hero-line .ai-label { color: #22c55e; font-weight: 600; }
+    .hero-line .ai-output { color: var(--text2); }
+    .hero-line .dim { color: var(--text3); }
+    .hero-line .file { color: #facc15; }
+    .hero-line .cmd { color: #60a5fa; }
+    .hero-line .yes-no { color: var(--text3); }
+    .hero-line .yes-selected { color: #22c55e; font-weight: 600; background: rgba(34,197,94,0.1); padding: 0 4px; border-radius: 3px; }
+    .hero-line .cursor-blink { display: inline-block; width: 7px; height: 14px; background: #c084fc; margin-left: 2px; vertical-align: middle; animation: blink 1s step-end infinite; }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+    .hero-line .thinking { color: var(--text3); }
+    .hero-line .thinking-dots { display: inline-block; }
+    .hero-line .thinking-dots::after {
+      content: '';
+      animation: dots 1.2s steps(4, end) infinite;
+    }
+    @keyframes dots {
+      0% { content: ''; }
+      25% { content: '.'; }
+      50% { content: '..'; }
+      75% { content: '...'; }
+    }
+    .hero-line .ctx-switch { color: #818cf8; font-style: italic; font-size: 0.8em; }
+
+    /* BFI floating badge */
+    .hero-bfi-badge {
+      position: absolute;
+      top: 12px; right: 12px;
+      background: rgba(15,12,41,0.9);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 6px 12px;
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      color: var(--text2);
+      backdrop-filter: blur(8px);
+      z-index: 2;
+      transition: border-color 0.5s;
+    }
+    .hero-bfi-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #22c55e;
+      transition: background 0.5s;
+    }
+    .hero-bfi-value {
+      font-weight: 700;
+      font-family: 'SF Mono', monospace;
+      color: #22c55e;
+      transition: color 0.5s;
+    }
+
+    /* Brain Bed alert notification */
+    .hero-alert {
+      position: absolute;
+      top: 50px; right: 12px;
+      width: 300px;
+      background: rgba(20,16,45,0.95);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 12px;
+      padding: 1rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px rgba(239,68,68,0.1);
+      z-index: 10;
+      transform: translateY(-120%);
+      opacity: 0;
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease;
+      pointer-events: none;
+    }
+    .hero-alert.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .hero-alert-icon {
+      display: inline-flex;
+      margin-bottom: 0.5rem;
+    }
+    .hero-alert-content {
+      margin-bottom: 0.75rem;
+    }
+    .hero-alert-title {
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #ef4444;
+      margin-bottom: 0.3rem;
+    }
+    .hero-alert-body {
+      font-family: var(--sans);
+      font-size: 0.78rem;
+      color: var(--text2);
+      line-height: 1.5;
+    }
+    .hero-alert-actions {
+      display: flex; gap: 0.5rem;
+    }
+    .hero-alert-btn {
+      padding: 0.4rem 0.9rem;
+      border-radius: 8px;
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: default;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hero-alert-btn--primary {
+      background: linear-gradient(135deg, var(--indigo), var(--purple));
+      color: #fff;
+    }
+    .hero-alert-btn--primary.highlight {
+      box-shadow: 0 0 16px rgba(139,92,246,0.5);
+      transform: scale(1.05);
+    }
+    .hero-alert-btn--secondary {
+      background: rgba(255,255,255,0.08);
+      color: var(--text2);
+    }
+
+    .hero-h1 {
+      font-family: var(--serif);
+      font-size: 3rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+      line-height: 1.3;
+      padding-bottom: 0.1em;
+    }
+
+    .hero-context {
+      font-family: var(--sans);
+      font-size: 1rem;
+      color: var(--text3);
+      margin-bottom: 1.2rem;
+    }
+
+    .hero-persona {
+      font-family: var(--sans);
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--text2);
+      letter-spacing: -0.01em;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-replay-wrap {
+      margin-top: 0.75rem;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .hero-replay-wrap.visible { opacity: 1; }
+    .hero-replay-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.4rem 1rem; border-radius: 8px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text2); font-size: 0.8rem; cursor: pointer;
+      font-family: var(--sans);
+      transition: all 0.2s;
+    }
+    .hero-replay-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+    .hero-sub, .hero-buttons, #hero-badge-el {
+      opacity: 1;
+      text-align: left;
+    }
+    .hero-sub {
+      max-width: 820px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
     /* ── Mobile ── */
     @media (max-width: 640px) {
       nav { padding: 1rem; }
       .nav-links a:not(.btn-download) { display: none; }
+      .hero-music-btn .nav-music-label { font-size: 0.78rem; }
+      .hero-music-btn { padding: 0.5rem 1rem; }
       .hero { padding: 7rem 1.5rem 3rem; }
       section { padding: 4rem 1.5rem; }
       .bfi-visual { flex-direction: column; }
+      .hero-claude-body { height: 280px; }
+      .hero-claude-terminal { font-size: 0.72rem; }
+      .hero-alert { width: 240px; right: 8px; top: 44px; padding: 0.75rem; }
+      .hero-alert-body { font-size: 0.7rem; }
       .demo-frame { aspect-ratio: 4/5; }
       .demo-gauge-wrap { width: 100px; height: 100px; }
       .demo-gauge-number { font-size: 1.4rem; }
@@ -592,10 +917,68 @@
 
   <!-- Hero -->
   <div class="hero">
-    <span class="hero-badge">Free &middot; macOS &middot; Open Source</span>
-    <h1>Stop AI Brain Fry<br/>Before It Stops You</h1>
-    <p>AI brain fry is real. Brain Bed monitors your Claude Code, Gemini CLI, and Codex CLI usage in real-time and forces meditation breaks when your cognitive load gets dangerous.</p>
-    <div class="hero-buttons">
+    <h1 class="hero-h1">Resting is part of shipping.</h1>
+    <button class="hero-music-btn" id="nav-music-btn" title="Listen to what Brain Bed plays during breaks">
+      <svg class="nav-music-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      <span class="nav-music-label" id="nav-music-label">Listen — This is what Brain Bed plays during breaks</span>
+      <span class="nav-music-bars" id="nav-music-bars">
+        <span></span><span></span><span></span>
+      </span>
+      <span class="nav-music-now" id="nav-music-now">
+        <span class="now-title" id="nav-music-title"></span>
+      </span>
+    </button>
+
+    <p class="hero-context">You, by 3 PM:</p>
+
+    <!-- Claude Code terminal animation -->
+    <div class="hero-claude-wrap">
+      <div class="hero-claude-terminal">
+        <div class="hero-claude-titlebar">
+          <div class="hero-claude-dot hero-claude-dot--red"></div>
+          <div class="hero-claude-dot hero-claude-dot--yellow"></div>
+          <div class="hero-claude-dot hero-claude-dot--green"></div>
+          <span class="hero-claude-titlebar-text" id="hero-claude-titlebar-text">claude &mdash; ~/projects/my-app</span>
+          <span class="hero-claude-clock" id="hero-claude-clock">2:14 PM</span>
+        </div>
+        <div class="hero-claude-tabs" id="hero-claude-tabs">
+          <div class="hero-claude-tab active" id="tab-myapp">~/my-app</div>
+          <div class="hero-claude-tab" id="tab-gateway">~/api-gateway</div>
+          <div class="hero-claude-tab" id="tab-dashboard">~/dashboard</div>
+        </div>
+        <div class="hero-claude-body" id="hero-claude-body">
+          <div class="hero-bfi-badge" id="hero-bfi-badge">
+            <div class="hero-bfi-dot" id="hero-bfi-dot"></div>
+            <span class="hero-bfi-value" id="hero-bfi-value">12</span>
+          </div>
+          <div class="hero-claude-scroll" id="hero-claude-scroll"></div>
+        </div>
+      </div>
+      <!-- Brain Bed alert notification -->
+      <div class="hero-alert" id="hero-alert">
+        <div class="hero-alert-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="hero-alert-content">
+          <div class="hero-alert-title">Brain Fry Detected</div>
+          <div class="hero-alert-body" id="hero-alert-body">BFI 97 — Your cognitive load is critically high. You've been switching between 3 projects for 2 hours without a break.</div>
+        </div>
+        <div class="hero-alert-actions">
+          <div class="hero-alert-btn hero-alert-btn--primary">Take a Break</div>
+          <div class="hero-alert-btn hero-alert-btn--secondary">Snooze</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-replay-wrap" id="hero-replay-wrap">
+      <button class="hero-replay-btn" id="hero-replay-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        Replay
+      </button>
+    </div>
+    <p class="hero-sub" id="hero-sub">3 concurrent sessions. Max plan.<br/><strong>You already know you won't stop on your own.</strong><br/><span style="color:#818cf8; font-weight:600;">Brain Bed</span> monitors your AI sessions,<br/>measures your cognitive load in real time,<br/>and forces the break you'll never take yourself.</p>
+
+    <div class="hero-buttons" id="hero-buttons">
       <a href="#" onclick="downloadLatest(event)" class="btn-download" style="padding: 0.8rem 2rem; font-size: 1rem;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Download for macOS
@@ -614,7 +997,7 @@
   <section id="demo" class="demo-section">
     <p class="section-label">Demo</p>
     <h2>See it in action</h2>
-    <p>Watch how Brain Bed detects cognitive overload and guides you into a meditation break.</p>
+    <p>Watch how Brain Bed detects cognitive overload and forces a reset before you ship something you'll regret.</p>
 
     <div class="demo-frame" id="demo-frame">
       <div class="demo-titlebar">
@@ -670,47 +1053,34 @@
     </div>
   </section>
 
-  <!-- Brain Fry Quiz -->
-  <section id="quiz" class="quiz-section">
-    <p class="section-label">Self-Assessment</p>
-    <h2>How fried is your brain?</h2>
-    <p>Answer 6 quick questions to find out your AI Brain Fry level.</p>
-
-    <div class="quiz-card" id="quiz-card">
-      <div class="quiz-progress" id="quiz-progress"></div>
-      <div id="quiz-body"></div>
-    </div>
-  </section>
-
   <!-- Features -->
   <section id="features">
     <p class="section-label">Features</p>
-    <h2>How Brain Bed Prevents AI Brain Fry</h2>
-    <p>Brain Bed sits in your macOS menu bar, monitoring your Claude Code, Gemini CLI, and Codex CLI sessions. When your cognitive load gets too high, it steps in.</p>
+    <h2>Three things happen. None require your judgment.</h2>
 
     <div class="features-grid" style="grid-template-columns: 1fr;">
       <div class="feature-card" style="padding: 2.5rem; border-color: rgba(139,92,246,0.2); background: rgba(139,92,246,0.04);">
         <div class="feature-icon" style="width:48px; height:48px; border-radius:12px;">
           <svg viewBox="0 0 24 24" style="width:24px; height:24px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         </div>
-        <h3 style="font-size:1.3rem; margin-bottom:0.75rem;">Brain Fry Index</h3>
-        <p style="font-size:1rem; line-height:1.7;">A real-time 0&ndash;100 cognitive load score. Calculated from your message velocity, number of active AI sessions, time of day, and how many alerts you've dismissed. Tracks Claude Code, Gemini CLI, and Codex CLI simultaneously.</p>
+        <h3 style="font-size:1.3rem; margin-bottom:0.75rem;">It Watches</h3>
+        <p style="font-size:1rem; line-height:1.7;">You open Claude Code at 9 AM and Cursor at 9:05. By 10:30 you've added Gemini CLI in a third terminal. Brain Bed sees all of them. It tracks session duration, prompt frequency, tool-switching speed, and rest gaps. A number appears in your menu bar: your Brain Fry Index, 0 to 100.</p>
       </div>
 
       <div class="feature-card" style="padding: 2.5rem; border-color: rgba(99,102,241,0.2); background: rgba(99,102,241,0.04);">
         <div class="feature-icon" style="width:48px; height:48px; border-radius:12px;">
           <svg viewBox="0 0 24 24" style="width:24px; height:24px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
-        <h3 style="font-size:1.3rem; margin-bottom:0.75rem;">Forced Meditation</h3>
-        <p style="font-size:1rem; line-height:1.7;">When your BFI spikes, Brain Bed locks your keyboard and transforms your screen into a meditation space. A breathing circle guides you through 4-4-6-2 cycles while curated classical music &mdash; Satie, Debussy, Chopin &mdash; fades in. Inspirational quotes rotate gently. You can't work. You can only rest.</p>
+        <h3 style="font-size:1.3rem; margin-bottom:0.75rem;">It Catches</h3>
+        <p style="font-size:1rem; line-height:1.7;">BFI hits 70. You've been bouncing between three AI tools for two hours straight without a single pause longer than 45 seconds. You just re-read the same Claude output for the third time and retained nothing. That's not reviewing &mdash; that's a screensaver with anxiety. Brain Bed flags the pattern.</p>
       </div>
 
       <div class="feature-card" style="padding: 2.5rem; border-color: rgba(234,179,8,0.2); background: rgba(234,179,8,0.04);">
         <div class="feature-icon" style="width:48px; height:48px; border-radius:12px; background: rgba(234,179,8,0.15);">
           <svg viewBox="0 0 24 24" style="width:24px; height:24px; stroke: #eab308;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         </div>
-        <h3 style="font-size:1.3rem; margin-bottom:0.75rem;">Smart Notifications</h3>
-        <p style="font-size:1rem; line-height:1.7;">Context-aware alerts that explain why you should rest. Late-night coding? Rapid-fire prompting? Multiple sessions at once? Brain Bed tells you exactly what's pushing your cognitive load up &mdash; and only nudges you when it actually matters (Heating and Brain Fry stages).</p>
+        <h3 style="font-size:1.3rem; margin-bottom:0.75rem;">It Resets</h3>
+        <p style="font-size:1rem; line-height:1.7;">BFI crosses the threshold. The screen goes full. The keyboard stops responding. Classical music plays. A timer counts down from five minutes. You're annoyed for about thirty seconds and then something loosens behind your eyes. When the timer ends, you look at the code. You see the bug immediately. It was on line 47 the whole time.</p>
       </div>
     </div>
   </section>
@@ -793,11 +1163,11 @@
   <!-- What is AI Brain Fry -->
   <section id="ai-brain-fry" class="brainfry-section">
     <p class="section-label">AI Brain Fry</p>
-    <h2>What is AI Brain Fry?</h2>
+    <h2>They called it "crack for nerds." They weren't joking.</h2>
     <div class="brainfry-content">
-      <p><strong>AI Brain Fry</strong> is the state of cognitive overload that developers experience after prolonged, intense interaction with AI coding tools like Claude Code, Gemini CLI, and Codex CLI. Unlike traditional coding fatigue, AI brain fry hits faster and harder &mdash; because AI tools accelerate your output beyond what your brain can sustainably process.</p>
+      <p>When we posted about AI coding fatigue on Reddit, it got <strong>47K views and 50+ comments</strong>. Developers called it "crack for nerds." An ex-addict in the thread said "the dopamine hits are real &mdash; this is basically the same thing." The auto-generated TL;DR said: <em>"The consensus is a resounding YES, Claude Code Brain Fry is a very real thing."</em></p>
 
-      <p>When you're rapid-firing prompts, reviewing AI-generated code across multiple sessions, and context-switching between projects at machine speed, your cognitive load skyrockets. Your brain is doing more reviewing, deciding, and integrating than ever before &mdash; but it still needs the same rest it always did.</p>
+      <p>AI coding tools are the most productive thing that ever happened to developers &mdash; and the most compulsive. One more prompt. One more agent run. One more hit. Your brain doesn't distinguish between "productive work" and "compulsive repetition" when the reward schedule is this fast.</p>
 
       <div class="brainfry-symptoms">
         <div class="brainfry-symptom">
@@ -818,14 +1188,14 @@
         </div>
       </div>
 
-      <p>AI brain fry isn't a character flaw &mdash; it's a natural consequence of working at the human-AI boundary. The solution isn't to use AI less, but to <strong>take forced breaks before your brain hits its limit</strong>. That's exactly what Brain Bed does: it monitors your real-time cognitive load and intervenes with meditation when you need it most.</p>
+      <p>AI brain fry isn't a character flaw &mdash; it's what happens when machines remove every speed limit and your brain doesn't get an upgrade. BCG found that brain fry increases major mistakes by 39%. The good news: it's reversible with breaks. The bad news: you won't take them yourself. <strong>Brain Bed forces the break you'll never choose to take.</strong></p>
     </div>
   </section>
 
   <!-- CTA -->
   <div class="cta" id="download">
-    <h2>Your brain will thank you</h2>
-    <p>Free, private, and built for developers who can't stop prompting.</p>
+    <h2>You can't ctrl+Z cognitive overload.</h2>
+    <p>Five minutes. That's the cost. The return is the bug you catch, the design flaw you spot, the clarity hiding behind three hours of prompts.</p>
     <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
       <a href="#" onclick="downloadLatest(event)" class="btn-download" style="padding:0.8rem 2rem; font-size:1rem;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -891,6 +1261,356 @@ function downloadLatest(e) {
   a.click();
   document.body.removeChild(a);
 }
+
+// ── Hero Claude Terminal Animation ──
+(function() {
+  var scroll = document.getElementById('hero-claude-scroll');
+  var body = document.getElementById('hero-claude-body');
+  var heroAlert = document.getElementById('hero-alert');
+  var bfiValue = document.getElementById('hero-bfi-value');
+  var bfiDot = document.getElementById('hero-bfi-dot');
+  var bfiBadge = document.getElementById('hero-bfi-badge');
+  var heroSub = document.getElementById('hero-sub');
+  var heroButtons = document.getElementById('hero-buttons');
+  var clockEl = document.getElementById('hero-claude-clock');
+
+  // Clock: starts at 2:14 PM, advances ~3-5 min per action group
+  var clockMinutes = 14 * 60 + 14; // 2:14 PM in total minutes from midnight = 854
+  function formatClock(totalMin) {
+    var h = Math.floor(totalMin / 60);
+    var m = totalMin % 60;
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    var h12 = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+    return h12 + ':' + (m < 10 ? '0' : '') + m + ' ' + ampm;
+  }
+  function advanceClock(min) {
+    clockMinutes += min;
+    clockEl.textContent = formatClock(clockMinutes);
+    // Turn red when it gets late
+    if (clockMinutes >= 17 * 60) clockEl.style.color = '#f97316'; // 5 PM+
+  }
+
+  // Each "session" is a separate terminal tab
+  var sessions = {
+    'myapp': { tab: 'tab-myapp', title: 'claude — ~/projects/my-app', lines: [] },
+    'gateway': { tab: 'tab-gateway', title: 'claude — ~/projects/api-gateway', lines: [] },
+    'dashboard': { tab: 'tab-dashboard', title: 'claude — ~/projects/dashboard', lines: [] }
+  };
+  var currentSession = 'myapp';
+
+  var timeline = [
+    // Round 1: auth bug fix — 2:14 PM
+    { session: 'myapp', type: 'prompt', text: 'fix the auth bug in login.ts', bfi: 12, clock: 0 },
+    { session: 'myapp', type: 'ai', text: 'I\'ll fix the authentication bug. Let me examine the file...', bfi: 14 },
+    { session: 'myapp', type: 'output', text: '  Updated login.ts — fixed token validation logic', bfi: 18 },
+    { session: 'myapp', type: 'output', text: '  Updated auth.test.ts — added edge case tests', bfi: 22 },
+    { session: 'myapp', type: 'confirm', text: 'Apply these changes?', opts: 'Yes / No', bfi: 24 },
+    { session: 'myapp', type: 'select-yes', bfi: 26 },
+    { session: 'myapp', type: 'dim', bfi: 26 },
+    // Round 2: scope creep — 2:31 PM
+    { session: 'myapp', type: 'prompt', text: 'also refactor the user module while you\'re at it', bfi: 30, clock: 17 },
+    { session: 'myapp', type: 'ai', text: 'Refactoring user module. Analyzing dependencies...', bfi: 38 },
+    { session: 'myapp', type: 'output', text: '  Refactored user.service.ts → 3 files extracted', bfi: 42 },
+    { session: 'myapp', type: 'output', text: '  Updated 12 import statements', bfi: 45 },
+    { session: 'myapp', type: 'confirm', text: 'Apply these changes?', opts: 'Yes / No', bfi: 48 },
+    { session: 'myapp', type: 'select-yes', bfi: 50 },
+    { session: 'myapp', type: 'output', text: '  ⚠ Found circular dependency in profile.ts', bfi: 52 },
+    { session: 'myapp', type: 'dim', bfi: 52 },
+    // Context switch to api-gateway — 3:08 PM
+    { session: 'gateway', type: 'prompt', text: 'check if the rate limiter config is still correct', bfi: 58, clock: 37 },
+    { session: 'gateway', type: 'ai', text: 'Checking rate limiter configuration...', bfi: 62 },
+    { session: 'gateway', type: 'output', text: '  rateLimit.config.ts — looks correct, no issues found', bfi: 65 },
+    { session: 'gateway', type: 'dim', bfi: 65 },
+    // Switch back to my-app — 3:22 PM
+    { session: 'myapp', type: 'prompt', text: 'fix that circular dependency from earlier', bfi: 70, clock: 14 },
+    { session: 'myapp', type: 'ai', text: 'Resolving circular dependency in profile.ts...', bfi: 74 },
+    { session: 'myapp', type: 'output', text: '  Created shared/types.ts to break the cycle', bfi: 76 },
+    { session: 'myapp', type: 'confirm', text: 'Apply these changes?', opts: 'Yes / No', bfi: 78 },
+    { session: 'myapp', type: 'select-yes', bfi: 80 },
+    { session: 'myapp', type: 'dim', bfi: 80 },
+    // Getting frantic — 3:47 PM
+    { session: 'myapp', type: 'prompt', text: 'now update the API routes to match', bfi: 82, clock: 25 },
+    { session: 'myapp', type: 'ai', text: 'Updating API routes...', bfi: 84 },
+    { session: 'myapp', type: 'output', text: '  ⚠ 3 tests failing after route changes', bfi: 87 },
+    { session: 'myapp', type: 'confirm', text: 'Apply these changes?', opts: 'Yes / No', bfi: 88 },
+    { session: 'myapp', type: 'select-yes', bfi: 89 },
+    // 3:55 PM
+    { session: 'myapp', type: 'prompt', text: 'fix the failing tests', bfi: 90, clock: 8 },
+    { session: 'myapp', type: 'output', text: '  Fixed user.test.ts, profile.test.ts, auth.test.ts', bfi: 91 },
+    { session: 'myapp', type: 'confirm', text: 'Apply these changes?', opts: 'Yes / No', bfi: 92 },
+    { session: 'myapp', type: 'select-yes', bfi: 93 },
+    // Final context switch to dashboard — 4:03 PM
+    { session: 'dashboard', type: 'prompt', text: 'add the new auth flow to the dashboard too', bfi: 95, clock: 8 },
+    { session: 'dashboard', type: 'ai', text: 'Integrating new auth flow into dashboard...', bfi: 96 },
+    { session: 'dashboard', type: 'output', text: '  Updated 6 components with new auth hooks', bfi: 97 },
+  ];
+
+  function getBfiColor(v) {
+    if (v < 30) return '#22c55e';
+    if (v < 60) return '#eab308';
+    if (v < 85) return '#f97316';
+    return '#ef4444';
+  }
+
+  function setBfi(v) {
+    var c = getBfiColor(v);
+    bfiValue.textContent = v;
+    bfiValue.style.color = c;
+    bfiDot.style.background = c;
+    if (v >= 85) bfiBadge.style.borderColor = 'rgba(239,68,68,0.4)';
+    else if (v >= 60) bfiBadge.style.borderColor = 'rgba(249,115,22,0.3)';
+    else bfiBadge.style.borderColor = 'rgba(255,255,255,0.1)';
+  }
+
+  var lastConfirmEl = null;
+  var titlebarText = document.getElementById('hero-claude-titlebar-text');
+  var allTabs = document.querySelectorAll('.hero-claude-tab');
+
+  // Store scroll content per session so switching back restores history
+  var sessionContent = { myapp: '', gateway: '', dashboard: '' };
+  var sessionScrollPos = { myapp: '', gateway: '', dashboard: '' };
+  var currentSession = 'myapp';
+
+  function switchSession(newSession, callback) {
+    if (newSession === currentSession) { if (callback) callback(); return; }
+
+    // Save current scroll state
+    sessionContent[currentSession] = scroll.innerHTML;
+    sessionScrollPos[currentSession] = scroll.style.transform;
+
+    // Highlight tab
+    allTabs.forEach(function(t) { t.classList.remove('active'); });
+    document.getElementById(sessions[newSession].tab).classList.add('active');
+    titlebarText.textContent = sessions[newSession].title;
+
+    // Slide out current
+    body.classList.add('switching-out');
+    setTimeout(function() {
+      body.classList.remove('switching-out');
+      // Load new session content
+      scroll.innerHTML = sessionContent[newSession];
+      scroll.style.transform = sessionScrollPos[newSession] || 'translateY(0)';
+      currentSession = newSession;
+      // Slide in new
+      body.classList.add('switching-in');
+      setTimeout(function() {
+        body.classList.remove('switching-in');
+        if (callback) callback();
+      }, 300);
+    }, 300);
+  }
+
+  function scrollDown() {
+    var scrollH = scroll.scrollHeight;
+    var bodyH = body.clientHeight;
+    if (scrollH > bodyH - 50) {
+      scroll.style.transform = 'translateY(-' + (scrollH - bodyH + 50) + 'px)';
+    }
+  }
+
+  // Typewriter effect for user prompts
+  function typeText(el, text, charDelay, callback) {
+    var cmdSpan = el.querySelector('.cmd');
+    var cursorSpan = el.querySelector('.cursor-blink');
+    var idx = 0;
+    cmdSpan.textContent = '';
+    function typeNext() {
+      if (idx < text.length) {
+        cmdSpan.textContent += text[idx];
+        idx++;
+        scrollDown();
+        heroTimer = setTimeout(typeNext, charDelay);
+      } else {
+        if (cursorSpan) cursorSpan.remove();
+        if (callback) callback();
+      }
+    }
+    typeNext();
+  }
+
+  function addLine(entry, callback) {
+    if (entry.type === 'select-yes') {
+      if (lastConfirmEl) {
+        var yesNo = lastConfirmEl.querySelector('.yes-no');
+        if (yesNo) yesNo.innerHTML = '<span class="yes-selected">Yes</span> / No';
+        var cursor = lastConfirmEl.querySelector('.cursor-blink');
+        if (cursor) cursor.remove();
+      }
+      if (callback) callback();
+      return;
+    }
+
+    var el = document.createElement('div');
+    el.className = 'hero-line';
+
+    if (entry.type === 'prompt') {
+      // Show prompt symbol + cursor, then typewrite the command
+      el.innerHTML = '<span class="prompt">❯ </span><span class="cmd"></span><span class="cursor-blink"></span>';
+      scroll.appendChild(el);
+      requestAnimationFrame(function() { el.classList.add('visible'); });
+      scrollDown();
+      // Speed up typing as animation progresses
+      var charSpeed = entry._charDelay || 35;
+      typeText(el, entry.text, charSpeed, callback);
+      return;
+    } else if (entry.type === 'ai') {
+      // Show thinking first, then replace with actual response
+      el.innerHTML = '<span class="ai-label">Claude </span><span class="thinking">Thinking<span class="thinking-dots"></span></span>';
+      scroll.appendChild(el);
+      requestAnimationFrame(function() { el.classList.add('visible'); });
+      scrollDown();
+      var thinkTime = entry._thinkDelay || 800;
+      setTimeout(function() {
+        el.innerHTML = '<span class="ai-label">Claude </span><span class="ai-output">' + entry.text + '</span>';
+        if (callback) callback();
+      }, thinkTime);
+      return;
+    } else if (entry.type === 'output') {
+      el.innerHTML = '<span class="ai-output">' + entry.text + '</span>';
+    } else if (entry.type === 'confirm') {
+      el.innerHTML = '<span class="ai-output">' + entry.text + ' </span><span class="yes-no">' + entry.opts + '</span><span class="cursor-blink"></span>';
+      lastConfirmEl = el;
+    } else {
+      el.innerHTML = '&nbsp;';
+    }
+    scroll.appendChild(el);
+    requestAnimationFrame(function() { el.classList.add('visible'); });
+    scrollDown();
+    if (callback) callback();
+  }
+
+  var heroTimer = null;
+  var isHeroRunning = false;
+
+  function runHeroAnimation() {
+    if (isHeroRunning) return;
+    isHeroRunning = true;
+    scroll.innerHTML = '';
+    scroll.style.transform = 'translateY(0)';
+    heroAlert.classList.remove('show');
+    var primaryBtn = heroAlert.querySelector('.hero-alert-btn--primary');
+    if (primaryBtn) primaryBtn.classList.remove('highlight');
+    setBfi(12);
+    currentSession = 'myapp';
+    titlebarText.textContent = sessions.myapp.title;
+    lastConfirmEl = null;
+    sessionContent = { myapp: '', gateway: '', dashboard: '' };
+    sessionScrollPos = { myapp: '', gateway: '', dashboard: '' };
+    allTabs.forEach(function(t) { t.classList.remove('active'); });
+    document.getElementById('tab-myapp').classList.add('active');
+
+    clockMinutes = 14 * 60 + 14; // reset to 2:14 PM
+    clockEl.textContent = formatClock(clockMinutes);
+    clockEl.style.color = 'var(--text3)';
+
+    var i = 0;
+    var baseDelay = 600;
+
+    function next() {
+      if (i >= timeline.length) {
+        // Show alert notification sliding in from top
+        setTimeout(function() {
+          // Update alert body with actual elapsed time
+          var elapsed = clockMinutes - (14 * 60 + 14);
+          var hrs = Math.floor(elapsed / 60);
+          var mins = elapsed % 60;
+          var timeStr = hrs > 0 ? hrs + 'h ' + mins + 'm' : mins + ' minutes';
+          document.getElementById('hero-alert-body').textContent =
+            'BFI 97 — You\'ve been coding across 3 projects for ' + timeStr + ' without a single break.';
+          heroAlert.classList.add('show');
+          // Highlight "Take a Break" button after a moment
+          setTimeout(function() {
+            var primaryBtn = heroAlert.querySelector('.hero-alert-btn--primary');
+            if (primaryBtn) primaryBtn.classList.add('highlight');
+          }, 1000);
+          setTimeout(function() {
+            isHeroRunning = false;
+          }, 1200);
+        }, 600);
+        return;
+      }
+
+      var entry = timeline[i];
+      if (entry.bfi !== undefined) setBfi(entry.bfi);
+      if (entry.clock) advanceClock(entry.clock);
+
+      var acceleration = 1 - (i / timeline.length) * 0.35;
+      entry._charDelay = 40; // consistent typing speed
+      entry._thinkDelay = Math.max(1200 * acceleration, 500); // thinking gets faster
+
+      if (entry.session !== currentSession) {
+        switchSession(entry.session, function() {
+          addLine(entry, function() { scheduleNext(); });
+        });
+      } else {
+        addLine(entry, function() { scheduleNext(); });
+      }
+
+      function scheduleNext() {
+        var speed;
+        if (entry.type === 'prompt') speed = 350; // pause after typing finishes
+        else if (entry.type === 'ai') speed = baseDelay + 500; // let AI response breathe
+        else if (entry.type === 'confirm') speed = 800 + Math.random() * 600; // hesitate before hitting Yes
+        else if (entry.type === 'select-yes') speed = 400;
+        else if (entry.type === 'output') speed = baseDelay + 200; // outputs need reading time
+        else if (entry.type === 'dim') speed = 400;
+        else speed = baseDelay;
+
+        speed = Math.max(speed * acceleration, 200);
+
+        i++;
+        heroTimer = setTimeout(next, speed);
+      }
+    }
+
+    next();
+  }
+
+  var heroReplayWrap = document.getElementById('hero-replay-wrap');
+  var heroReplayBtn = document.getElementById('hero-replay-btn');
+
+  function stopHero() {
+    isHeroRunning = false;
+    if (heroTimer) {
+      clearTimeout(heroTimer);
+      heroTimer = null;
+    }
+  }
+
+  // Show replay button when animation finishes (set in runHeroAnimation end)
+  var origFinish = null;
+
+  // Auto-play once on page load
+  var hasAutoPlayed = false;
+  var heroObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting && !hasAutoPlayed && !isHeroRunning) {
+        hasAutoPlayed = true;
+        runHeroAnimation();
+      }
+    });
+  }, { threshold: 0.3 });
+  heroObs.observe(document.querySelector('.hero-claude-wrap'));
+
+  // Show replay when animation ends
+  var origRunHero = runHeroAnimation;
+  // Patch: show replay button after animation finishes
+  var _origNext = null;
+
+  // Replay button click
+  heroReplayBtn.addEventListener('click', function() {
+    stopHero();
+    heroReplayWrap.classList.remove('visible');
+    setTimeout(function() { runHeroAnimation(); }, 100);
+  });
+
+  // Override the finish to show replay
+  var _checkShowReplay = setInterval(function() {
+    if (!isHeroRunning && hasAutoPlayed) {
+      heroReplayWrap.classList.add('visible');
+    }
+  }, 500);
+})();
 
 // ── Demo Animation ──
 (function() {
@@ -1030,181 +1750,50 @@ function downloadLatest(e) {
   });
 })();
 
-// ── Brain Fry Quiz ──
+// ── Music Player ──
 (function() {
-  var questions = [
-    {
-      q: "How many hours per day do you use AI coding tools?",
-      opts: [
-        { text: "Less than 1 hour", score: 5 },
-        { text: "1–3 hours", score: 20 },
-        { text: "3–6 hours", score: 45 },
-        { text: "6+ hours — I live in the terminal", score: 75 }
-      ]
-    },
-    {
-      q: "How many AI sessions do you run simultaneously?",
-      opts: [
-        { text: "Just one at a time", score: 5 },
-        { text: "2 sessions", score: 25 },
-        { text: "3–4 sessions", score: 55 },
-        { text: "I've lost count", score: 80 }
-      ]
-    },
-    {
-      q: "Do you review AI-generated code before accepting it?",
-      opts: [
-        { text: "Always, line by line", score: 5 },
-        { text: "Mostly, I skim through", score: 25 },
-        { text: "Sometimes I just hit accept", score: 55 },
-        { text: "Accept all, fix later (or never)", score: 80 }
-      ]
-    },
-    {
-      q: "How often do you code past midnight with AI tools?",
-      opts: [
-        { text: "Rarely or never", score: 5 },
-        { text: "Once or twice a week", score: 25 },
-        { text: "Most nights", score: 55 },
-        { text: "What's sleep?", score: 80 }
-      ]
-    },
-    {
-      q: "When you take a break, what do you do?",
-      opts: [
-        { text: "Go for a walk or stretch", score: 5 },
-        { text: "Browse social media", score: 30 },
-        { text: "Switch to a different AI project", score: 60 },
-        { text: "Breaks? I don't take breaks", score: 85 }
-      ]
-    },
-    {
-      q: "Have you ever forgotten what you were building mid-session?",
-      opts: [
-        { text: "No, never", score: 5 },
-        { text: "Once or twice", score: 25 },
-        { text: "It happens regularly", score: 55 },
-        { text: "I'm not sure what I'm building right now", score: 85 }
-      ]
-    }
+  var tracks = [
+    { src: 'audio/gymnopedies-no1.mp3', title: 'Gymnopédie No.1 — Erik Satie' },
+    { src: 'audio/clair-de-lune.ogg', title: 'Clair de Lune — Claude Debussy' },
+    { src: 'audio/nocturne-op9-no2.mp3', title: 'Nocturne Op.9 No.2 — Frédéric Chopin' }
   ];
 
-  var scores = [];
-  var current = 0;
-  var body = document.getElementById('quiz-body');
-  var progressEl = document.getElementById('quiz-progress');
+  var btn = document.getElementById('nav-music-btn');
+  var label = document.getElementById('nav-music-label');
+  var nowEl = document.getElementById('nav-music-now');
+  var titleEl = document.getElementById('nav-music-title');
 
-  function renderProgress() {
-    var dots = '';
-    for (var i = 0; i < questions.length; i++) {
-      var cls = 'quiz-progress-dot';
-      if (i < current) cls += ' done';
-      else if (i === current) cls += ' current';
-      dots += '<div class="' + cls + '"></div>';
-    }
-    progressEl.innerHTML = dots;
-  }
+  var audio = null;
+  var currentTrack = 0;
+  var isPlaying = false;
 
-  function renderQuestion() {
-    var q = questions[current];
-    renderProgress();
-    var html = '<div class="quiz-question-num">Question ' + (current + 1) + ' of ' + questions.length + '</div>';
-    html += '<div class="quiz-question">' + q.q + '</div>';
-    html += '<div class="quiz-options">';
-    for (var i = 0; i < q.opts.length; i++) {
-      html += '<button class="quiz-option" data-score="' + q.opts[i].score + '">' + q.opts[i].text + '</button>';
-    }
-    html += '</div>';
-    body.innerHTML = html;
-
-    var btns = body.querySelectorAll('.quiz-option');
-    btns.forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        btn.classList.add('selected');
-        scores.push(parseInt(btn.getAttribute('data-score')));
-        setTimeout(function() {
-          current++;
-          if (current < questions.length) renderQuestion();
-          else renderResult();
-        }, 350);
+  function play() {
+    if (!audio) {
+      audio = new Audio(tracks[currentTrack].src);
+      audio.volume = 0.4;
+      audio.addEventListener('ended', function() {
+        currentTrack = (currentTrack + 1) % tracks.length;
+        audio.src = tracks[currentTrack].src;
+        titleEl.textContent = tracks[currentTrack].title;
+        audio.play();
       });
-    });
-  }
-
-  function renderResult() {
-    var total = 0;
-    for (var i = 0; i < scores.length; i++) total += scores[i];
-    var bfi = Math.round(total / scores.length);
-    if (bfi > 100) bfi = 100;
-
-    var stage, color, desc;
-    if (bfi < 30) {
-      stage = 'Calm'; color = '#22c55e';
-      desc = "Your AI usage is well-balanced. You're taking breaks, reviewing code carefully, and keeping a healthy rhythm. Keep it up!";
-    } else if (bfi < 60) {
-      stage = 'Warming'; color = '#eab308';
-      desc = "You're starting to push it. The pace is picking up and your brain is working harder than you think. A few more sessions and things could heat up fast.";
-    } else if (bfi < 85) {
-      stage = 'Heating'; color = '#f97316';
-      desc = "Your cognitive load is high. You're juggling too many AI sessions, skipping reviews, and burning through prompts. Your brain needs a break — seriously.";
-    } else {
-      stage = 'Brain Fry'; color = '#ef4444';
-      desc = "You're deep in AI brain fry territory. Rapid-fire prompting, zero breaks, late-night sessions — your brain is running on fumes. Time to step away.";
     }
-
-    var circumference = 2 * Math.PI * 68;
-    var offset = circumference - (bfi / 100) * circumference;
-
-    renderProgress();
-    // fill all progress dots
-    var dots = progressEl.querySelectorAll('.quiz-progress-dot');
-    dots.forEach(function(d) { d.className = 'quiz-progress-dot done'; });
-
-    body.innerHTML = '<div class="quiz-result">' +
-      '<div class="quiz-result-gauge">' +
-        '<svg viewBox="0 0 160 160">' +
-          '<circle class="quiz-gauge-bg" cx="80" cy="80" r="68" />' +
-          '<circle class="quiz-gauge-fg" cx="80" cy="80" r="68" stroke="' + color + '" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + circumference + '" />' +
-        '</svg>' +
-        '<div class="quiz-result-score">' +
-          '<div class="quiz-result-number" style="color:' + color + '">' + bfi + '</div>' +
-          '<div class="quiz-result-label">Brain Fry Index</div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="quiz-result-stage" style="color:' + color + '">' + stage + '</div>' +
-      '<div class="quiz-result-desc">' + desc + '</div>' +
-      '<div class="quiz-result-actions">' +
-        '<a href="#" onclick="downloadLatest(event)" class="btn-download">Download Brain Bed</a>' +
-        '<button class="quiz-btn-share" id="quiz-share">Share Result</button>' +
-        '<button class="quiz-btn-restart" id="quiz-restart">Retake Quiz</button>' +
-      '</div>' +
-    '</div>';
-
-    // Animate gauge
-    setTimeout(function() {
-      body.querySelector('.quiz-gauge-fg').style.strokeDashoffset = offset;
-    }, 100);
-
-    document.getElementById('quiz-restart').addEventListener('click', function() {
-      scores = []; current = 0; renderQuestion();
-    });
-
-    document.getElementById('quiz-share').addEventListener('click', function() {
-      var shareText = "My AI Brain Fry Index is " + bfi + "/100 (" + stage + "). How fried is YOUR brain? Take the quiz:";
-      var shareUrl = "https://brainbed.backproach.dev#quiz";
-      if (navigator.share) {
-        navigator.share({ title: "AI Brain Fry Quiz", text: shareText, url: shareUrl });
-      } else {
-        navigator.clipboard.writeText(shareText + " " + shareUrl).then(function() {
-          var btn = document.getElementById('quiz-share');
-          btn.textContent = 'Copied!';
-          setTimeout(function() { btn.textContent = 'Share Result'; }, 2000);
-        });
-      }
-    });
+    audio.play();
+    isPlaying = true;
+    btn.classList.add('playing');
+    titleEl.textContent = tracks[currentTrack].title;
   }
 
-  renderQuestion();
+  function pause() {
+    if (audio) audio.pause();
+    isPlaying = false;
+    btn.classList.remove('playing');
+  }
+
+  btn.addEventListener('click', function() {
+    if (isPlaying) pause();
+    else play();
+  });
 })();
 </script>
 </body>
