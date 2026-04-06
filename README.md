@@ -5,8 +5,8 @@
 <h1 align="center">Brain Bed</h1>
 
 <p align="center">
-  <strong>Forced meditation breaks for AI-fried brains.</strong><br/>
-  Inner peace, right on your screen.
+  <strong>Cooked brain, cooked project.</strong><br/>
+  Brain Bed locks your keyboard before you merge something you'll regret.
 </p>
 
 <p align="center">
@@ -20,11 +20,11 @@
 
 ---
 
-Brain Bed monitors your AI tool usage (Claude Code, Gemini CLI, Codex CLI) in real-time, calculates a **Brain Fry Index (BFI)**, and gently forces you into meditation when your cognitive load gets too high.
+Brain Bed monitors your AI coding sessions (Claude Code, Gemini CLI, Codex CLI) in real-time, calculates a **Brain Fry Index (BFI)**, and locks your keyboard when your cognitive load crosses the threshold. Not a wellness app. Accident insurance for developers who code past the point where their judgment fails.
 
-## Features
+## How it stops the accident
 
-### Brain Fry Index (BFI)
+### 1. It detects decline
 
 A real-time 0–100 cognitive load score calculated from five signals:
 
@@ -38,13 +38,13 @@ A real-time 0–100 cognitive load score calculated from five signals:
 
 **Stages:** Calm (0–29) → Warming (30–59) → Heating (60–84) → Brain Fry (85–100)
 
-### Forced Meditation
+### 2. It predicts the incident
 
-When your BFI spikes, Brain Bed locks your keyboard and immerses you in a full-screen meditation — guided breathing, 3D visuals, classical music, and mindfulness quotes. Emergency exit via `Cmd+Shift+Esc`.
+Exponential backoff alerts — 10min → 20min → 40min → 60min cap. No notification fatigue. Brain Bed tells you your judgment is degrading before you approve the diff you didn't read.
 
-### Smart Notifications
+### 3. It locks your keyboard
 
-Exponential backoff alerts — 10min → 20min → 40min → 60min cap. No notification fatigue. Meditation resets everything.
+When your BFI spikes, Brain Bed locks your keyboard and forces a break — guided breathing, 3D visuals, classical music. You come back sharper. Emergency exit via `Cmd+Shift+Esc`.
 
 ### Supported AI Tools
 
