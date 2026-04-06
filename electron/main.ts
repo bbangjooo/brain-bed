@@ -192,16 +192,49 @@ function showMainWindow() {
 
 // ── Tray ─────────────────────────────────────────────────
 
-function createTray() {
-  const iconPath = path.join(__dirname, '..', 'resources', 'icons', 'trayTemplate.png')
-  let trayIcon: nativeImage
-  try {
-    trayIcon = nativeImage.createFromPath(iconPath)
-  } catch {
-    trayIcon = nativeImage.createEmpty()
+const BFI_STAGE_COLORS: Record<BfiStage, { r: number; g: number; b: number }> = {
+  'calm':      { r: 0x4A, g: 0xDE, b: 0x80 }, // green
+  'warming':   { r: 0xFB, g: 0xBF, b: 0x24 }, // yellow
+  'heating':   { r: 0xFB, g: 0x92, b: 0x3C }, // orange
+  'brain-fry': { r: 0xEF, g: 0x44, b: 0x44 }, // red
+}
+
+let trayTemplateImage: Electron.NativeImage | null = null
+
+function getTrayTemplate(): Electron.NativeImage {
+  if (!trayTemplateImage) {
+    const iconPath = path.join(__dirname, '..', 'resources', 'icons', 'trayTemplate@2x.png')
+    trayTemplateImage = nativeImage.createFromPath(iconPath)
+  }
+  return trayTemplateImage
+}
+
+function createBfiTrayIcon(stage: BfiStage): Electron.NativeImage {
+  const template = getTrayTemplate()
+  const logicalSize = template.getSize()
+  const scaleFactor = 2
+  const pxWidth = logicalSize.width * scaleFactor
+  const pxHeight = logicalSize.height * scaleFactor
+  const bitmap = template.toBitmap() // BGRA format at physical resolution
+  const tinted = Buffer.from(bitmap)
+  const { r, g, b } = BFI_STAGE_COLORS[stage]
+
+  for (let i = 0; i < tinted.length; i += 4) {
+    const alpha = tinted[i + 3]
+    if (alpha > 0) {
+      // Template icon is grayscale — use its luminance as intensity multiplier
+      const lum = tinted[i + 1] / 255 // green channel = luminance for grayscale
+      tinted[i]     = Math.round(b * lum) // B
+      tinted[i + 1] = Math.round(g * lum) // G
+      tinted[i + 2] = Math.round(r * lum) // R
+    }
   }
 
-  tray = new Tray(trayIcon)
+  return nativeImage.createFromBitmap(tinted, { width: pxWidth, height: pxHeight, scaleFactor })
+}
+
+function createTray() {
+  tray = new Tray(createBfiTrayIcon(currentBfi.stage))
   tray.setToolTip('Brain Bed')
 
   tray.on('click', () => showMainWindow())
@@ -234,6 +267,10 @@ function updateTrayMenu() {
   ])
   tray.setContextMenu(contextMenu)
   tray.setToolTip(`Brain Bed — BFI: ${bfi.score} (${stageLabel(bfi.stage)})`)
+
+  // Update tray icon color and title based on BFI stage
+  tray.setImage(createBfiTrayIcon(bfi.stage))
+  tray.setTitle(` ${bfi.score}`, { fontType: 'monospacedDigit' })
 }
 
 function formatTokens(n: number): string {
@@ -676,6 +713,7 @@ app.whenReady().then(() => {
   } else {
     createMainWindow()
   }
+  currentBfi = computeBfi()
   createTray()
   setupIPC()
   if (!isFirstRun) {

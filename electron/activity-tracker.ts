@@ -22,8 +22,8 @@ export class ActivityTracker {
     this.startTime = Date.now()
     this.pausedDuration = 0
 
-    // Check every minute
-    this.intervalId = setInterval(() => this.tick(), 60_000)
+    // Check every 15 seconds
+    this.intervalId = setInterval(() => this.tick(), 15_000)
 
     // Check idle state every 30 seconds
     this.idleCheckInterval = setInterval(() => {
