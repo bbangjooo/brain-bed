@@ -212,26 +212,117 @@
     }
     section > p { color: var(--text2); font-size: 1.1rem; max-width: 600px; line-height: 1.7; margin-bottom: 3rem; }
 
-    /* ── Features Grid ── */
-    .features-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
+    /* ── How It Works ── */
+    .hiw-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 2rem; margin-top: 2.5rem;
     }
-    .feature-card {
+    .hiw-step {
       padding: 2rem; border-radius: 16px;
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.06);
       transition: border-color 0.3s, transform 0.3s;
     }
-    .feature-card:hover { border-color: rgba(139,92,246,0.3); transform: translateY(-2px); }
-    .feature-icon {
-      width: 40px; height: 40px; border-radius: 10px;
+    .hiw-step:hover { border-color: rgba(129,140,248,0.3); transform: translateY(-2px); }
+    .hiw-number {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(129,140,248,0.12); border: 1px solid rgba(129,140,248,0.25);
       display: flex; align-items: center; justify-content: center;
-      background: rgba(139,92,246,0.15); margin-bottom: 1rem;
+      font-family: var(--sans); font-size: 1rem; font-weight: 700;
+      color: #818cf8; margin-bottom: 1.2rem;
     }
-    .feature-icon svg { width: 20px; height: 20px; stroke: var(--purple); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    .feature-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
-    .feature-card p { font-size: 0.9rem; color: var(--text2); line-height: 1.6; }
+    .hiw-title { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .hiw-desc { font-size: 0.92rem; color: var(--text2); line-height: 1.6; margin-bottom: 1rem; }
+    .hiw-points { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+    .hiw-points li {
+      font-size: 0.85rem; color: var(--text2); line-height: 1.5;
+      padding-left: 1.2rem; position: relative;
+    }
+    .hiw-points li::before {
+      content: ''; position: absolute; left: 0; top: 0.5em;
+      width: 6px; height: 6px; border-radius: 50%; background: #818cf8;
+    }
+
+    /* ── HIW Mini Demos ── */
+    .hiw-demo {
+      height: 140px; border-radius: 10px;
+      background: rgba(15,12,41,0.6); border: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 1.2rem; overflow: hidden; position: relative;
+    }
+    .hiw-demo-watch {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 0.8rem; padding: 1rem;
+    }
+    .hiw-menubar {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; padding: 0.4rem 0.7rem;
+      background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);
+    }
+    .hiw-menubar-dots { display: flex; gap: 4px; }
+    .hiw-menubar-dots span { width: 7px; height: 7px; border-radius: 50%; }
+    .hiw-menubar-dots span:nth-child(1) { background: #ff5f57; }
+    .hiw-menubar-dots span:nth-child(2) { background: #febc2e; }
+    .hiw-menubar-dots span:nth-child(3) { background: #28c840; }
+    .hiw-menubar-bfi {
+      display: flex; align-items: center; gap: 5px;
+      font-family: 'SF Mono', monospace; font-size: 0.8rem; font-weight: 700;
+    }
+    .hiw-bfi-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; }
+    .hiw-bfi-num { color: #22c55e; }
+    .hiw-sessions { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: center; }
+    .hiw-session-tag {
+      padding: 0.2rem 0.5rem; border-radius: 5px;
+      background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.2);
+      font-size: 0.65rem; color: rgba(255,255,255,0.65); font-family: 'SF Mono', monospace;
+    }
+    .hiw-session-delayed { animation: hiwFadeIn 2s ease-in-out infinite; }
+    @keyframes hiwFadeIn {
+      0%, 40% { opacity: 0; transform: translateY(4px); }
+      60%, 100% { opacity: 1; transform: translateY(0); }
+    }
+    .hiw-demo-catch {
+      display: flex; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .hiw-alert-mini {
+      display: flex; align-items: flex-start; gap: 0.6rem;
+      padding: 0.8rem 1rem; background: rgba(20,16,45,0.9);
+      border: 1px solid rgba(249,115,22,0.3); border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      animation: hiwSlideIn 2.5s ease-in-out infinite; max-width: 240px;
+    }
+    @keyframes hiwSlideIn {
+      0%, 10% { transform: translateY(-30px); opacity: 0; }
+      30%, 80% { transform: translateY(0); opacity: 1; }
+      95%, 100% { transform: translateY(-30px); opacity: 0; }
+    }
+    .hiw-alert-mini-icon { flex-shrink: 0; margin-top: 1px; }
+    .hiw-alert-mini-text { display: flex; flex-direction: column; gap: 0.15rem; }
+    .hiw-alert-mini-text strong { font-size: 0.75rem; color: #f97316; }
+    .hiw-alert-mini-text span { font-size: 0.65rem; color: var(--text3); }
+    .hiw-demo-reset { display: flex; align-items: center; justify-content: center; }
+    .hiw-lock-screen {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.6rem;
+    }
+    .hiw-breath-circle {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: rgba(129,140,248,0.1); border: 2px solid rgba(129,140,248,0.3);
+      animation: hiwBreathe 4s ease-in-out infinite;
+    }
+    @keyframes hiwBreathe {
+      0%, 100% { transform: scale(0.8); opacity: 0.5; border-color: rgba(129,140,248,0.2); }
+      50% { transform: scale(1.15); opacity: 1; border-color: rgba(129,140,248,0.5); }
+    }
+    .hiw-lock-text { font-family: 'SF Mono', monospace; font-size: 0.85rem; color: var(--text3); }
+    .hiw-lock-bars { display: flex; align-items: flex-end; gap: 3px; height: 18px; }
+    .hiw-lock-bars span {
+      width: 3px; border-radius: 1px; background: #818cf8;
+      animation: musicBar 0.8s ease-in-out infinite alternate;
+    }
+    .hiw-lock-bars span:nth-child(1) { height: 40%; animation-delay: 0s; }
+    .hiw-lock-bars span:nth-child(2) { height: 70%; animation-delay: 0.15s; }
+    .hiw-lock-bars span:nth-child(3) { height: 50%; animation-delay: 0.3s; }
+    .hiw-lock-bars span:nth-child(4) { height: 80%; animation-delay: 0.45s; }
+    .hiw-lock-bars span:nth-child(5) { height: 35%; animation-delay: 0.6s; }
 
     /* ── BFI Section ── */
     .bfi-visual {
@@ -412,7 +503,14 @@
     }
 
     /* ── Demo ── */
-    .demo-section { max-width: 800px; }
+    .demo-section { max-width: 820px; }
+    .demo-terminal-wrap {
+      display: flex; flex-direction: column; gap: 2rem;
+      margin-top: 2rem;
+    }
+    .demo-phase2 {
+      display: flex; flex-direction: column; gap: 0;
+    }
     .demo-frame {
       position: relative;
       background: #1c1832;
@@ -602,6 +700,7 @@
       width: 100%;
       max-width: 820px;
       margin: 0 auto 2.5rem;
+      overflow: visible;
     }
     .hero-claude-terminal {
       background: #1a1a2e;
@@ -634,7 +733,7 @@
     }
     .hero-claude-body {
       padding: 1rem 1.4rem;
-      height: 360px;
+      height: 440px;
       overflow: hidden;
       position: relative;
       text-align: left;
@@ -745,26 +844,24 @@
       transition: color 0.5s;
     }
 
-    /* Brain Bed alert notification */
+    /* Brain Bed floating panel — always visible beside terminal */
     .hero-alert {
       position: absolute;
-      top: 50px; right: 12px;
-      width: 300px;
+      top: 50px; right: -100px;
+      width: 200px;
       background: rgba(20,16,45,0.95);
-      border: 1px solid rgba(239,68,68,0.3);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 12px;
-      padding: 1rem;
+      padding: 0.8rem;
       backdrop-filter: blur(12px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px rgba(239,68,68,0.1);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
       z-index: 10;
-      transform: translateY(-120%);
-      opacity: 0;
-      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease;
-      pointer-events: none;
+      pointer-events: auto;
+      transition: border-color 0.5s, box-shadow 0.5s, opacity 0.4s;
     }
-    .hero-alert.show {
-      transform: translateY(0);
-      opacity: 1;
+    .hero-alert.danger {
+      border-color: rgba(239,68,68,0.3);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4), 0 0 15px rgba(239,68,68,0.08);
     }
     .hero-alert-icon {
       display: inline-flex;
@@ -837,6 +934,121 @@
       margin-bottom: 1.5rem;
     }
 
+    /* ── Meditation Overlay ── */
+    .hero-meditation {
+      position: absolute; inset: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.8s ease;
+      z-index: 20;
+    }
+    .hero-meditation.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .hero-med-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 40%, #1a1040 0%, #0a0a14 70%, #050508 100%);
+    }
+    .hero-med-content {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: 100%; gap: 10px;
+    }
+    .hero-med-breath {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(129,140,248,0.06);
+      border: 2px solid rgba(129,140,248,0.15);
+      animation: medBreathe 16s ease-in-out infinite;
+    }
+    .hero-med-breath-inner {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(129,140,248,0.2) 0%, rgba(129,140,248,0.02) 70%);
+      animation: medBreathe 16s ease-in-out infinite;
+    }
+    @keyframes medBreathe {
+      0%      { transform: scale(0.45); opacity: 0.4; }
+      25%     { transform: scale(1);    opacity: 1; }   /* inhale 4s */
+      50%     { transform: scale(1);    opacity: 0.9; } /* hold 4s */
+      87.5%   { transform: scale(0.45); opacity: 0.4; } /* exhale 6s */
+      100%    { transform: scale(0.45); opacity: 0.4; } /* hold 2s */
+    }
+    .hero-med-label {
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      color: rgba(129,140,248,0.6);
+      letter-spacing: 0.5px;
+    }
+    .hero-med-quote {
+      font-family: var(--serif);
+      font-size: 1rem;
+      color: rgba(255,255,255,0.35);
+      font-style: italic;
+      text-align: center;
+      max-width: 300px;
+      line-height: 1.5;
+    }
+    .hero-med-timer {
+      font-family: 'SF Mono', 'Geist Mono', monospace;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .hero-med-music {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      color: var(--text3);
+    }
+    .hero-med-bars {
+      display: inline-flex; align-items: flex-end; gap: 2px; height: 14px;
+    }
+    .hero-med-bars span {
+      width: 2px; border-radius: 1px;
+      background: var(--purple);
+      animation: musicBar 0.8s ease-in-out infinite alternate;
+    }
+    .hero-med-bars span:nth-child(1) { height: 40%; animation-delay: 0s; }
+    .hero-med-bars span:nth-child(2) { height: 70%; animation-delay: 0.15s; }
+    .hero-med-bars span:nth-child(3) { height: 50%; animation-delay: 0.3s; }
+    .hero-med-bars span:nth-child(4) { height: 80%; animation-delay: 0.45s; }
+    .hero-med-bars span:nth-child(5) { height: 35%; animation-delay: 0.6s; }
+
+    .hero-med-exit {
+      position: relative;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+      margin-top: 24px;
+    }
+    .hero-med-exit:hover { background: rgba(255,255,255,0.12); }
+    .hero-med-exit-ring {
+      position: absolute; inset: 0;
+      transform: rotate(-90deg);
+    }
+    .hero-med-exit-progress {
+      stroke-dasharray: 125.66;
+      stroke-dashoffset: 125.66;
+      transition: stroke-dashoffset 0.05s linear;
+    }
+    .hero-med-exit-icon { position: relative; z-index: 1; }
+    .hero-med-exit-hint {
+      font-family: var(--sans);
+      font-size: 0.45rem;
+      color: rgba(255,255,255,0.12);
+      margin-top: 2px;
+    }
+
     .hero-replay-wrap {
       margin-top: 0.75rem;
       margin-bottom: 1.5rem;
@@ -873,11 +1085,11 @@
       .hero-music-btn { padding: 0.5rem 1rem; }
       .hero { padding: 7rem 1.5rem 3rem; }
       section { padding: 4rem 1.5rem; }
+      .hiw-grid { grid-template-columns: 1fr; }
       .bfi-visual { flex-direction: column; }
       .hero-claude-body { height: 280px; }
       .hero-claude-terminal { font-size: 0.72rem; }
-      .hero-alert { width: 240px; right: 8px; top: 44px; padding: 0.75rem; }
-      .hero-alert-body { font-size: 0.7rem; }
+      .hero-alert { display: none; }
       .demo-frame { aspect-ratio: 4/5; }
       .demo-gauge-wrap { width: 100px; height: 100px; }
       .demo-gauge-number { font-size: 1.4rem; }
@@ -917,7 +1129,7 @@
 
   <!-- Hero -->
   <div class="hero">
-    <h1 class="hero-h1">Resting is part of shipping.</h1>
+    <h1 class="hero-h1">Cooked brain, cooked project.</h1>
     <button class="hero-music-btn" id="nav-music-btn" title="Listen to what Brain Bed plays during breaks">
       <svg class="nav-music-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
       <span class="nav-music-label" id="nav-music-label">Listen — This is what Brain Bed plays during breaks</span>
@@ -929,7 +1141,7 @@
       </span>
     </button>
 
-    <p class="hero-context">You, by 3 PM:</p>
+    <p class="hero-context">You, by 9 PM:</p>
 
     <!-- Claude Code terminal animation -->
     <div class="hero-claude-wrap">
@@ -954,18 +1166,39 @@
           <div class="hero-claude-scroll" id="hero-claude-scroll"></div>
         </div>
       </div>
-      <!-- Brain Bed alert notification -->
+      <!-- Brain Bed floating panel — always visible -->
       <div class="hero-alert" id="hero-alert">
-        <div class="hero-alert-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="hero-alert-title" id="hero-alert-title">Monitoring</div>
+          <div class="hero-alert-bfi" id="hero-alert-bfi" style="font-family:'SF Mono',monospace; font-size:0.8rem; font-weight:700; color:#22c55e;">12</div>
         </div>
-        <div class="hero-alert-content">
-          <div class="hero-alert-title">Brain Fry Detected</div>
-          <div class="hero-alert-body" id="hero-alert-body">BFI 97 — Your cognitive load is critically high. You've been switching between 3 projects for 2 hours without a break.</div>
+        <div class="hero-alert-body" id="hero-alert-body">3 active sessions detected.</div>
+        <div class="hero-alert-actions" style="margin-top:0.6rem;">
+          <div class="hero-alert-btn hero-alert-btn--primary" id="hero-take-break" style="cursor:pointer; width:100%; text-align:center;">Take a Break</div>
         </div>
-        <div class="hero-alert-actions">
-          <div class="hero-alert-btn hero-alert-btn--primary">Take a Break</div>
-          <div class="hero-alert-btn hero-alert-btn--secondary">Snooze</div>
+      </div>
+      <!-- Meditation overlay (shown when Take a Break is clicked) -->
+      <div class="hero-meditation" id="hero-meditation">
+        <div class="hero-med-bg"></div>
+        <div class="hero-med-content">
+          <div class="hero-med-breath" id="hero-med-breath">
+            <div class="hero-med-breath-inner"></div>
+          </div>
+          <div class="hero-med-label" id="hero-med-label">Breathe in</div>
+          <div class="hero-med-quote">"The mind is everything. What you think you become."</div>
+          <div class="hero-med-timer" id="hero-med-timer">4:58</div>
+          <div class="hero-med-music">
+            <span class="hero-med-bars"><span></span><span></span><span></span><span></span><span></span></span>
+            Gymnop&eacute;die No.1 &mdash; Erik Satie
+          </div>
+          <button class="hero-med-exit" id="hero-med-exit">
+            <svg class="hero-med-exit-ring" viewBox="0 0 44 44">
+              <circle cx="22" cy="22" r="20" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
+              <circle class="hero-med-exit-progress" cx="22" cy="22" r="20" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <svg class="hero-med-exit-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </button>
+          <p class="hero-med-exit-hint">Hold to exit</p>
         </div>
       </div>
     </div>
@@ -988,99 +1221,77 @@
         GitHub
       </a>
     </div>
-    <div style="margin-top: 2rem;">
-      <a href="https://www.producthunt.com/products/brain-bed?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-brain-bed" target="_blank" rel="noopener noreferrer"><img alt="Brain Bed - Your AI don't have a break button. Brain Bed is that button | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1108769&amp;theme=dark&amp;t=1774607547148" /></a>
-    </div>
   </div>
 
-  <!-- Demo -->
-  <section id="demo" class="demo-section">
-    <p class="section-label">Demo</p>
-    <h2>See it in action</h2>
-    <p>Watch how Brain Bed detects cognitive overload and forces a reset before you ship something you'll regret.</p>
 
-    <div class="demo-frame" id="demo-frame">
-      <div class="demo-titlebar">
-        <div class="demo-dot demo-dot--red"></div>
-        <div class="demo-dot demo-dot--yellow"></div>
-        <div class="demo-dot demo-dot--green"></div>
-        <span class="demo-titlebar-text">Brain Bed</span>
-      </div>
-      <div class="demo-viewport">
-        <!-- Phase 1: Dashboard -->
-        <div class="demo-layer demo-dashboard active" id="demo-phase1">
-          <div class="demo-gauge-wrap">
-            <div class="demo-gauge-bg"></div>
-            <div class="demo-gauge-fg" id="demo-gauge-fg"></div>
-            <div class="demo-gauge-value">
-              <span class="demo-gauge-number" id="demo-bfi-num">25</span>
-              <span class="demo-gauge-label" id="demo-bfi-label">Calm</span>
+  <!-- How it stops the accident -->
+  <section id="features">
+    <p class="section-label">How it works</p>
+    <h2>How it stops the accident</h2>
+
+    <div class="hiw-grid">
+      <div class="hiw-step">
+        <div class="hiw-demo hiw-demo-watch">
+          <div class="hiw-menubar">
+            <div class="hiw-menubar-dots"><span></span><span></span><span></span></div>
+            <div class="hiw-menubar-bfi">
+              <div class="hiw-bfi-dot"></div>
+              <span class="hiw-bfi-num">0</span>
             </div>
           </div>
-          <div class="demo-sessions">
-            <span class="demo-active-label">Active Sessions: 2</span>
-          </div>
-          <div class="demo-sessions">
-            <span class="demo-session-tag">Claude Code</span>
-            <span class="demo-session-tag">Gemini CLI</span>
+          <div class="hiw-sessions">
+            <span class="hiw-session-tag">Claude Code</span>
+            <span class="hiw-session-tag">Cursor</span>
+            <span class="hiw-session-tag hiw-session-delayed">Gemini CLI</span>
           </div>
         </div>
+        <div class="hiw-number">1</div>
+        <h3 class="hiw-title">It detects decline</h3>
+        <p class="hiw-desc">Tracks session count, duration, and interaction patterns to model your real-time cognitive state.</p>
+        <ul class="hiw-points">
+          <li>Claude Code, Cursor, Gemini CLI</li>
+          <li>BFI score in your menu bar</li>
+        </ul>
+      </div>
 
-        <!-- Phase 2: Notification (overlays on dashboard) -->
-        <div class="demo-notification" id="demo-notification">
-          <div class="demo-notif-title">Brain Fry Detected</div>
-          <div class="demo-notif-body">BFI 87 &mdash; Your cognitive load is dangerously high. Time to rest.</div>
-          <div class="demo-notif-buttons">
-            <div class="demo-notif-btn demo-notif-btn--primary" id="demo-meditate-btn">Meditate Now</div>
-            <div class="demo-notif-btn demo-notif-btn--secondary">Snooze</div>
+      <div class="hiw-step">
+        <div class="hiw-demo hiw-demo-catch">
+          <div class="hiw-alert-mini">
+            <div class="hiw-alert-mini-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="hiw-alert-mini-text">
+              <strong>Judgment degrading</strong>
+              <span>BFI 78 &middot; Review accuracy dropping</span>
+            </div>
           </div>
         </div>
-
-        <!-- Phase 3: Meditation -->
-        <div class="demo-layer demo-meditation" id="demo-phase3">
-          <div class="demo-breath-circle"></div>
-          <div class="demo-quote" id="demo-quote">"The mind is everything. What you think you become." &mdash; Buddha</div>
-          <div class="demo-timer" id="demo-timer">9:42 remaining</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="demo-replay-wrap">
-      <button class="demo-replay-btn" id="demo-replay-btn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-        Replay
-      </button>
-    </div>
-  </section>
-
-  <!-- Features -->
-  <section id="features">
-    <p class="section-label">Features</p>
-    <h2>Three things happen. None require your judgment.</h2>
-
-    <div class="features-grid" style="grid-template-columns: 1fr;">
-      <div class="feature-card" style="padding: 2.5rem; border-color: rgba(139,92,246,0.2); background: rgba(139,92,246,0.04);">
-        <div class="feature-icon" style="width:48px; height:48px; border-radius:12px;">
-          <svg viewBox="0 0 24 24" style="width:24px; height:24px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        </div>
-        <h3 style="font-size:1.3rem; margin-bottom:0.75rem;">It Watches</h3>
-        <p style="font-size:1rem; line-height:1.7;">You open Claude Code at 9 AM and Cursor at 9:05. By 10:30 you've added Gemini CLI in a third terminal. Brain Bed sees all of them. It tracks session duration, prompt frequency, tool-switching speed, and rest gaps. A number appears in your menu bar: your Brain Fry Index, 0 to 100.</p>
+        <div class="hiw-number">2</div>
+        <h3 class="hiw-title">It predicts the incident</h3>
+        <p class="hiw-desc">Identifies the inflection point where you stop catching errors and start approving without verifying.</p>
+        <ul class="hiw-points">
+          <li>Detects context-switching spirals</li>
+          <li>Flags before the damage reaches production</li>
+        </ul>
       </div>
 
-      <div class="feature-card" style="padding: 2.5rem; border-color: rgba(99,102,241,0.2); background: rgba(99,102,241,0.04);">
-        <div class="feature-icon" style="width:48px; height:48px; border-radius:12px;">
-          <svg viewBox="0 0 24 24" style="width:24px; height:24px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <div class="hiw-step">
+        <div class="hiw-demo hiw-demo-reset">
+          <div class="hiw-lock-screen">
+            <div class="hiw-breath-circle"></div>
+            <div class="hiw-lock-text">5:00</div>
+            <div class="hiw-lock-bars">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </div>
         </div>
-        <h3 style="font-size:1.3rem; margin-bottom:0.75rem;">It Catches</h3>
-        <p style="font-size:1rem; line-height:1.7;">BFI hits 70. You've been bouncing between three AI tools for two hours straight without a single pause longer than 45 seconds. You just re-read the same Claude output for the third time and retained nothing. That's not reviewing &mdash; that's a screensaver with anxiety. Brain Bed flags the pattern.</p>
-      </div>
-
-      <div class="feature-card" style="padding: 2.5rem; border-color: rgba(234,179,8,0.2); background: rgba(234,179,8,0.04);">
-        <div class="feature-icon" style="width:48px; height:48px; border-radius:12px; background: rgba(234,179,8,0.15);">
-          <svg viewBox="0 0 24 24" style="width:24px; height:24px; stroke: #eab308;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        </div>
-        <h3 style="font-size:1.3rem; margin-bottom:0.75rem;">It Resets</h3>
-        <p style="font-size:1rem; line-height:1.7;">BFI crosses the threshold. The screen goes full. The keyboard stops responding. Classical music plays. A timer counts down from five minutes. You're annoyed for about thirty seconds and then something loosens behind your eyes. When the timer ends, you look at the code. You see the bug immediately. It was on line 47 the whole time.</p>
+        <div class="hiw-number">3</div>
+        <h3 class="hiw-title">It locks your keyboard</h3>
+        <p class="hiw-desc">Locks your keyboard. Classical music plays. You breathe.</p>
+        <ul class="hiw-points">
+          <li>5-minute mandatory break</li>
+          <li>The diff is still there when you get back</li>
+        </ul>
       </div>
     </div>
   </section>
@@ -1148,49 +1359,7 @@
     </div>
   </section>
 
-  <!-- Supported Tools -->
-  <section>
-    <p class="section-label">Compatibility</p>
-    <h2>Works with your tools</h2>
-    <p>Brain Bed reads local session logs &mdash; no API keys, no cloud, everything stays on your machine.</p>
-    <div class="tools-row">
-      <div class="tool-badge">Claude Code</div>
-      <div class="tool-badge">Gemini CLI</div>
-      <div class="tool-badge">Codex CLI</div>
-    </div>
-  </section>
 
-  <!-- What is AI Brain Fry -->
-  <section id="ai-brain-fry" class="brainfry-section">
-    <p class="section-label">AI Brain Fry</p>
-    <h2>They called it "crack for nerds." They weren't joking.</h2>
-    <div class="brainfry-content">
-      <p>When we posted about AI coding fatigue on Reddit, it got <strong>47K views and 50+ comments</strong>. Developers called it "crack for nerds." An ex-addict in the thread said "the dopamine hits are real &mdash; this is basically the same thing." The auto-generated TL;DR said: <em>"The consensus is a resounding YES, Claude Code Brain Fry is a very real thing."</em></p>
-
-      <p>AI coding tools are the most productive thing that ever happened to developers &mdash; and the most compulsive. One more prompt. One more agent run. One more hit. Your brain doesn't distinguish between "productive work" and "compulsive repetition" when the reward schedule is this fast.</p>
-
-      <div class="brainfry-symptoms">
-        <div class="brainfry-symptom">
-          <span>&#x26A1;</span>
-          <strong>Prompt fatigue</strong><br/>You keep rephrasing the same question, unable to articulate what you actually need.
-        </div>
-        <div class="brainfry-symptom">
-          <span>&#x1F9CA;</span>
-          <strong>Decision paralysis</strong><br/>You accept AI suggestions without reviewing them, or reject everything on instinct.
-        </div>
-        <div class="brainfry-symptom">
-          <span>&#x1F300;</span>
-          <strong>Context blur</strong><br/>You forget which project you're working on or what you were trying to accomplish 10 minutes ago.
-        </div>
-        <div class="brainfry-symptom">
-          <span>&#x1F525;</span>
-          <strong>Compulsive prompting</strong><br/>You keep starting new AI sessions even though you know you should stop.
-        </div>
-      </div>
-
-      <p>AI brain fry isn't a character flaw &mdash; it's what happens when machines remove every speed limit and your brain doesn't get an upgrade. BCG found that brain fry increases major mistakes by 39%. The good news: it's reversible with breaks. The bad news: you won't take them yourself. <strong>Brain Bed forces the break you'll never choose to take.</strong></p>
-    </div>
-  </section>
 
   <!-- CTA -->
   <div class="cta" id="download">
@@ -1487,9 +1656,6 @@ function downloadLatest(e) {
     isHeroRunning = true;
     scroll.innerHTML = '';
     scroll.style.transform = 'translateY(0)';
-    heroAlert.classList.remove('show');
-    var primaryBtn = heroAlert.querySelector('.hero-alert-btn--primary');
-    if (primaryBtn) primaryBtn.classList.remove('highlight');
     setBfi(12);
     currentSession = 'myapp';
     titlebarText.textContent = sessions.myapp.title;
@@ -1515,17 +1681,9 @@ function downloadLatest(e) {
           var hrs = Math.floor(elapsed / 60);
           var mins = elapsed % 60;
           var timeStr = hrs > 0 ? hrs + 'h ' + mins + 'm' : mins + ' minutes';
-          document.getElementById('hero-alert-body').textContent =
-            'BFI 97 — You\'ve been coding across 3 projects for ' + timeStr + ' without a single break.';
-          heroAlert.classList.add('show');
-          // Highlight "Take a Break" button after a moment
-          setTimeout(function() {
-            var primaryBtn = heroAlert.querySelector('.hero-alert-btn--primary');
-            if (primaryBtn) primaryBtn.classList.add('highlight');
-          }, 1000);
           setTimeout(function() {
             isHeroRunning = false;
-          }, 1200);
+          }, 600);
         }, 600);
         return;
       }
@@ -1612,142 +1770,174 @@ function downloadLatest(e) {
   }, 500);
 })();
 
-// ── Demo Animation ──
+
+// ── Floating Panel + Take a Break → Meditation ──
 (function() {
-  const demoFrame = document.getElementById('demo-frame');
-  const phase1 = document.getElementById('demo-phase1');
-  const phase3 = document.getElementById('demo-phase3');
-  const notification = document.getElementById('demo-notification');
-  const gaugeFg = document.getElementById('demo-gauge-fg');
-  const bfiNum = document.getElementById('demo-bfi-num');
-  const bfiLabel = document.getElementById('demo-bfi-label');
-  const meditateBtn = document.getElementById('demo-meditate-btn');
-  const quote = document.getElementById('demo-quote');
-  const replayBtn = document.getElementById('demo-replay-btn');
+  var takeBreakBtn = document.getElementById('hero-take-break');
+  var meditation = document.getElementById('hero-meditation');
+  var alertEl = document.getElementById('hero-alert');
+  var alertTitle = document.getElementById('hero-alert-title');
+  var alertBody = document.getElementById('hero-alert-body');
+  var timerEl = document.getElementById('hero-med-timer');
+  var labelEl = document.getElementById('hero-med-label');
+  var bfiValueEl = document.getElementById('hero-bfi-value');
+  var alertBfi = document.getElementById('hero-alert-bfi');
 
-  let animationTimer = null;
-  let isRunning = false;
+  if (!takeBreakBtn || !meditation) return;
 
-  function getBfiColor(v) {
+  var medTimer = null;
+  var breathTimer = null;
+  var lastBfi = 0;
+
+  // Update floating panel based on BFI
+  function updatePanel(bfi) {
+    if (bfi === lastBfi) return;
+    lastBfi = bfi;
+    alertBfi.textContent = bfi;
+
+    if (bfi < 30) {
+      alertEl.classList.remove('danger');
+      alertEl.style.borderColor = 'rgba(34,197,94,0.2)';
+      alertTitle.textContent = 'Calm';
+      alertTitle.style.color = '#22c55e';
+      alertBfi.style.color = '#22c55e';
+      alertBody.textContent = 'Sessions detected. All good.';
+    } else if (bfi < 60) {
+      alertEl.classList.remove('danger');
+      alertEl.style.borderColor = 'rgba(234,179,8,0.25)';
+      alertTitle.textContent = 'Warming';
+      alertTitle.style.color = '#eab308';
+      alertBfi.style.color = '#eab308';
+      alertBody.textContent = 'Context switches accelerating. Consider a break.';
+    } else if (bfi < 85) {
+      alertEl.classList.remove('danger');
+      alertEl.style.borderColor = 'rgba(249,115,22,0.3)';
+      alertTitle.textContent = 'Heating';
+      alertTitle.style.color = '#f97316';
+      alertBfi.style.color = '#f97316';
+      alertBody.textContent = 'Decision quality degrading. Break recommended.';
+    } else {
+      alertEl.classList.add('danger');
+      alertTitle.textContent = 'Brain Fry';
+      alertTitle.style.color = '#ef4444';
+      alertBfi.style.color = '#ef4444';
+      alertBody.textContent = 'Your keyboard should be locked right now.';
+    }
+  }
+
+  // Poll BFI value from the hero animation
+  setInterval(function() {
+    if (!bfiValueEl) return;
+    var val = parseInt(bfiValueEl.textContent);
+    if (!isNaN(val)) updatePanel(val);
+  }, 500);
+
+  // Exit meditation — hold to exit (3 seconds, like the real app)
+  var exitBtn = document.getElementById('hero-med-exit');
+  var exitProgress = exitBtn.querySelector('.hero-med-exit-progress');
+  var HOLD_DURATION = 3000;
+  var HOLD_INTERVAL = 50;
+  var CIRCUMFERENCE = 2 * Math.PI * 20; // 125.66
+  var holdTimer = null;
+
+  function exitMeditation() {
+    meditation.classList.remove('active');
+    alertEl.style.opacity = '1';
+    alertEl.style.pointerEvents = 'auto';
+    if (medTimer) { clearTimeout(medTimer); medTimer = null; }
+    if (breathTimer) { clearTimeout(breathTimer); breathTimer = null; }
+  }
+
+  function startHold() {
+    var elapsed = 0;
+    holdTimer = setInterval(function() {
+      elapsed += HOLD_INTERVAL;
+      var progress = Math.min(elapsed / HOLD_DURATION, 1);
+      exitProgress.style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
+      if (progress >= 1) {
+        clearInterval(holdTimer);
+        holdTimer = null;
+        exitProgress.style.strokeDashoffset = CIRCUMFERENCE;
+        exitMeditation();
+      }
+    }, HOLD_INTERVAL);
+  }
+
+  function cancelHold() {
+    if (holdTimer) { clearInterval(holdTimer); holdTimer = null; }
+    exitProgress.style.strokeDashoffset = CIRCUMFERENCE;
+  }
+
+  exitBtn.addEventListener('pointerdown', startHold);
+  exitBtn.addEventListener('pointerup', cancelHold);
+  exitBtn.addEventListener('pointerleave', cancelHold);
+
+  // Take a Break click
+  takeBreakBtn.addEventListener('click', function() {
+    alertEl.style.opacity = '0';
+    alertEl.style.pointerEvents = 'none';
+    meditation.classList.add('active');
+    startMedTimer();
+    startBreathLabel();
+    // Play music
+    var musicBtn = document.getElementById('nav-music-btn');
+    if (musicBtn && !musicBtn.classList.contains('playing')) {
+      musicBtn.click();
+    }
+  });
+
+  function startMedTimer() {
+    var seconds = 298;
+    function tick() {
+      var m = Math.floor(seconds / 60);
+      var s = seconds % 60;
+      timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+      if (seconds > 0) {
+        seconds--;
+        medTimer = setTimeout(tick, 1000);
+      }
+    }
+    tick();
+  }
+
+  function startBreathLabel() {
+    var phases = [
+      { label: 'Breathe in', duration: 4000 },
+      { label: 'Hold', duration: 4000 },
+      { label: 'Breathe out', duration: 6000 },
+      { label: 'Hold', duration: 2000 }
+    ];
+    var idx = 0;
+    function cycle() {
+      labelEl.textContent = phases[idx].label;
+      breathTimer = setTimeout(function() {
+        idx = (idx + 1) % phases.length;
+        cycle();
+      }, phases[idx].duration);
+    }
+    cycle();
+  }
+})();
+
+// ── HIW BFI Counter ──
+(function() {
+  var numEl = document.querySelector('.hiw-bfi-num');
+  var dotEl = document.querySelector('.hiw-bfi-dot');
+  if (!numEl) return;
+  var vals = [12, 28, 45, 58, 67, 73, 58, 67, 73, 45, 28, 12];
+  var idx = 0;
+  function getColor(v) {
     if (v < 30) return '#22c55e';
     if (v < 60) return '#eab308';
-    if (v < 85) return '#f97316';
-    return '#ef4444';
+    return '#f97316';
   }
-
-  function getBfiStage(v) {
-    if (v < 30) return 'Calm';
-    if (v < 60) return 'Warming';
-    if (v < 85) return 'Heating';
-    return 'Brain Fry';
-  }
-
-  function setGauge(value) {
-    var degrees = (value / 100) * 360 - 90;
-    var color = getBfiColor(value);
-    gaugeFg.style.borderTopColor = color;
-    gaugeFg.style.borderRightColor = value > 25 ? color : 'transparent';
-    gaugeFg.style.borderBottomColor = value > 50 ? color : 'transparent';
-    gaugeFg.style.borderLeftColor = value > 75 ? color : 'transparent';
-    gaugeFg.style.transform = 'rotate(' + degrees + 'deg)';
-    bfiNum.textContent = value;
-    bfiNum.style.color = color;
-    bfiLabel.textContent = getBfiStage(value);
-  }
-
-  function resetDemo() {
-    phase1.classList.add('active');
-    phase3.classList.remove('active');
-    notification.classList.remove('show');
-    meditateBtn.classList.remove('highlight');
-    quote.classList.remove('visible');
-    setGauge(25);
-  }
-
-  function animateBfi(from, to, duration, callback) {
-    var start = performance.now();
-    function tick(now) {
-      var elapsed = now - start;
-      var progress = Math.min(elapsed / duration, 1);
-      var eased = progress * progress * (3 - 2 * progress); // smoothstep
-      var current = Math.round(from + (to - from) * eased);
-      setGauge(current);
-      if (progress < 1) {
-        animationTimer = requestAnimationFrame(tick);
-      } else if (callback) {
-        callback();
-      }
-    }
-    animationTimer = requestAnimationFrame(tick);
-  }
-
-  function delay(ms) {
-    return new Promise(function(resolve) {
-      animationTimer = setTimeout(resolve, ms);
-    });
-  }
-
-  async function runDemo() {
-    if (isRunning) return;
-    isRunning = true;
-    resetDemo();
-
-    // Phase 1: Dashboard gauge animation (3s)
-    await new Promise(function(resolve) {
-      animateBfi(25, 87, 3000, resolve);
-    });
-
-    // Phase 2: Notification slide in (2s)
-    notification.classList.add('show');
-    await delay(1000);
-    meditateBtn.classList.add('highlight');
-    await delay(1000);
-
-    // Phase 3: Meditation (4s)
-    notification.classList.remove('show');
-    phase1.classList.remove('active');
-    phase3.classList.add('active');
-    await delay(600);
-    quote.classList.add('visible');
-    await delay(3400);
-
-    // Loop back
-    phase3.classList.remove('active');
-    quote.classList.remove('visible');
-    isRunning = false;
-    runDemo();
-  }
-
-  function stopDemo() {
-    isRunning = false;
-    if (animationTimer) {
-      cancelAnimationFrame(animationTimer);
-      clearTimeout(animationTimer);
-      animationTimer = null;
-    }
-  }
-
-  // Auto-play on scroll into view
-  var hasStarted = false;
-  var observer = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry) {
-      if (entry.isIntersecting && !isRunning) {
-        hasStarted = true;
-        runDemo();
-      } else if (!entry.isIntersecting && isRunning) {
-        stopDemo();
-        resetDemo();
-      }
-    });
-  }, { threshold: 0.3 });
-  observer.observe(demoFrame);
-
-  // Replay button
-  replayBtn.addEventListener('click', function() {
-    stopDemo();
-    resetDemo();
-    setTimeout(function() { runDemo(); }, 100);
-  });
+  setInterval(function() {
+    idx = (idx + 1) % vals.length;
+    numEl.textContent = vals[idx];
+    var c = getColor(vals[idx]);
+    numEl.style.color = c;
+    dotEl.style.background = c;
+  }, 800);
 })();
 
 // ── Music Player ──
