@@ -898,6 +898,40 @@
     .hero-alert-btn--primary {
       background: linear-gradient(135deg, var(--indigo), var(--purple));
       color: #fff;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 12px rgba(99,102,241,0.3);
+      border: 1px solid rgba(255,255,255,0.15);
+      animation: btnPulse 2s ease-in-out infinite;
+    }
+    @keyframes btnPulse {
+      0%, 100% { box-shadow: 0 2px 12px rgba(99,102,241,0.3); }
+      50% { box-shadow: 0 2px 20px rgba(99,102,241,0.6); }
+    }
+    .hero-alert-cursor {
+      position: absolute;
+      bottom: -8px; right: 30px;
+      animation: cursorClick 3s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 20;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+    @keyframes cursorClick {
+      0% { transform: translate(20px, 15px); opacity: 0; }
+      20% { transform: translate(20px, 15px); opacity: 1; }
+      45% { transform: translate(0, 0); opacity: 1; }
+      50% { transform: translate(0, 0) scale(0.85); opacity: 1; }
+      55% { transform: translate(0, 0) scale(1); opacity: 1; }
+      70% { transform: translate(0, 0); opacity: 1; }
+      90% { opacity: 0; }
+      100% { transform: translate(20px, 15px); opacity: 0; }
+    }
+    .hero-alert-btn--primary:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 16px rgba(99,102,241,0.4);
+    }
+    .hero-alert-btn--primary:active {
+      transform: scale(0.97);
     }
     .hero-alert-btn--primary.highlight {
       box-shadow: 0 0 16px rgba(139,92,246,0.5);
@@ -1175,6 +1209,11 @@
         <div class="hero-alert-body" id="hero-alert-body">3 active sessions detected.</div>
         <div class="hero-alert-actions" style="margin-top:0.6rem;">
           <div class="hero-alert-btn hero-alert-btn--primary" id="hero-take-break" style="cursor:pointer; width:100%; text-align:center;">Take a Break</div>
+        </div>
+        <div class="hero-alert-cursor" id="hero-alert-cursor">
+          <svg width="16" height="20" viewBox="0 0 16 20" fill="none">
+            <path d="M1 1L1 13.5L4.5 10.5L7.5 17L10 16L7 9H12L1 1Z" fill="white" stroke="rgba(0,0,0,0.3)" stroke-width="1"/>
+          </svg>
         </div>
       </div>
       <!-- Meditation overlay (shown when Take a Break is clicked) -->
