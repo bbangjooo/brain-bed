@@ -5,6 +5,7 @@ import PhaseAwareness from './PhaseAwareness'
 import PhasePromise from './PhasePromise'
 import PhaseFirstTaste from './PhaseFirstTaste'
 import PhaseSetup from './PhaseSetup'
+import { track } from '../../analytics'
 
 type Phase = 'empathy' | 'awareness' | 'promise' | 'firstTaste' | 'setup'
 
@@ -82,14 +83,18 @@ export default function OnboardingScreen() {
     const idx = PHASE_ORDER.indexOf(phase)
     if (idx >= PHASE_ORDER.length - 1) return
 
+    const nextPhase = PHASE_ORDER[idx + 1]
+    track('onboarding_phase_viewed', { phase: nextPhase })
+
     setTransitioning(true)
     setTimeout(() => {
-      setPhase(PHASE_ORDER[idx + 1])
+      setPhase(nextPhase)
       setTimeout(() => setTransitioning(false), 50)
     }, 800)
   }, [phase])
 
   const handleSkip = useCallback(() => {
+    track('onboarding_skipped', {})
     setExiting(true)
     setTimeout(() => {
       window.electronAPI?.onboardingComplete({
@@ -105,6 +110,10 @@ export default function OnboardingScreen() {
     late_night_enabled: boolean
     launch_at_login: boolean
   }) => {
+    track('onboarding_completed', {
+      default_meditation_minutes: settings.default_meditation_minutes,
+      launch_at_login: settings.launch_at_login,
+    })
     setExiting(true)
     setTimeout(() => {
       window.electronAPI?.onboardingComplete(settings)

@@ -9,6 +9,7 @@ import BreathingCircle from './BreathingCircle'
 import ExitConfirmDialog from './ExitConfirmDialog'
 import CompletionScreen from './CompletionScreen'
 import TimeSelector from './TimeSelector'
+import { track } from '../../analytics'
 
 type Phase = 'loading' | 'selecting' | 'active' | 'completed'
 
@@ -80,21 +81,25 @@ export default function MeditationScreen() {
   }, [phase])
 
   const handleSelectDuration = useCallback((minutes: number) => {
+    track('meditation_duration_selected', { minutes })
     window.electronAPI?.selectDuration(minutes * 60)
   }, [])
 
   const handleComplete = useCallback(() => {
+    track('meditation_completed', { duration_minutes: Math.round(totalSeconds / 60) })
     window.electronAPI?.endMeditation(true)
-  }, [])
+  }, [totalSeconds])
 
   const handleExitConfirm = useCallback(() => {
+    track('meditation_exit_confirmed', { remaining_seconds: remainingSeconds, total_seconds: totalSeconds })
     setShowExitDialog(false)
     window.electronAPI?.endMeditation(false)
-  }, [])
+  }, [remainingSeconds, totalSeconds])
 
   const handleContinue = useCallback(() => {
+    track('meditation_continued', { remaining_seconds: remainingSeconds })
     setShowExitDialog(false)
-  }, [])
+  }, [remainingSeconds])
 
   const handleAnalyserReady = useCallback((node: AnalyserNode) => {
     setAnalyser(node)
@@ -115,11 +120,12 @@ export default function MeditationScreen() {
       if (progress >= 1) {
         if (holdTimerRef.current) clearInterval(holdTimerRef.current)
         holdTimerRef.current = null
+        track('meditation_exit_attempted', { remaining_seconds: remainingSeconds, total_seconds: totalSeconds })
         setShowExitDialog(true)
         setHoldProgress(0)
       }
     }, HOLD_INTERVAL)
-  }, [])
+  }, [remainingSeconds, totalSeconds])
 
   const cancelHold = useCallback(() => {
     if (holdTimerRef.current) {

@@ -449,10 +449,25 @@ function sendNotification() {
   })
 
   notification.on('action', () => {
+    mainWindow?.webContents.send('analytics:track', {
+      event: 'notification_clicked',
+      properties: { bfi: bfi.score, stage: bfi.stage },
+    })
     showTimeSelection()
   })
 
-  notification.on('click', () => showTimeSelection())
+  notification.on('click', () => {
+    mainWindow?.webContents.send('analytics:track', {
+      event: 'notification_clicked',
+      properties: { bfi: bfi.score, stage: bfi.stage },
+    })
+    showTimeSelection()
+  })
+
+  mainWindow?.webContents.send('analytics:track', {
+    event: 'notification_shown',
+    properties: { bfi: bfi.score, stage: bfi.stage, notification_count: notificationCount },
+  })
   notification.show()
 }
 
@@ -663,6 +678,13 @@ app.whenReady().then(() => {
         lastNotificationAt = null
       }
 
+      // Track BFI stage transitions
+      if (currentBfi.stage !== lastBfiStage) {
+        mainWindow?.webContents.send('analytics:track', {
+          event: 'bfi_stage_changed',
+          properties: { from: lastBfiStage, to: currentBfi.stage, score: currentBfi.score },
+        })
+      }
       lastBfiStage = currentBfi.stage
       updateTrayMenu()
       sendStatusToMain()

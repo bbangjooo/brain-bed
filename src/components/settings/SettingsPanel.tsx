@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { track } from '../../analytics'
 
 interface Settings {
   default_meditation_minutes: number
@@ -31,6 +32,7 @@ export default function SettingsPanel({ onBack }: SettingsPanelProps) {
 
   async function updateSetting(key: keyof Settings, value: any) {
     setSettings((prev) => ({ ...prev, [key]: value }))
+    track('setting_changed', { key, value })
     await window.electronAPI?.updateSetting(key, String(value))
   }
 
@@ -110,7 +112,10 @@ export default function SettingsPanel({ onBack }: SettingsPanelProps) {
 
       <div className="mt-8 pt-4 border-t" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
         <button
-          onClick={() => window.electronAPI?.onboardingReplay()}
+          onClick={() => {
+            track('onboarding_replayed', {})
+            window.electronAPI?.onboardingReplay()
+          }}
           className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-white/5"
           style={{ color: 'rgba(255, 255, 255, 0.35)', border: '1px solid rgba(255, 255, 255, 0.08)' }}
         >

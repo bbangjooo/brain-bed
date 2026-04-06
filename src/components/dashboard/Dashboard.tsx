@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import type { AppStatus, BfiStage } from '../../types/electron'
+import { track } from '../../analytics'
 
 interface DashboardProps {
   onNavigate: (route: 'dashboard' | 'settings') => void
@@ -80,6 +81,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
     })
     const unsubUpdate = window.electronAPI?.onUpdateReady((data) => {
       setUpdateVersion(data.version)
+      track('update_shown', { version: data.version })
     })
     return () => { unsub?.(); unsubUpdate?.() }
   }, [])
@@ -170,7 +172,11 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
 
           {/* Details toggle */}
           <button
-            onClick={() => setShowDetails(!showDetails)}
+            onClick={() => {
+              const next = !showDetails
+              setShowDetails(next)
+              track('details_toggled', { expanded: next })
+            }}
             className="mt-3 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-[1.03] active:scale-[0.97]"
             style={{
               color: 'rgba(255,255,255,0.5)',
@@ -298,7 +304,10 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
 
         {/* Take a break button */}
         <button
-          onClick={() => window.electronAPI?.takeBreak()}
+          onClick={() => {
+            track('take_break_clicked', { bfi: status.bfi, bfi_stage: status.bfiStage })
+            window.electronAPI?.takeBreak()
+          }}
           disabled={status.isMeditating}
           className="w-full py-3.5 rounded-xl font-medium text-sm transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
           style={{
@@ -326,7 +335,10 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
         >
           <span>v{updateVersion} ready</span>
           <button
-            onClick={() => window.electronAPI?.restartForUpdate()}
+            onClick={() => {
+              track('update_installed', { version: updateVersion! })
+              window.electronAPI?.restartForUpdate()
+            }}
             className="px-3 py-1 rounded-lg font-medium transition-all hover:scale-105 active:scale-95"
             style={{
               background: 'rgba(129, 140, 248, 0.5)',

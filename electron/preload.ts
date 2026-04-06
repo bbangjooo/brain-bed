@@ -55,6 +55,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
     return () => ipcRenderer.removeListener('meditation:show-exit-dialog', handler)
   },
 
+  // Analytics (forwarded from main process)
+  onAnalyticsTrack: (callback: (data: { event: string; properties: Record<string, any> }) => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, data: { event: string; properties: Record<string, any> }) => callback(data)
+    ipcRenderer.on('analytics:track', handler)
+    return () => ipcRenderer.removeListener('analytics:track', handler)
+  },
+
   // Onboarding
   onboardingRequestAccessibility: () => ipcRenderer.invoke('onboarding:request-accessibility'),
   onboardingGetScanData: () => ipcRenderer.invoke('onboarding:get-scan-data'),

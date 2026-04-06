@@ -58,6 +58,8 @@ export interface ElectronAPI {
     callback: (data: { duration: number; musicAutoplay: boolean }) => void
   ) => () => void
   onShowExitDialog: (callback: () => void) => () => void
+  // Analytics (forwarded from main process)
+  onAnalyticsTrack: (callback: (data: { event: string; properties: Record<string, any> }) => void) => () => void
   // Onboarding
   onboardingRequestAccessibility: () => Promise<boolean>
   onboardingGetScanData: () => Promise<OnboardingScanData | null>

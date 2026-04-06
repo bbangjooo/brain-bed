@@ -3,6 +3,7 @@ import Dashboard from './components/dashboard/Dashboard'
 import MeditationScreen from './components/meditation/MeditationScreen'
 import SettingsPanel from './components/settings/SettingsPanel'
 import OnboardingScreen from './components/onboarding/OnboardingScreen'
+import { track } from './analytics'
 
 type Route = 'dashboard' | 'meditation' | 'settings' | 'onboarding'
 
@@ -15,6 +16,14 @@ function App() {
     else if (hash === '/settings') setRoute('settings')
     else if (hash === '/onboarding') setRoute('onboarding')
     else setRoute('dashboard')
+  }, [])
+
+  // Forward analytics events from main process
+  useEffect(() => {
+    const unsub = window.electronAPI?.onAnalyticsTrack((data) => {
+      track(data.event as any, data.properties as any)
+    })
+    return () => unsub?.()
   }, [])
 
   if (route === 'meditation') return <MeditationScreen />
