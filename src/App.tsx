@@ -7,16 +7,16 @@ import { track } from './analytics'
 
 type Route = 'dashboard' | 'meditation' | 'settings' | 'onboarding'
 
-function App() {
-  const [route, setRoute] = useState<Route>('dashboard')
+function getInitialRoute(): Route {
+  const hash = window.location.hash.replace('#', '')
+  if (hash === '/meditation') return 'meditation'
+  if (hash === '/settings') return 'settings'
+  if (hash === '/onboarding') return 'onboarding'
+  return 'dashboard'
+}
 
-  useEffect(() => {
-    const hash = window.location.hash.replace('#', '')
-    if (hash === '/meditation') setRoute('meditation')
-    else if (hash === '/settings') setRoute('settings')
-    else if (hash === '/onboarding') setRoute('onboarding')
-    else setRoute('dashboard')
-  }, [])
+function App() {
+  const [route, setRoute] = useState<Route>(getInitialRoute)
 
   // Forward analytics events from main process
   useEffect(() => {

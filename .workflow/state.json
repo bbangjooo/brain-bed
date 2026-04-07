@@ -1,7 +1,7 @@
 {
   "projectName": "Brain Bed",
   "createdAt": "2026-03-26T12:00:00Z",
-  "currentPhaseId": "v2-complete",
+  "currentPhaseId": "v5-stage-3",
   "phases": [
     {
       "id": "stage-0",
@@ -74,6 +74,84 @@
       "startedAt": "2026-03-26T14:45:00Z",
       "completedAt": "2026-03-26T15:00:00Z",
       "artifacts": ["outputs/stage-3/build-config-v2.md"]
+    },
+    {
+      "id": "v3-stage-0",
+      "name": "Ideation v3 — 휴식 컨텐츠 대안 리서치",
+      "status": "completed",
+      "startedAt": "2026-04-07T00:00:00Z",
+      "completedAt": "2026-04-07T00:10:00Z",
+      "artifacts": ["outputs/stage-0/content-research-v3.md"]
+    },
+    {
+      "id": "v3-prototype",
+      "name": "Prototype v3 — 휴식 컨텐츠 3종 프로토타입",
+      "status": "completed",
+      "startedAt": "2026-04-07T00:10:00Z",
+      "completedAt": "2026-04-07T00:20:00Z",
+      "artifacts": [
+        "outputs/prototypes/1-generative-art.html",
+        "outputs/prototypes/3-creative-sandbox.html",
+        "outputs/prototypes/4-mini-puzzles.html"
+      ]
+    },
+    {
+      "id": "v4-stage-0",
+      "name": "Ideation v4 — 마이크로 컨텍스트 스위칭 컨셉",
+      "status": "completed",
+      "startedAt": "2026-04-07T10:00:00Z",
+      "completedAt": "2026-04-07T10:10:00Z",
+      "artifacts": ["outputs/stage-0/idea-brief-v4.md"]
+    },
+    {
+      "id": "v4-stage-1",
+      "name": "Planning v4 — Context Switch Zone PRD",
+      "status": "completed",
+      "startedAt": "2026-04-07T10:10:00Z",
+      "completedAt": "2026-04-07T10:20:00Z",
+      "artifacts": ["outputs/stage-1/prd-v4.md"]
+    },
+    {
+      "id": "v4-stage-2",
+      "name": "Design v4 — Context Switch Zone UI/UX",
+      "status": "completed",
+      "startedAt": "2026-04-07T10:20:00Z",
+      "completedAt": "2026-04-07T10:30:00Z",
+      "artifacts": ["outputs/stage-2/design-spec-v4.md"]
+    },
+    {
+      "id": "v4-stage-3",
+      "name": "Development v4 — Context Switch Zone 구현",
+      "status": "completed",
+      "startedAt": "2026-04-07T10:30:00Z",
+      "completedAt": "2026-04-07T10:50:00Z",
+      "artifacts": [
+        "src/components/modes/ModeSelector.tsx",
+        "src/components/modes/PlayMode.tsx",
+        "src/components/modes/ListenMode.tsx",
+        "src/components/modes/MoveMode.tsx",
+        "src/components/modes/CreateMode.tsx"
+      ]
+    },
+    {
+      "id": "v5-stage-0",
+      "name": "Ideation+PRD v5 — Refresh Process & Rhythm Game",
+      "status": "completed",
+      "startedAt": "2026-04-07T16:00:00Z",
+      "completedAt": "2026-04-07T16:10:00Z",
+      "artifacts": ["outputs/stage-0/idea-brief-v5.md"]
+    },
+    {
+      "id": "v5-stage-3",
+      "name": "Development v5 — 2-Mode System",
+      "status": "completed",
+      "startedAt": "2026-04-07T16:10:00Z",
+      "completedAt": "2026-04-07T16:30:00Z",
+      "artifacts": [
+        "src/components/modes/ModeSelector.tsx",
+        "src/components/modes/RefreshMode.tsx",
+        "src/components/modes/RhythmMode.tsx"
+      ]
     }
   ]
 }

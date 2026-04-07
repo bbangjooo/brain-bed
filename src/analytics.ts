@@ -21,6 +21,12 @@ type Events = {
   meditation_exit_confirmed: { remaining_seconds: number; total_seconds: number }
   meditation_continued: { remaining_seconds: number }
 
+  // Context Switch (v4)
+  mode_selected: { mode: string; duration_minutes: number }
+  context_switch_started: { mode: string; duration_seconds: number; is_free: boolean }
+  context_switch_completed: { mode: string | null; duration_seconds: number; completed_full: boolean }
+  context_switch_exited: { mode: string | null; remaining_seconds: number; total_seconds: number }
+
   // Settings
   setting_changed: { key: string; value: string | number | boolean }
   onboarding_replayed: {}

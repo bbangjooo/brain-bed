@@ -1,26 +1,21 @@
-import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import GradientBackground from './GradientBackground'
 import Scene3D from './Scene3D'
-import QuoteDisplay from './QuoteDisplay'
 import CircularTimer from './CircularTimer'
 import AudioPlayer from './AudioPlayer'
-
-import BreathingCircle from './BreathingCircle'
 import ExitConfirmDialog from './ExitConfirmDialog'
 import CompletionScreen from './CompletionScreen'
-import TimeSelector from './TimeSelector'
+import RefreshMode from '../modes/RefreshMode'
 import { track } from '../../analytics'
 
-type Phase = 'loading' | 'selecting' | 'active' | 'completed'
+type Phase = 'loading' | 'active' | 'completed'
 
 export default function MeditationScreen() {
   const [phase, setPhase] = useState<Phase>('loading')
-  const [defaultMinutes, setDefaultMinutes] = useState(10)
   const [totalSeconds, setTotalSeconds] = useState(600)
   const [remainingSeconds, setRemainingSeconds] = useState(600)
   const [showExitDialog, setShowExitDialog] = useState(false)
   const [musicAutoplay, setMusicAutoplay] = useState(true)
-  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // Disable right-click
@@ -30,22 +25,24 @@ export default function MeditationScreen() {
     return () => window.removeEventListener('contextmenu', handler)
   }, [])
 
-  // IPC listeners
+  // IPC listeners — use configured duration from settings
   useEffect(() => {
     if (!window.electronAPI) return
 
     const unsubSelect = window.electronAPI.onMeditationSelect((data) => {
-      setDefaultMinutes(data.defaultMinutes)
       setMusicAutoplay(data.musicAutoplay)
-      setPhase('selecting')
+      const duration = data.defaultMinutes * 60
+      setTotalSeconds(duration)
+      setRemainingSeconds(duration)
+      window.electronAPI?.selectDuration(duration)
     })
 
-    // Signal main process that listeners are ready
     window.electronAPI.meditationReady?.()
 
     const unsubStart = window.electronAPI.onMeditationStart((data) => {
-      setTotalSeconds(data.duration)
-      setRemainingSeconds(data.duration)
+      const duration = data.duration
+      setTotalSeconds(duration)
+      setRemainingSeconds(duration)
       setMusicAutoplay(data.musicAutoplay)
       setPhase('active')
     })
@@ -80,52 +77,47 @@ export default function MeditationScreen() {
     }
   }, [phase])
 
-  const handleSelectDuration = useCallback((minutes: number) => {
-    track('meditation_duration_selected', { minutes })
-    window.electronAPI?.selectDuration(minutes * 60)
+  const handleComplete = useCallback(() => {
+    track('context_switch_completed', {
+      mode: 'refresh',
+      duration_seconds: totalSeconds,
+      completed_full: true,
+    })
+    window.electronAPI?.endMeditation(true)
   }, [])
 
-  const handleComplete = useCallback(() => {
-    track('meditation_completed', { duration_minutes: Math.round(totalSeconds / 60) })
-    window.electronAPI?.endMeditation(true)
-  }, [totalSeconds])
-
   const handleExitConfirm = useCallback(() => {
-    track('meditation_exit_confirmed', { remaining_seconds: remainingSeconds, total_seconds: totalSeconds })
+    track('context_switch_exited', {
+      mode: 'refresh',
+      remaining_seconds: remainingSeconds,
+      total_seconds: totalSeconds,
+    })
     setShowExitDialog(false)
     window.electronAPI?.endMeditation(false)
-  }, [remainingSeconds, totalSeconds])
-
-  const handleContinue = useCallback(() => {
-    track('meditation_continued', { remaining_seconds: remainingSeconds })
-    setShowExitDialog(false)
   }, [remainingSeconds])
 
-  const handleAnalyserReady = useCallback((node: AnalyserNode) => {
-    setAnalyser(node)
+  const handleContinue = useCallback(() => {
+    setShowExitDialog(false)
   }, [])
 
   // Long-press exit
   const [holdProgress, setHoldProgress] = useState(0)
   const holdTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const HOLD_DURATION = 3000 // 3 seconds
-  const HOLD_INTERVAL = 50
 
   const startHold = useCallback(() => {
     let elapsed = 0
     holdTimerRef.current = setInterval(() => {
-      elapsed += HOLD_INTERVAL
-      const progress = Math.min(elapsed / HOLD_DURATION, 1)
+      elapsed += 50
+      const progress = Math.min(elapsed / 1500, 1)
       setHoldProgress(progress)
       if (progress >= 1) {
         if (holdTimerRef.current) clearInterval(holdTimerRef.current)
         holdTimerRef.current = null
-        track('meditation_exit_attempted', { remaining_seconds: remainingSeconds, total_seconds: totalSeconds })
         setShowExitDialog(true)
         setHoldProgress(0)
       }
-    }, HOLD_INTERVAL)
-  }, [remainingSeconds, totalSeconds])
+    }, 50)
+  }, [])
 
   const cancelHold = useCallback(() => {
     if (holdTimerRef.current) {
@@ -135,6 +127,8 @@ export default function MeditationScreen() {
     setHoldProgress(0)
   }, [])
 
+  // --- RENDER ---
+
   if (phase === 'loading') {
     return (
       <div className="meditation-window w-full h-full">
@@ -143,21 +137,6 @@ export default function MeditationScreen() {
     )
   }
 
-  // Time selection
-  if (phase === 'selecting') {
-    return (
-      <div className="meditation-window w-full h-full relative overflow-hidden">
-        <GradientBackground />
-        <Scene3D analyser={null} />
-        <TimeSelector
-          defaultMinutes={defaultMinutes}
-          onSelect={handleSelectDuration}
-        />
-      </div>
-    )
-  }
-
-  // Completed
   if (phase === 'completed') {
     return (
       <div className="meditation-window w-full h-full relative overflow-hidden">
@@ -165,62 +144,62 @@ export default function MeditationScreen() {
         <Scene3D analyser={null} />
         <CompletionScreen
           durationMinutes={Math.round(totalSeconds / 60)}
+          mode="refresh"
           onClose={handleComplete}
         />
       </div>
     )
   }
 
-  // Active meditation
+  // Active
   return (
-    <div className="meditation-window meditation-mode w-full h-full flex flex-col items-center justify-center relative overflow-hidden">
+    <div className="meditation-window meditation-mode w-full h-full relative overflow-hidden">
       <GradientBackground />
-      <Scene3D analyser={analyser} />
+      <Scene3D analyser={null} />
 
-      {/* Breathing circle + quote */}
-      <div className="flex-1 flex flex-col items-center justify-center z-10 relative w-full -mt-12">
-        <BreathingCircle />
-        <div className="mt-6">
-          <QuoteDisplay />
-        </div>
-      </div>
+      <RefreshMode />
 
-      {/* Bottom: timer + audio + guide */}
-      <div className="relative z-10 pb-8 flex flex-col items-center gap-4 w-full">
+      {/* Timer (top right) */}
+      <div className="absolute top-5 right-5 z-20">
         <CircularTimer
           remainingSeconds={remainingSeconds}
           totalSeconds={totalSeconds}
         />
-        <AudioPlayer autoplay={musicAutoplay} onAnalyserReady={handleAnalyserReady} />
-        <div className="flex flex-col items-center gap-2 mt-1">
-          <button
-            onPointerDown={startHold}
-            onPointerUp={cancelHold}
-            onPointerLeave={cancelHold}
-            className="relative w-11 h-11 rounded-full flex items-center justify-center transition-colors"
-            style={{ background: 'rgba(255, 255, 255, 0.08)' }}
-          >
-            <svg className="absolute inset-0 -rotate-90" viewBox="0 0 44 44">
-              <circle cx="22" cy="22" r="20" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="2" />
-              <circle
-                cx="22" cy="22" r="20" fill="none"
-                stroke="#a78bfa"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeDasharray={`${2 * Math.PI * 20}`}
-                strokeDashoffset={`${2 * Math.PI * 20 * (1 - holdProgress)}`}
-                style={{ transition: holdProgress === 0 ? 'stroke-dashoffset 0.15s' : 'none' }}
-              />
-            </svg>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeLinecap="round">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-            </svg>
-          </button>
-          <p className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.2)' }}>
-            Hold to exit
-          </p>
-        </div>
+      </div>
+
+      {/* Music */}
+      <div className="absolute bottom-4 left-4 z-20">
+        <AudioPlayer autoplay={musicAutoplay} />
+      </div>
+
+      {/* Hold-to-exit */}
+      <div className="absolute bottom-4 right-4 z-20 flex items-center gap-2">
+        <span className="text-[10px]" style={{ color: 'rgba(255, 255, 255, 0.15)' }}>
+          hold to exit
+        </span>
+        <button
+          onPointerDown={startHold}
+          onPointerUp={cancelHold}
+          onPointerLeave={cancelHold}
+          className="relative w-9 h-9 rounded-full flex items-center justify-center"
+          style={{ background: 'rgba(255, 255, 255, 0.06)' }}
+        >
+          <svg className="absolute inset-0 -rotate-90" viewBox="0 0 36 36">
+            <circle cx="18" cy="18" r="16" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="2" />
+            <circle
+              cx="18" cy="18" r="16" fill="none"
+              stroke="#a78bfa"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeDasharray={`${2 * Math.PI * 16}`}
+              strokeDashoffset={`${2 * Math.PI * 16 * (1 - holdProgress)}`}
+              style={{ transition: holdProgress === 0 ? 'stroke-dashoffset 0.15s' : 'none' }}
+            />
+          </svg>
+          <span className="text-sm" style={{ lineHeight: 1 }}>
+            {'\uD83D\uDEAA'}
+          </span>
+        </button>
       </div>
 
       {showExitDialog && (

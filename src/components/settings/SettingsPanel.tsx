@@ -67,23 +67,26 @@ export default function SettingsPanel({ onBack }: SettingsPanelProps) {
       </div>
 
       <div className="space-y-6">
-        <SettingItem label="Default meditation duration">
-          <select
-            value={settings.default_meditation_minutes}
-            onChange={(e) => updateSetting('default_meditation_minutes', Number(e.target.value))}
-            className="w-full rounded-lg px-3 py-2 text-sm cursor-pointer"
-            style={{
-              background: 'rgba(255, 255, 255, 0.08)',
-              color: 'rgba(255, 255, 255, 0.8)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-            }}
-          >
-            <option value={5}>5 min</option>
-            <option value={10}>10 min</option>
-            <option value={15}>15 min</option>
-            <option value={20}>20 min</option>
-            <option value={30}>30 min</option>
-          </select>
+        <SettingItem label="Default healing duration">
+          <div className="flex items-center gap-2">
+            <input
+              type="number"
+              min={1}
+              max={120}
+              value={settings.default_meditation_minutes}
+              onChange={(e) => {
+                const v = Math.max(1, Math.min(120, Number(e.target.value) || 10))
+                updateSetting('default_meditation_minutes', v)
+              }}
+              className="w-20 rounded-lg px-3 py-2 text-sm text-center"
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                color: 'rgba(255, 255, 255, 0.8)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            />
+            <span className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.4)' }}>min</span>
+          </div>
         </SettingItem>
 
         <SettingItem label="Music autoplay" description="Automatically play classical music when entering meditation">
