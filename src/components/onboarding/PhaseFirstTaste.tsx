@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import BreathingCircle from '../meditation/BreathingCircle'
 import Scene3D from '../meditation/Scene3D'
 
 interface Props {
@@ -9,56 +8,60 @@ interface Props {
 }
 
 export default function PhaseFirstTaste({ userResponse, analyser, onAdvance }: Props) {
-  const [showGuide, setShowGuide] = useState(true)
   const [showText, setShowText] = useState(false)
-  const duration = userResponse === 'no' ? 45 : 30
+  const [showClosing, setShowClosing] = useState(false)
 
   useEffect(() => {
-    // Hide tutorial guide after 6s
-    const guideTimer = setTimeout(() => setShowGuide(false), 6000)
-    // Show closing text after duration
-    const textTimer = setTimeout(() => setShowText(true), duration * 1000)
-    // Advance after text + 3s
-    const advanceTimer = setTimeout(onAdvance, (duration + 3) * 1000)
+    const t1 = setTimeout(() => setShowText(true), 800)
+    const t2 = setTimeout(() => setShowClosing(true), 8000)
+    const t3 = setTimeout(onAdvance, 12000)
 
     return () => {
-      clearTimeout(guideTimer)
-      clearTimeout(textTimer)
-      clearTimeout(advanceTimer)
+      clearTimeout(t1)
+      clearTimeout(t2)
+      clearTimeout(t3)
     }
-  }, [duration, onAdvance])
+  }, [onAdvance])
 
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden">
       <Scene3D analyser={analyser} />
 
-      {/* Tutorial guide text — fades out after 6s */}
-      <div
-        className="absolute top-24 left-0 right-0 z-20 text-center"
-        style={{
-          opacity: showGuide && !showText ? 1 : 0,
-          transition: 'opacity 1.5s ease',
-          pointerEvents: 'none',
-        }}
-      >
-        <p
-          style={{
-            fontFamily: '"Cormorant Garamond", Georgia, serif',
-            fontSize: 24,
-            fontStyle: 'italic',
-            color: 'rgba(255,255,255,0.6)',
-            lineHeight: 1.5,
-          }}
-        >
-          Follow the circle. Breathe in as it grows, out as it shrinks.
-        </p>
-      </div>
-
-      {/* Breathing circle / closing text */}
       <div className="flex-1 flex flex-col items-center justify-center z-10 relative">
-        {!showText ? (
-          <div className="flex items-center justify-center" style={{ animation: 'fadeIn 1500ms ease-out', width: 400, height: 400 }}>
-            <BreathingCircle />
+        {!showClosing ? (
+          <div
+            className="flex flex-col items-center gap-6 px-8"
+            style={{
+              opacity: showText ? 1 : 0,
+              transition: 'opacity 1.5s ease',
+            }}
+          >
+            <p
+              style={{
+                fontFamily: '"Cormorant Garamond", Georgia, serif',
+                fontSize: 28,
+                fontStyle: 'italic',
+                color: 'rgba(255,255,255,0.7)',
+                lineHeight: 1.5,
+                textAlign: 'center',
+                maxWidth: 480,
+              }}
+            >
+              When your brain needs a break, we'll show you real things to do.
+            </p>
+            <p
+              style={{
+                fontFamily: '"Cormorant Garamond", Georgia, serif',
+                fontSize: 22,
+                fontStyle: 'italic',
+                color: 'rgba(255,255,255,0.4)',
+                lineHeight: 1.5,
+                textAlign: 'center',
+                maxWidth: 420,
+              }}
+            >
+              A walk. A stretch. A cup of tea. Something away from the screen.
+            </p>
           </div>
         ) : (
           <p
@@ -73,7 +76,7 @@ export default function PhaseFirstTaste({ userResponse, analyser, onAdvance }: P
               maxWidth: 480,
             }}
           >
-            This space is always here for you.
+            The real world is always here for you.
           </p>
         )}
       </div>

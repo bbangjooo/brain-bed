@@ -42,9 +42,9 @@ A real-time 0–100 cognitive load score calculated from five signals:
 
 Exponential backoff alerts — 10min → 20min → 40min → 60min cap. No notification fatigue. Brain Bed tells you your judgment is degrading before you approve the diff you didn't read.
 
-### 3. It locks your keyboard
+### 3. It locks your keyboard and gives you options
 
-When your BFI spikes, Brain Bed locks your keyboard and forces a break — guided breathing, 3D visuals, classical music. You come back sharper. Emergency exit via `Cmd+Shift+Esc`.
+When your BFI spikes, Brain Bed locks your keyboard and presents a deck of real-world activities — go for a walk, stretch, make tea, breathe, tidy your desk. Swipe through the cards, pick one, and actually do it. Classical music plays in the background. Emergency exit via hold-to-exit button.
 
 ### Supported AI Tools
 
@@ -59,7 +59,7 @@ Reads local session logs only. No API keys, no cloud. Everything stays on your m
 <p align="center">
   <img src="landing/screenshot-dashboard.png" height="360" alt="Dashboard" />
   &nbsp;&nbsp;
-  <img src="landing/screenshot-meditation.png" height="360" alt="Meditation" />
+  <img src="landing/screenshot-meditation.png" height="360" alt="Activity Cards" />
 </p>
 
 ## Install
@@ -93,7 +93,8 @@ npm run release
 
 - **Electron** + **React 19** + **TypeScript**
 - **Vite** — build tooling
-- **Three.js** / React Three Fiber — 3D meditation scene
+- **Lucide Icons** — activity card icons
+- **Three.js** / React Three Fiber — 3D background visuals
 - **Tailwind CSS** — styling
 - **better-sqlite3** — local settings & session storage
 - **electron-builder** — packaging & auto-update
@@ -102,9 +103,9 @@ npm run release
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| Meditation duration | 10 min | 5, 10, 15, 20, or 30 minutes |
-| Music autoplay | On | Classical music on meditation start |
-| Force entry | Off | Auto-start meditation after 3 dismissals |
+| Healing duration | 10 min | Custom duration (1–120 minutes) |
+| Music autoplay | On | Classical music during break |
+| Force entry | Off | Auto-start break after 3 dismissals |
 | Alert threshold | 60 min | Usage time before first alert |
 | Late night window | 22:00–06:00 | Hours that trigger late-night penalty |
 
@@ -121,7 +122,8 @@ electron/
 src/
   components/
     dashboard/         # BFI gauge, stats, controls
-    meditation/        # Breathing circle, 3D scene, timer, audio, quotes
+    meditation/        # Timer, audio, completion screen
+    modes/             # Swipeable activity cards (RefreshMode)
     settings/          # Config panel
 
 resources/
