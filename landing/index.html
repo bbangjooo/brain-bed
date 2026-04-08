@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Brain Bed — Forced Breaks for AI-Fried Developers | Free macOS App</title>
-  <meta name="description" content="Brain Bed monitors your Claude Code, Cursor, and Gemini CLI sessions. When your Brain Fry Index crosses the threshold, it locks your keyboard and forces a 5-minute reset. Free, open source, macOS." />
+  <meta name="description" content="Brain Bed monitors your Claude Code, Cursor, and Gemini CLI sessions. When your Brain Fry Index crosses the threshold, it locks your keyboard and tells you what to do instead. Free, open source, macOS." />
   <meta property="og:title" content="Brain Bed — AI Coding Sessions Need a Kill Switch" />
   <meta property="og:description" content="Monitors your AI tool usage. Locks your keyboard when cognitive overload hits. Free, open source, macOS." />
   <meta property="og:image" content="https://brainbed.backproach.dev/hero-meditation.png" />
@@ -12,7 +12,7 @@
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Brain Bed — Forced Breaks for AI-Fried Developers" />
-  <meta name="twitter:description" content="Your Brain Fry Index is a number. When it's too high, your keyboard locks. 5 minutes later, you catch the bug. Free, open source." />
+  <meta name="twitter:description" content="Your Brain Fry Index is a number. When it's too high, your keyboard locks and you pick something real to do. Free, open source." />
   <meta name="twitter:image" content="https://brainbed.backproach.dev/hero-meditation.png" />
   <meta name="google-site-verification" content="eGQtK7aXDFNXHdoVouMpZl4zw54Z1MzbV68TsfaV7IE" />
   <link rel="icon" type="image/png" href="/app-icon.png" />
@@ -23,7 +23,7 @@
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "Brain Bed",
-    "description": "Brain Bed monitors your AI coding tool usage (Claude Code, Gemini CLI, Codex CLI) and forces meditation breaks when cognitive load gets too high. Measures Brain Fry Index in real time.",
+    "description": "Brain Bed monitors your AI coding tool usage (Claude Code, Gemini CLI, Codex CLI) and forces breaks when cognitive load gets too high. Locks your keyboard and shows you real-world activities to do instead.",
     "url": "https://brainbed.backproach.dev",
     "applicationCategory": "UtilitiesApplication",
     "operatingSystem": "macOS",
@@ -1223,8 +1223,8 @@
           <div class="hero-med-breath" id="hero-med-breath">
             <div class="hero-med-breath-inner"></div>
           </div>
-          <div class="hero-med-label" id="hero-med-label">Breathe in</div>
-          <div class="hero-med-quote">"The mind is everything. What you think you become."</div>
+          <div class="hero-med-label" id="hero-med-label">Go for a walk</div>
+          <div class="hero-med-quote">Step outside. Notice 3 things you can see.</div>
           <div class="hero-med-timer" id="hero-med-timer">4:58</div>
           <div class="hero-med-music">
             <span class="hero-med-bars"><span></span><span></span><span></span><span></span><span></span></span>
@@ -1326,9 +1326,9 @@
         </div>
         <div class="hiw-number">3</div>
         <h3 class="hiw-title">It locks your keyboard</h3>
-        <p class="hiw-desc">Locks your keyboard. Classical music plays. You breathe.</p>
+        <p class="hiw-desc">Locks your keyboard. Shows you real things to do — walk, stretch, make tea.</p>
         <ul class="hiw-points">
-          <li>5-minute mandatory break</li>
+          <li>Swipe through activity cards, pick one</li>
           <li>The diff is still there when you get back</li>
         </ul>
       </div>
@@ -1941,10 +1941,10 @@ function downloadLatest(e) {
 
   function startBreathLabel() {
     var phases = [
-      { label: 'Breathe in', duration: 4000 },
-      { label: 'Hold', duration: 4000 },
-      { label: 'Breathe out', duration: 6000 },
-      { label: 'Hold', duration: 2000 }
+      { label: 'Go for a walk', duration: 4000 },
+      { label: 'Full body stretch', duration: 4000 },
+      { label: 'Make a warm drink', duration: 4000 },
+      { label: 'Sit by a window', duration: 4000 }
     ];
     var idx = 0;
     function cycle() {
