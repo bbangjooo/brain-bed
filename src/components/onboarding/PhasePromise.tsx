@@ -4,8 +4,8 @@ import type { BfiStage } from '../../types/electron'
 const PROMISES = [
   'This is your Brain Fry Index.',
   'When things heat up, I\'ll let you know.',
-  'When it\'s time, I\'ll show you something different to do.',
-  'Your keyboard locks — and you pick a real-world activity.',
+  'When it\'s time, I\'ll show you what to do.',
+  'Your keyboard locks — you step away from the screen.',
 ]
 
 const STAGE_CONFIG: Record<BfiStage, { color: string; label: string }> = {

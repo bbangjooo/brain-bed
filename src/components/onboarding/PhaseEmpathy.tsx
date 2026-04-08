@@ -8,7 +8,7 @@ interface Props {
 const LINES = [
   "You've been working with AI today, haven't you?",
   'Prompts, outputs, context switches — one tool to the next, without a pause.',
-  'Could you use a change of scenery?',
+  'Could you use a quiet moment?',
 ]
 
 const RESPONSES = {
