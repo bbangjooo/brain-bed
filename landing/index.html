@@ -1143,6 +1143,11 @@
     gtag('js', new Date());
     gtag('config', 'G-8Q4PWFM67S');
   </script>
+  <!-- Amplitude -->
+  <script src="https://cdn.amplitude.com/libs/analytics-browser-2.11.0-min.js.gz"></script>
+  <script>
+    window.amplitude.init('874a0f06996069ced2020914719cc7e9', { defaultTracking: true });
+  </script>
   <script defer src="/_vercel/insights/script.js"></script>
   <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
@@ -1465,6 +1470,7 @@ function downloadLatest(e) {
     file_extension: '.dmg',
     link_url: url
   });
+  window.amplitude.track('landing_download_clicked', { url: url });
   const a = document.createElement('a');
   a.href = url;
   a.download = '';
