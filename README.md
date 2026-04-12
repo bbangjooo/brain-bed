@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/bbangjooo/brain-bed/releases"><img src="https://img.shields.io/endpoint?url=https://brainbed.backproach.dev/badge/downloads.json" alt="Downloads" /></a>
+  <a href="https://github.com/bbangjooo/brain-bed/releases"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/bbangjooo/brain-bed/main/landing/badge/downloads.json" alt="Downloads" /></a>
 </p>
 
 <p align="center">
